@@ -36,17 +36,15 @@
                 <div class="packet">
                   <div id="course">
                     <h4 style="margin-bottom: 2vmax;">Add Course Fee </h4>
-                    <form>
+                    <form action="/addFeeStructure" method="post">
                       <div class="mb-3">
-                        <label for="exampleInputEmail1" class="form-label"
-                          >Select Course</label
-                        >
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="exampleInputEmail1"
-                          aria-describedby="emailHelp"
-                        />
+                        <label for="exampleInputEmail1" class="form-label">Select Course</label>
+                        <select name="selectCourse" class="form-select" aria-label="Default select example">
+                            <option selected=""></option>
+                            <option value="CCC">CCC</option>
+                            <option value="BCA">BCA</option>
+                            <option value="MCA">MCA</option>
+                          </select>
                       </div>
                       <div class="mb-3">
                         <label for="exampleInputPassword1" class="form-label"
@@ -55,6 +53,7 @@
                         <input
                           type="text"
                           class="form-control"
+                          name="totalFee"
                           placeholder="0"
                           id="exampleInputPassword1"
                         />
@@ -75,13 +74,15 @@
                           </tr>
                         </thead>
                         <tbody>
+                        <% course.forEach((course,i) => { %>
                           <tr>
-                            <th scope="row">1</th>
-                            <td>CCC</td>
-                            <td>3000</td>
+                            <th scope="row"><%=i %></th>
+                            <td><%=course.selectCourse %></td>
+                            <td><%=course.totalFee %></td>
                             
                             <td> <button class="btn btn-success">Edit</button> </td>
                           </tr>
+                       <% }); %>
                           
                         </tbody>
                       </table>

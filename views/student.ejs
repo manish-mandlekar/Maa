@@ -39,14 +39,16 @@
                         </tr>
                       </thead>
                       <tbody>
+                      <% std.forEach((std,i) => {%>
                         <tr>
-                          <td>1</td>
-                          <td>John Doe</td>
-                          <td>123-456-7890</td>
-                          <td>Computer Science</td>
-                          <td>9:00 AM - 12:00 PM</td>
-                          <td>2024-03-26</td>
+                          <td><%=i %></td>
+                          <td><%=std.firstName %> <%=std.lastName %></td>
+                          <td><%=std.contactNumber %></td>
+                          <td><%=std.course %></td>
+                          <td><%=std.timing %></td>
+                          <td><%=std.joiningDate.toDateString() %></td>
                         </tr>
+                     <% }); %>
                         <!-- Add more rows for additional students -->
                       </tbody>
                     </table>

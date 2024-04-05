@@ -4,20 +4,27 @@ const mongoose = require('mongoose');
 const courseSchema = new mongoose.Schema({
     courseName: {
         type: String,
-        required: true
+        
     },
     courseCode: {
         type: String,
-        required: true,
-        unique: true
+       
     },
     courseDuration: {
         type: String,
-        required: true
+        
     },
     totalFee: {
         type: String,
-        required: true
+        
+    },
+    selectCourse:{
+        type:String,
+        
+    },
+    totalFee:{
+        type:Number,
+        
     }
 });
 

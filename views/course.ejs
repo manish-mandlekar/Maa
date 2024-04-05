@@ -36,13 +36,14 @@
           <div class="packet">
             <div id="course">
               <h4 style="margin-bottom: 2vmax;">Add course</h4>
-              <form>
+              <form action="/course" method="post">
                 <div class="mb-3">
                   <label for="exampleInputEmail1" class="form-label"
                     >Enter Course Name</label
                   >
                   <input
-                    type="email"
+                  name="courseName"
+                    type="text"
                     class="form-control"
                     id="exampleInputEmail1"
                     aria-describedby="emailHelp"
@@ -53,6 +54,7 @@
                     >Enter Course Code</label
                   >
                   <input
+                  name="courseCode"
                     type="text"
                     class="form-control"
                     id="exampleInputPassword1"
@@ -63,6 +65,7 @@
                     >Enter Course Duration</label
                   >
                   <input
+                  name="courseDuration"
                     type="text"
                     class="form-control"
                     id="exampleInputPassword1"
@@ -97,13 +100,15 @@
                     </tr>
                   </thead>
                   <tbody>
+                   <% course.forEach((course,i) => {%>
                     <tr>
-                      <th scope="row">1</th>
-                      <td>CCC</td>
-                      <td>CCC</td>
-                      <td>4 Months</td>
+                      <th scope="row"><%= i %></th>
+                      <td><%=course.courseName %></td>
+                      <td><%=course.courseCode %></td>
+                      <td><%=course.courseDuration%> Months</td>
                       <td> <button class="btn btn-success">Edit</button> </td>
                     </tr>
+                  <% }); %>
                     
                   </tbody>
                 </table>

@@ -35,35 +35,35 @@
                     </ul>
                   </div>
                   <div class="inq">
-                    <form class="row g-3">
+                    <form action="/allenquiry" method="post" class="row g-3">
                         <div class="col-md-6">
                           <label for="inputEmail4" class="form-label">Visitor Name</label>
-                           <input required type="text" placeholder="Enter First Name" class="form-control" id="inputEmail4">
+                           <input required type="text" placeholder="Enter First Name" name="firstName" class="form-control" id="inputEmail4">
                         </div>
                         <div class="col-md-6">
                           <label for="inputPassword4" class="form-label">Visitor Surname</label>
-                           <input required type="text" placeholder="Enter Last Name" class="form-control" id="inputPassword4">
+                           <input required type="text" name="lastName" placeholder="Enter Last Name" class="form-control" id="inputPassword4">
                         </div>
                         <div class="col-12">
                           <label for="inputAddress" class="form-label">Visitor Email</label>
-                           <input required type="email"  class="form-control" id="inputAddress" placeholder="Enter Email Address">
+                           <input required type="email" name="visitorEmail" class="form-control" id="inputAddress" placeholder="Enter Email Address">
                         </div>
                         <div class="col-12">
                           <label for="inputAddress2" class="form-label">Contact Number</label>
-                           <input required type="text" class="form-control" id="inputAddress2" placeholder="Enter Contact Number">
+                           <input required type="text" name="contactNumber" class="form-control" id="inputAddress2" placeholder="Enter Contact Number">
                         </div>
                         <div class="col-md-6">
                           <label for="inputCity" class="form-label">Qualification</label>
-                           <input required type="text" class="form-control" placeholder="Enter Qualification" id="inputCity">
+                           <input required name="qualification" type="text" class="form-control" placeholder="Enter Qualification" id="inputCity">
                         </div>
                         
                         <div class="col-md-2">
                           <label for="inputZip" class="form-label">Address</label>
-                           <input required type="text" placeholder="Address" class="form-control" id="inputZip">
+                           <input name="address" required type="text" placeholder="Address" class="form-control" id="inputZip">
                         </div>
                         <div class="col-md-2">
                             <label for="inputZip" class="form-label">Enquiry Date</label>
-                             <input required type="date" class="form-control" id="inputZip">
+                             <input name="enquiryDate" required type="date" class="form-control" id="inputZip">
                           </div>
                         
                         </div>
@@ -80,11 +80,11 @@
                            <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Select Course</label>
-                                 <input required type="text" class="form-control" id="inputEmail4">
+                                 <input required type="text" name="course" class="form-control" id="inputEmail4">
                               </div>
                               <div class="col-md-6">
                                 <label for="inputPassword4" class="form-label">Total Fee</label>
-                                 <input required type="text" class="form-control" id="inputPassword4" placeholder="Enter Fees">
+                                 <input required type="text" name="fee" class="form-control" id="inputPassword4" placeholder="Enter Fees">
                               </div>
                               <div class="col-12">
                                 <label for="inputAddress" class="form-label">Enquiry By</label>
@@ -92,11 +92,20 @@
                               </div>
                               <div class="col-12">
                                 <label for="inputAddress2" class="form-label"> Like To Join </label>
-                                 <input required type="text" class="form-control" id="inputAddress2" >
+                                 <input required type="date" name="joiningDate" class="form-control" id="inputAddress2" >
                               </div>
-                              <div class="col-md-6">
-                                <label for="inputCity" class="form-label">Commment</label>
-                                 <input required type="text" class="form-control" id="inputCity" placeholder="Commment">
+                              <div class="col-md-4">
+                                <label for="inputState" class="form-label">Timing</label>
+                                <select name="timing" id="inputState" class="form-select">
+                                  <option selected>9 To 10</option>
+                                  <option>10 To 11</option>
+                                  <option>11 To 12</option>
+                                  <option>1 to 2</option>
+                                  <option>2 To 3</option>
+                                  <option>3 To 4</option>
+                                  <option>4 To 5</option>
+                                  
+                                </select>
                               </div>
                               <div class="col-md-4">
                                 <label for="inputState" class="form-label">You Came To Know About Institute By:</label>

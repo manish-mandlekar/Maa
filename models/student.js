@@ -17,10 +17,14 @@ const studentEnquirySchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ["Male", "Female"],
+    enum: ["male", "female"],
     required: true,
   },
   contactNumber: {
+    type: String,
+    required: true,
+  },
+  course: {
     type: String,
     required: true,
   },
@@ -32,11 +36,26 @@ const studentEnquirySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  
+  fee: {
+    type: String,
+    required: true,
+  },
   enquiryDate: {
     type: Date,
     default: Date.now,
   },
+  joiningDate: {
+    type: Date,
+    default: Date.now,
+  },
+  rejected:{
+    type: Boolean,
+    default: false
+  },
+  timing:{
+    type:String,
+    required:true
+  }
 });
 
 // Create a model from the schema
