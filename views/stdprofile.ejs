@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/student.css" />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+  </head>
+  <body>
+    <div id="main">
+      <%- include('./partials/header') %>
+      <div id="right">
+        <%- include('./partials/right-header') %>
+        <div class="popa">
+          <h1>Student Profile</h1>
+          <div>
+            <label for="firstName">First Name:</label>
+            <span id="firstName"><%=founduser.firstName %></span>
+          </div>
+          <div>
+            <label for="lastName">Last Name:</label>
+            <span id="lastName"><%=founduser.lastName %></span>
+          </div>
+          <div>
+            <label for="visitorEmail">Email:</label>
+            <span id="visitorEmail"><%=founduser.visitorEmail %></span>
+          </div>
+          <div>
+            <label for="gender">Gender:</label>
+            <span id="gender"><%=founduser.gender %></span>
+          </div>
+          <div>
+            <label for="contactNumber">Contact Number:</label>
+            <span id="contactNumber"><%=founduser.contactNumber %></span>
+          </div>
+          <div>
+            <label for="course">Course:</label>
+            <span id="course"><%=founduser.course %></span>
+          </div>
+          <div>
+            <label for="qualification">Qualification:</label>
+            <span id="qualification"><%=founduser.qualification %></span>
+          </div>
+          <div>
+            <label for="address">Address:</label>
+            <span id="address"><%=founduser.address %></span>
+          </div>
+          <div>
+            <label for="fee">Fee:</label>
+            <span id="fee"><%=founduser.fee %></span>
+          </div>
+          <div>
+            <label for="enquiryDate">Enquiry Date:</label>
+            <span id="enquiryDate"><%=founduser.enquiryDate.toDateString() %></span>
+          </div>
+          <div>
+            <label for="joiningDate">Joining Date:</label>
+            <span id="joiningDate"><%=founduser.joiningDate.toDateString() %></span>
+          </div>
+          <div>
+            <label for="timing">Timing:</label>
+            <span id="timing"><%=founduser.timing %></span>
+          </div>
+          <div>
+            <label for="installmentAmount">Installment Amount:</label>
+            <span id="installmentAmount"><%=founduser.Installment %></span>
+          </div>
+          <div>
+            <label for="dueAmount">Due Amount:</label>
+            <span id="dueAmount"><%=founduser.Due %></span>
+          </div>
+          <div>
+            <label for="paymentStatus">Payment Status:</label>
+            <span id="paymentStatus"><%=founduser.done %></span>
+          </div>
+          <div>
+            <label for="registrationPayment">Registration Payment Method:</label>
+            <span id="registrationPayment"><%=founduser.RegistrationPayment %></span>
+          </div>
+          <div>
+            <label for="registrationPayment">Due Amount Date</label>
+            <span id="registrationPayment"><%=founduser.DueDate %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

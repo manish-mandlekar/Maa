@@ -69,6 +69,9 @@ const studentEnquirySchema = new mongoose.Schema({
   },
   RegistrationPayment:{
 type:String
+  },
+  DueDate:{
+    type:String,
   }
 });
 

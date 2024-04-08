@@ -106,7 +106,8 @@ router.post("/allenquiry", (req, res, next) => {
       RegistrationPayment: req.body.RegistrationPayment,
       Installment:req.body.Installment,
       Due:req.body.Due,
-      done:req.body.done
+      done:req.body.done,
+      DueDate:req.body.DueDate
     })
     .then((created) => {
       res.redirect("/allenquiry");
@@ -167,6 +168,14 @@ router.post("/addStaff", (req, res, next) => {
 });
 router.get("/profile", (req, res, next) => {
   res.render("profile");
+});
+router.get("/stdprofile/:username",(req, res, next) => {
+studentModel.findOne({
+  firstName:req.params.username
+}).then((founduser)=>{
+
+  res.render("stdprofile",{founduser});
+})
 });
 router.get("/allStaff", (req, res, next) => {
   staffModel.find().then((staff)=>{

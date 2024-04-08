@@ -25,7 +25,7 @@
         <%- include('./partials/right-header') %>
         <div class="inq">
             <div class="cola">
-                <h2>Student Details</h2>
+                <h2>Registered Student Details</h2>
                 <div class="container mt-5">
                     <table class="table">
                       <thead>
@@ -42,7 +42,7 @@
                       <% std.forEach((std,i) => {%>
                         <tr>
                           <td><%=i %></td>
-                          <td><%=std.firstName %> <%=std.lastName %></td>
+                          <td><a href="/stdprofile/<%=std.firstName %>"><%=std.firstName %> <%=std.lastName %></a></td>
                           <td><%=std.contactNumber %></td>
                           <td><%=std.course %></td>
                           <td><%=std.timing %></td>
