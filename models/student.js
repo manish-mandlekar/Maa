@@ -55,6 +55,20 @@ const studentEnquirySchema = new mongoose.Schema({
   timing:{
     type:String,
     required:true
+  },
+  Installment:{
+    type:String,
+    
+  },
+  Due:{
+    type:String,
+    
+  },
+  done:{
+    type:String,
+  },
+  RegistrationPayment:{
+type:String
   }
 });
 

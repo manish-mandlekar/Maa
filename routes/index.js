@@ -103,6 +103,10 @@ router.post("/allenquiry", (req, res, next) => {
       fee: req.body.fee,
       joiningDate: req.body.joining,
       timing: req.body.timing,
+      RegistrationPayment: req.body.RegistrationPayment,
+      Installment:req.body.Installment,
+      Due:req.body.Due,
+      done:req.body.done
     })
     .then((created) => {
       res.redirect("/allenquiry");
