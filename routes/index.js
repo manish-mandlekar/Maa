@@ -93,6 +93,7 @@ router.post("/allenquiry", (req, res, next) => {
     .create({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
+      fatherName: req.body.fatherName,
       visitorEmail: req.body.visitorEmail,
       gender: req.body.gender,
       contactNumber: req.body.contactNumber,
@@ -168,6 +169,9 @@ router.post("/addStaff", (req, res, next) => {
 });
 router.get("/profile", (req, res, next) => {
   res.render("profile");
+});
+router.get("/fees", (req, res, next) => {
+  res.render("fees");
 });
 router.get("/stdprofile/:username",(req, res, next) => {
 studentModel.findOne({
