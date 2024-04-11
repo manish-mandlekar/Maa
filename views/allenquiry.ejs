@@ -38,9 +38,6 @@
               <li>
                 <a class="dropdown-item" href="/rejected">Rejected Inquiry</a>
               </li>
-              <li>
-                <a class="dropdown-item" href="/ifs">Inquiry Fees Structure</a>
-              </li>
             </ul>
           </div>
           <div id="inq">
@@ -54,7 +51,6 @@
                   <th scope="col">Fees</th>
                   <th scope="col">Enquiry Date</th>
                   <th scope="col">Joining Date</th>
-                  <th scope="col">Feedback</th>
                   <th scope="col">Action</th>
                 </tr>
               </thead>
@@ -63,17 +59,21 @@
                 <tr id="<%= std._id %>">
                   <th scope="row"><%=std.firstName %> <%=std.lastName %></th>
                   <td><%=std.contactNumber %></td>
-                  <td><%=std.course %></td>
-                  <td><%=std.fee %></td>
+                  <td>
+                    <% std.course.forEach(e=>{ %>
+                      <%= e.courseCode %> 
+                    <% }) %>
+                  </td>
+                  <td><%=std.due %></td>
                   <td><%=std.enquiryDate.toDateString()%></td>
                   <td><%=std.joiningDate.toDateString() %></td>
-                  <td><ion-icon name="create-outline"></ion-icon></td>
                   <td>
-                    <ion-icon name="pencil-outline"></ion-icon>
                     <a href="/delete/enquiry/<%= std._id %>">
-                      <ion-icon name="trash-bin-outline"></ion-icon>
+                      ❌
                     </a>
-                    <%=std.RegistrationPayment %>
+                    <a href="/accepted/enquiry/<%= std._id %>">
+                      ✅
+                    </a>
                   </td>
                   <td></td>
                 </tr>

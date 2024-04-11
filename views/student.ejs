@@ -24,36 +24,40 @@
       <div id="right">
         <%- include('./partials/right-header') %>
         <div class="inq">
-            <div class="cola">
-                <h2>Registered Student Details</h2>
-                <div class="container mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr  class="table-info">
-                          <th>Roll No.</th>
-                          <th>Name</th>
-                          <th>Mobile No.</th>
-                          <th>Course</th>
-                          <th>Time</th>
-                          <th>Admission Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <% std.forEach((std,i) => {%>
-                        <tr>
-                          <td><%=i %></td>
-                          <td><a href="/stdprofile/<%=std.firstName %>"><%=std.firstName %> <%=std.lastName %></a></td>
-                          <td><%=std.contactNumber %></td>
-                          <td><%=std.course %></td>
-                          <td><%=std.timing %></td>
-                          <td><%=std.joiningDate.toDateString() %></td>
-                        </tr>
-                     <% }); %>
-                        <!-- Add more rows for additional students -->
-                      </tbody>
-                    </table>
-                  </div>
+          <div class="cola">
+            <h2>Registered Student Details</h2>
+            <div class="container mt-5">
+              <table class="table">
+                <thead>
+                  <tr class="table-info">
+                    <th>Roll No.</th>
+                    <th>Name</th>
+                    <th>Mobile No.</th>
+                    <th>Course</th>
+                    <th>Time</th>
+                    <th>Admission Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% std.forEach((std,i) => {%>
+                  <tr>
+                    <td><%=i+1 %></td>
+                    <td>
+                      <a href="/stdprofile/<%=std.firstName %>"
+                        ><%=std.firstName %> <%=std.lastName %></a
+                      >
+                    </td>
+                    <td><%=std.contactNumber %></td>
+                    <td><%=std.course %></td>
+                    <td><%=std.timing %></td>
+                    <td><%=std.joiningDate.toDateString() %></td>
+                  </tr>
+                  <% }); %>
+                  <!-- Add more rows for additional students -->
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
       </div>
     </div>

@@ -17,7 +17,6 @@ const staffSchema = new mongoose.Schema({
   maritalStatus: {
     type: String,
     required: true,
-    
   },
   qualification: {
     type: String,

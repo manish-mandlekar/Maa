@@ -10,37 +10,22 @@ const studentEnquirySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  visitorEmail: {
+  email: {
     type: String,
     required: true,
-    unique: true,
   },
   fatherName: {
     type: String,
     required: true,
   },
-  gender: {
-    type: String,
-    enum: ["male", "female"],
-    required: true,
-  },
   contactNumber: {
-    type: String,
-    required: true,
-  },
-  course: {
-    type: String,
+    type: Number,
     required: true,
   },
   qualification: {
     type: String,
-    required: true,
   },
   address: {
-    type: String,
-    required: true,
-  },
-  fee: {
     type: String,
     required: true,
   },
@@ -48,32 +33,28 @@ const studentEnquirySchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  joiningDate: {
-    type: Date,
-    default: Date.now,
+  gender: {
+    type: String,
+    enum: ["male", "female"],
+    required: true,
   },
+  course: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    },
+  ],
+  enquiryBy: String,
+  joiningDate: Date,
+  reference: String,
+  registrationPaymentMode: String,
+  installment: String,
+  due: Number,
+  registrationPayment: String,
+  dueDate: String,
   rejected: {
     type: Boolean,
     default: false,
-  },
-  timing: {
-    type: String,
-    required: true,
-  },
-  Installment: {
-    type: String,
-  },
-  Due: {
-    type: String,
-  },
-  done: {
-    type: String,
-  },
-  RegistrationPayment: {
-    type: String,
-  },
-  DueDate: {
-    type: String,
   },
 });
 

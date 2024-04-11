@@ -38,9 +38,6 @@
                 <a class="dropdown-item" href="/allenquiry">All Inquiry</a>
               </li>
               <li><a class="dropdown-item" href="/inquiry">Add Inquiry</a></li>
-              <li>
-                <a class="dropdown-item" href="/ifs">Inquiry Fees Structure</a>
-              </li>
             </ul>
           </div>
           <div id="inq">
@@ -51,7 +48,7 @@
                   <th scope="col">Name</th>
                   <th scope="col">Mobile</th>
                   <th scope="col">Course</th>
-                  <th scope="col">Fees</th>
+                  <th scope="col">Due Fees</th>
                   <th scope="col">Enquiry Date</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -60,13 +57,17 @@
                 <% students.forEach(student=>{ %>
                 <tr>
                   <th scope="row"><%= student.firstName %></th>
-                  <td>745784544</td>
-                  <td>ccc</td>
-                  <td>5000</td>
-                  <td>24/03/24</td>
+                  <td><%= student.contactNumber %></td>
+                  <td><%= student.course[0].courseCode %></td>
+                  <td><%= student.due %></td>
+                  <td><%= student.enquiryDate.toDateString() %></td>
                   <td>
-                    <ion-icon name="pencil-outline"></ion-icon>
-                    <ion-icon name="trash-bin-outline"></ion-icon>
+                    <a href="">
+                      ❌
+                    </a>
+                    <a href="/accepted/enquiry/<%= student._id %>">
+                      ✅
+                    </a>
                   </td>
                 </tr>
                 <% }) %>

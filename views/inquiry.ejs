@@ -31,11 +31,10 @@
                     <ul class="dropdown-menu">
                       <li><a class="dropdown-item" href="/allenquiry">All Inquiry</a></li>
                       <li><a class="dropdown-item" href="/rejected">Rejected Inquiry</a></li>
-                      <li><a class="dropdown-item" href="/ifs">Inquiry Fees Structure</a></li>
                     </ul>
                   </div>
                   <div class="inq">
-                    <form action="/allenquiry" method="post" class="row g-3">
+                    <form action="/inquiry" method="post" class="row g-3">
                         <div class="col-md-6">
                           <label for="inputEmail4" class="form-label">Student Name</label>
                            <input required type="text" placeholder="Enter First Name" name="firstName" class="form-control" id="inputEmail4">
@@ -46,7 +45,7 @@
                         </div>
                         <div class="col-12">
                           <label for="inputAddress" class="form-label">Student Email</label>
-                           <input required type="email" name="visitorEmail" class="form-control" id="inputAddress" placeholder="Enter Email Address">
+                           <input required type="email" name="email" class="form-control" id="inputAddress" placeholder="Enter Email Address">
                         </div>
                         <div class="col-12">
                           <label for="inputAddress" class="form-label">Name of Father / Husband</label>
@@ -54,7 +53,7 @@
                         </div>
                         <div class="col-12">
                           <label for="inputAddress2" class="form-label">Contact Number/ WhatsAap Number</label>
-                           <input required type="text" name="contactNumber" class="form-control" id="inputAddress2" placeholder="Enter Contact Number">
+                           <input required type="number" name="contactNumber" class="form-control" id="inputAddress2" placeholder="Enter Contact Number">
                         </div>
                         <div class="col-md-6">
                           <label for="inputCity" class="form-label">Qualification</label>
@@ -82,38 +81,25 @@
                           </div>
                           
                            <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label for="inputEmail4" class="form-label">Select Course</label>
-                                 <input required type="text" name="course" class="form-control" id="inputEmail4">
+                                <select name="course" id="inputState" class="form-select">
+                                  <% course.forEach(e=>{ %>
+                                    <option value="<%= e._id %>"><%= e.courseName %></option>
+                                  <% }) %> 
+                                </select>
                               </div>
-                              <div class="col-md-6">
-                                <label for="inputPassword4" class="form-label">Total Fee</label>
-                                 <input required type="text" name="fee" class="form-control" id="inputPassword4" placeholder="Enter Fees">
-                              </div>
-                              <div class="col-12">
+                              <div class="col-6">
                                 <label for="inputAddress" class="form-label">Enquiry By</label>
-                                 <input required type="text" class="form-control" id="inputAddress" placeholder="Enter Name">
+                                 <input required type="text" name="enquiryBy" class="form-control" id="inputAddress" placeholder="Enter Name">
                               </div>
-                              <div class="col-12">
+                              <div class="col-6">
                                 <label for="inputAddress2" class="form-label"> Like To Join </label>
                                  <input required type="date" name="joiningDate" class="form-control" id="inputAddress2" >
                               </div>
                               <div class="col-md-4">
-                                <label for="inputState" class="form-label">Timing</label>
-                                <select name="timing" id="inputState" class="form-select">
-                                  <option selected>9 To 10</option>
-                                  <option>10 To 11</option>
-                                  <option>11 To 12</option>
-                                  <option>1 to 2</option>
-                                  <option>2 To 3</option>
-                                  <option>3 To 4</option>
-                                  <option>4 To 5</option>
-                                  
-                                </select>
-                              </div>
-                              <div class="col-md-4">
                                 <label for="inputState" class="form-label">You Came To Know About Institute By:</label>
-                                <select id="inputState" class="form-select">
+                                <select id="inputState" name="reference" class="form-select">
                                   <option selected>Choose...</option>
                                   <option>Sign Board</option>
                                   <option>Advertisement Papers</option>
@@ -126,7 +112,7 @@
                               </div>
                               <div class="col-md-4">
                                 <label for="inputState" class="form-label">Registration Payment Mode:</label>
-                                <select name="RegistrationPayment" id="inputState" class="form-select">
+                                <select name="registrationPaymentMode" id="inputState" class="form-select">
                                   <option selected>Cash</option>
                                   <option>Phone pe</option>
                                   <option>Google pay</option>
@@ -140,16 +126,16 @@
                             <div class="row g-3" style="margin-top: 1vmax;">
                               <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Installment</label>
-                                 <input required type="text" name="Installment" class="form-control" id="inputEmail4" placeholder="Enter Installment Amount">
+                                 <input required type="number" name="installment" class="form-control" id="inputEmail4" placeholder="Enter Installment Amount">
                               </div>
                               <div class="col-md-6" style="margin-top: 1vmax;">
                                 <label for="inputPassword4" class="form-label">Due</label>
-                                 <input required type="text" name="Due" class="form-control" id="inputPassword4" placeholder="Enter Due Amount">
+                                 <input required type="number" name="due" class="form-control" id="inputPassword4" placeholder="Enter Due Amount">
                               </div>
                             </div>
                             <div class="col-md-4" style="margin-top: 1vmax;">
                               <label for="inputState" class="form-label">Registration Payment:</label>
-                              <select name="done" id="inputState" class="form-select">
+                              <select name="registrationPayment" id="inputState" class="form-select">
                                 <option selected>Done</option>
                                 <option>Not Done</option>
                                 
@@ -159,7 +145,7 @@
                             </div>
                             <div class="col-md-6" style="margin-top: 1vmax;">
                               <label for="inputPassword4" class="form-label">Due Amount Date</label>
-                               <input required type="text" name="DueDate" class="form-control" id="inputPassword4" placeholder="Enter Due Amount date">
+                               <input required type="date" name="dueDate" class="form-control" id="inputPassword4" placeholder="Enter Due Amount date">
                             </div>
                           
                         <div class="col-12"style="margin-top: 1vmax;" >

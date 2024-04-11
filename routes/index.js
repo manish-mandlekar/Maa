@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const mongoose = require("mongoose");
 const userModel = require("../models/Usermodel");
-const staffModel = require('../models/staff')
+const staffModel = require("../models/staff");
 const studentModel = require("../models/student");
 const courseModel = require("../models/course");
 const passport = require("passport");
@@ -17,7 +17,7 @@ mongoose
   });
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.render("index", { title: "Express" });
+  res.render("index");
 });
 router.get("/signup", function (req, res, next) {
   res.render("signup");
@@ -27,14 +27,17 @@ router.post("/register", function (req, res) {
     username: req.body.username,
     email: req.body.email,
   });
-  userModel.register(newUser, req.body.password).then(function (u) {
-    passport.authenticate("local")(req, res, function () {
-      res.redirect("/dashboard");
+  userModel
+    .register(newUser, req.body.password)
+    .then(function (u) {
+      passport.authenticate("local")(req, res, function () {
+        res.redirect("/dashboard");
+      });
+    })
+    .catch((e) => {
+      console.log(e);
+      res.redirect("/signup");
     });
-  }).catch(e => {
-    console.log(e);
-    res.redirect("/signup");
-  })
 });
 router.post(
   "/login",
@@ -59,7 +62,7 @@ function isLoggedIn(req, res, next) {
 router.get("/dashboard", (req, res, next) => {
   res.render("dashboard");
 });
-
+// Course routes
 router.get("/course", (req, res, next) => {
   courseModel.find().then((course) => {
     res.render("course", { course });
@@ -76,99 +79,86 @@ router.post("/course", (req, res, next) => {
       res.redirect("/course");
     });
 });
-
-router.get("/inquiry", (req, res, next) => {
-  res.render("inquiry");
-});
-router.get("/allenquiry", (req, res, next) => {
-  studentModel.find({ rejected: false }).then((students) => {
-    res.render("allenquiry", { students });
-  });
-});
-router.get("/delete/enquiry/:id", async (req, res, next) => {
-  const student = await studentModel.findById({ _id: req.params.id });
-  student.rejected = true;
-  await student.save();
-  res.redirect("/allenquiry");
-});
-router.post("/allenquiry", (req, res, next) => {
-  studentModel
-    .create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      fatherName: req.body.fatherName,
-      visitorEmail: req.body.visitorEmail,
-      gender: req.body.gender,
-      contactNumber: req.body.contactNumber,
-      qualification: req.body.qualification,
-      address: req.body.address,
-      course: req.body.course,
-      enquiryDate: req.body.enquiryDate,
-      fee: req.body.fee,
-      joiningDate: req.body.joining,
-      timing: req.body.timing,
-      RegistrationPayment: req.body.RegistrationPayment,
-      Installment:req.body.Installment,
-      Due:req.body.Due,
-      done:req.body.done,
-      DueDate:req.body.DueDate
-    })
-    .then((created) => {
-      res.redirect("/allenquiry");
-    });
-});
-router.get("/rejected", (req, res, next) => {
-  studentModel.find({ rejected: true }).then((students) => {
-    res.render("rejected", { students });
-  });
-});
-router.get("/ifs", (req, res, next) => {
-  res.render("ifs");
-});
 router.get("/addFeeStructure", (req, res, next) => {
   courseModel.find().then((course) => {
     res.render("addFeeStructure", { course });
   });
 });
-router.post("/addFeeStructure", (req, res, next) => {
-  courseModel
-    .create({
-      selectCourse: req.body.selectCourse,
-      totalFee: req.body.totalFee,
-    })
-    .then(() => {
-      res.redirect("/addFeeStructure");
-    });
+router.post("/addFeeStructure", async (req, res, next) => {
+  const { selectCourse, totalFee } = req.body;
+  const course = await courseModel.findOne({ _id: selectCourse });
+  course.totalFee = totalFee;
+  await course.save();
+  res.redirect("/addFeeStructure");
 });
-router.get("/student", (req, res, next) => {
-  studentModel.find().then((std)=>{
+router.get("/deletecourse/:id", async (req, res, next) => {
+  await courseModel.findOneAndDelete({ _id: req.params.id });
+  res.redirect("back");
+});
 
-    res.render("student",{std});
-  })
+// Inquiry routes
+router.get("/inquiry", async (req, res, next) => {
+  const course = await courseModel.find();
+  res.render("inquiry", { course });
+});
+router.post("/inquiry", async (req, res, next) => {
+  await studentModel.create(req.body);
+  res.redirect("/allenquiry");
+});
+router.get("/allenquiry", async (req, res, next) => {
+  const students = await studentModel
+    .find({ rejected: false })
+    .populate("course");
+  res.render("allenquiry", { students });
+});
+router.get("/delete/enquiry/:id", async (req, res, next) => {
+  const student = await studentModel.findById({ _id: req.params.id });
+  student.rejected = true;
+  await student.save();
+  res.redirect("back");
+});
+router.get("/accepted/enquiry/:id", async (req, res, next) => {
+  const student = await studentModel.findById({ _id: req.params.id });
+  student.rejected = false;
+  await student.save();
+  res.redirect("back");
+});
+router.get("/rejected", async (req, res, next) => {
+  const students = await studentModel
+    .find({ rejected: true })
+    .populate("course");
+  res.render("rejected", { students });
+});
+
+router.get("/student", (req, res, next) => {
+  studentModel.find().then((std) => {
+    res.render("student", { std });
+  });
 });
 router.get("/addStaff", (req, res, next) => {
-    res.render("addStaff");
+  res.render("addStaff");
 });
 router.post("/addStaff", (req, res, next) => {
-  staffModel.create({
-    firstName:req.body.firstName,
-    secondName:req.body.secondName,
-    gender:req.body.gender,
-    maritalStatus:req.body.maritalStatus,
-    qualification:req.body.qualification,
-    contactNumber:req.body.contactNumber,
-    email:req.body.email,
-    dob:req.body.dob,
-    address:req.body.address,
-    totalExperience:req.body.totalExperience,
-    salary:req.body.salary,
-    joinDate:req.body.joinDate,
-    jobTiming:req.body.jobTiming,
-    position:req.body.position,
-  }).then(()=>{
-
-    res.redirect("/allStaff");
-  })
+  staffModel
+    .create({
+      firstName: req.body.firstName,
+      secondName: req.body.secondName,
+      gender: req.body.gender,
+      maritalStatus: req.body.maritalStatus,
+      qualification: req.body.qualification,
+      contactNumber: req.body.contactNumber,
+      email: req.body.email,
+      dob: req.body.dob,
+      address: req.body.address,
+      totalExperience: req.body.totalExperience,
+      salary: req.body.salary,
+      joinDate: req.body.joinDate,
+      jobTiming: req.body.jobTiming,
+      position: req.body.position,
+    })
+    .then(() => {
+      res.redirect("/allStaff");
+    });
 });
 router.get("/profile", (req, res, next) => {
   res.render("profile");
@@ -176,19 +166,16 @@ router.get("/profile", (req, res, next) => {
 router.get("/fees", (req, res, next) => {
   res.render("fees");
 });
-router.get("/stdprofile/:username",(req, res, next) => {
-studentModel.findOne({
-  firstName:req.params.username
-}).then((founduser)=>{
-
-  res.render("stdprofile",{founduser});
-})
+router.get("/stdprofile/:username", async (req, res, next) => {
+  const founduser = await studentModel.findOne({
+    firstName: req.params.username,
+  }).populate("course")
+  res.render("stdprofile", { founduser });
 });
 router.get("/allStaff", (req, res, next) => {
-  staffModel.find().then((staff)=>{
-
-    res.render("allStaff",{staff});
-  })
+  staffModel.find().then((staff) => {
+    res.render("allStaff", { staff });
+  });
 });
 
 module.exports = router;

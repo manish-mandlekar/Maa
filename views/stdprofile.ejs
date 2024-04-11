@@ -35,7 +35,7 @@
           </div>
           <div>
             <label for="visitorEmail">Email:</label>
-            <span id="visitorEmail"><%=founduser.visitorEmail %></span>
+            <span id="visitorEmail"><%=founduser.email %></span>
           </div>
           <div>
             <label for="gender">Gender:</label>
@@ -47,7 +47,10 @@
           </div>
           <div>
             <label for="course">Course:</label>
-            <span id="course"><%=founduser.course %></span>
+            <span id="course"
+              ><%founduser.course.forEach(e=>{ %> <%= e.courseCode %> <% })
+              %></span
+            >
           </div>
           <div>
             <label for="qualification">Qualification:</label>
@@ -58,40 +61,40 @@
             <span id="address"><%=founduser.address %></span>
           </div>
           <div>
-            <label for="fee">Fee:</label>
-            <span id="fee"><%=founduser.fee %></span>
-          </div>
-          <div>
             <label for="enquiryDate">Enquiry Date:</label>
-            <span id="enquiryDate"><%=founduser.enquiryDate.toDateString() %></span>
+            <span id="enquiryDate"
+              ><%=founduser.enquiryDate.toDateString() %></span
+            >
           </div>
           <div>
             <label for="joiningDate">Joining Date:</label>
-            <span id="joiningDate"><%=founduser.joiningDate.toDateString() %></span>
-          </div>
-          <div>
-            <label for="timing">Timing:</label>
-            <span id="timing"><%=founduser.timing %></span>
+            <span id="joiningDate"
+              ><%=founduser.joiningDate.toDateString() %></span
+            >
           </div>
           <div>
             <label for="installmentAmount">Installment Amount:</label>
-            <span id="installmentAmount"><%=founduser.Installment %></span>
+            <span id="installmentAmount"><%=founduser.installment %></span>
           </div>
           <div>
             <label for="dueAmount">Due Amount:</label>
-            <span id="dueAmount"><%=founduser.Due %></span>
+            <span id="dueAmount"><%=founduser.due %></span>
           </div>
           <div>
             <label for="paymentStatus">Payment Status:</label>
-            <span id="paymentStatus"><%=founduser.done %></span>
+            <span id="paymentStatus"><%=founduser.registrationPayment %></span>
           </div>
           <div>
-            <label for="registrationPayment">Registration Payment Method:</label>
-            <span id="registrationPayment"><%=founduser.RegistrationPayment %></span>
+            <label for="registrationPayment"
+              >Registration Payment Method:</label
+            >
+            <span id="registrationPayment"
+              ><%=founduser.registrationPaymentMode %></span
+            >
           </div>
           <div>
-            <label for="registrationPayment">Due Amount Date</label>
-            <span id="registrationPayment"><%=founduser.DueDate %></span>
+            <label for="registrationPayment">Due Amount Date: </label>
+            <span id="registrationPayment"><%=founduser.dueDate %></span>
           </div>
         </div>
       </div>
