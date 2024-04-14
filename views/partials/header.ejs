@@ -1,67 +1,79 @@
-<link rel="stylesheet" href="../../public/stylesheets/header.css">
+<link rel="stylesheet" href="../stylesheets/header.css" />
 
 <div id="left">
-        <div id="nav-logo">
-          <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-        </div>
-       
-       <a href="/dashboard" style="text-decoration: none;">
-        <div class="cnt">
-            <ion-icon name="home-outline"></ion-icon>
-            <h3>Dashboard</h3>
-        </div>
-       </a>
-       <a href="/course" style="text-decoration: none;">
-        <div class="cnt">
-            <ion-icon name="copy-outline"></ion-icon>
-            <h3>Course</h3>
-        </div>
-       </a>
-       <a href="/inquiry" style="text-decoration: none;">
-        <div class="cnt">
-            <ion-icon name="people-outline"></ion-icon>
-            <h3>Inquiry</h3>
-        </div>
-       </a>
-      <a href="/student" style="text-decoration: none;">
-        <div class="cnt">
-            <ion-icon name="person-outline"></ion-icon>
-            <h3>Student</h3>
-        </div>
-      </a>
-        <div class="cnt">
-            <ion-icon name="call-outline"></ion-icon>
-            <h3>Call</h3>
-        </div>
-       <a href="/addStaff"  style="text-decoration: none;">
-        <div class="cnt">
-            <ion-icon name="id-card-outline"></ion-icon>
-            <h3>Staff</h3>
-        </div>
-       </a>
-       <a href="/fees" style="text-decoration: none;">
-        <div class="cnt">
-            <ion-icon name="wallet-outline"></ion-icon>
-            <h3>Fees</h3>
-        </div>
-       </a>
-        <div class="cnt">
-            <ion-icon name="calendar-outline"></ion-icon>
-            <h3>Attendance</h3>
-        </div>
-        <div class="cnt">
-            <ion-icon name="settings-outline"></ion-icon>
-            <h3>Setup</h3>
-        </div>
-        <div class="cnt">
-            <ion-icon name="refresh-circle-outline"></ion-icon>
-            <h3>Cache</h3>
-        </div>
-      </div>
+  <div id="nav-logo">
+    <img
+      src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      alt=""
+    />
+  </div>
 
-      <script>
-        document.querySelector(
+  <a href="/dashboard" style="text-decoration: none">
+    <div class="cnt">
+      <ion-icon name="home-outline"></ion-icon>
+      <h3>Dashboard</h3>
+    </div>
+  </a>
+  <a href="/course" style="text-decoration: none">
+    <div class="cnt">
+      <ion-icon name="copy-outline"></ion-icon>
+      <h3>Course</h3>
+    </div>
+  </a>
+  <a href="/inquiry" style="text-decoration: none">
+    <div class="cnt">
+      <ion-icon name="people-outline"></ion-icon>
+      <h3>Inquiry</h3>
+    </div>
+  </a>
+  <a href="/student" style="text-decoration: none">
+    <div class="cnt">
+      <ion-icon name="person-outline"></ion-icon>
+      <h3>Student</h3>
+    </div>
+  </a>
+  <div class="cnt">
+    <ion-icon name="call-outline"></ion-icon>
+    <h3>Call</h3>
+  </div>
+  <a href="/addStaff" style="text-decoration: none">
+    <div class="cnt">
+      <ion-icon name="id-card-outline"></ion-icon>
+      <h3>Staff</h3>
+    </div>
+  </a>
+  <a href="/fees" style="text-decoration: none">
+    <div class="cnt">
+      <ion-icon name="wallet-outline"></ion-icon>
+      <h3>Fees</h3>
+    </div>
+  </a>
+  <div class="cnt">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <h3>Attendance</h3>
+  </div>
+  <div class="cnt">
+    <ion-icon name="settings-outline"></ion-icon>
+    <h3>Setup</h3>
+  </div>
+  <div class="cnt">
+    <ion-icon name="refresh-circle-outline"></ion-icon>
+    <h3>Notification</h3>
+  </div>
+</div>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"
+  integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  const fetchDate = async () => {
+    const date = await axios.get("/getdate");
+    console.log(date.data);
+  };
+  fetchDate();
+  document.querySelector(
     `#${window.location.pathname.split("/")[1]} h3`
   ).style.fontWeight = "800";
-
-      </script>
+</script>

@@ -102,6 +102,7 @@ router.get("/inquiry", async (req, res, next) => {
   res.render("inquiry", { course });
 });
 router.post("/inquiry", async (req, res, next) => {
+  console.log(req.body);
   await studentModel.create(req.body);
   res.redirect("/allenquiry");
 });
@@ -163,13 +164,26 @@ router.post("/addStaff", (req, res, next) => {
 router.get("/profile", (req, res, next) => {
   res.render("profile");
 });
-router.get("/fees", (req, res, next) => {
-  res.render("fees");
+router.get("/fees", async (req, res, next) => {
+  const students = await studentModel.find().populate("course");
+  students.sort(function (a, b) {
+    return new Date(b.dueDate) - new Date(a.dueDate);
+  });
+  res.render("fees", { students: students });
+});
+router.get("/getdate", async (req, res, next) => {
+  const students = await studentModel.find().populate("course");
+  students.sort(function (a, b) {
+    return new Date(a.dueDate) - new Date(b.dueDate);
+  });
+  res.json({ students: students });
 });
 router.get("/stdprofile/:username", async (req, res, next) => {
-  const founduser = await studentModel.findOne({
-    firstName: req.params.username,
-  }).populate("course")
+  const founduser = await studentModel
+    .findOne({
+      firstName: req.params.username,
+    })
+    .populate("course");
   res.render("stdprofile", { founduser });
 });
 router.get("/allStaff", (req, res, next) => {

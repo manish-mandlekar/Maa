@@ -23,40 +23,36 @@
       <%- include('./partials/header') %>
       <div id="right">
         <%- include('./partials/right-header') %>
-      <div class="popa">
-        <h2>Students' Fees Due</h2>
-        <table>
+        <div class="popa">
+          <h2>Students' Fees Due</h2>
+          <table>
             <thead>
-                <tr>
-                    <th>Student's Name</th>
-                    <th>Father's Name</th>
-                    <th>Course</th>
-                    <th>Due Date</th>
-                    <th>Mobile Number</th>
-                    <th>Due Amount</th>
-                </tr>
+              <tr>
+                <th>Student's Name</th>
+                <th>Father's Name</th>
+                <th>Course</th>
+                <th>Due Date</th>
+                <th>Mobile Number</th>
+                <th>Due Amount</th>
+              </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>Jonny Doe</td>
-                    <td>Computer Science</td>
-                    <td>2024-04-15</td>
-                    <td>+91-70837 28923</td>
-                    <td>7,00,000</td>
-                </tr>
-                <tr>
-                  <td>John Doe</td>
-                  <td>Jonny Doe</td>
-                  <td>Computer Science</td>
-                  <td>2024-04-15</td>
-                  <td>+91-70837 28923</td>
-                  <td>7,00,000</td>
-                </tr>
-                <!-- Add more rows as needed -->
+              <% students.reverse().forEach(e=>{ %>
+              <tr>
+                <td><%= e.firstName %></td>
+                <td><%= e.fatherName %></td>
+                <td><% e.course.forEach(c=>{ %>
+                  <%= c.courseName %> 
+                  <% }) %></td>
+                <td><%= e.dueDate %></td>
+                <td><%= e.contactNumber %></td>
+                <td><%= e.due %></td>
+              </tr>
+              <% }) %>
+              <!-- Add more rows as needed -->
             </tbody>
-        </table>
-      </div>
+          </table>
+        </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
