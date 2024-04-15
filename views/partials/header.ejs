@@ -70,7 +70,10 @@
 <script>
   const fetchDate = async () => {
     const date = await axios.get("/getdate");
-    console.log(date.data);
+    date.data.students.forEach(elem => {
+      console.log(new Date(elem.dueDate)<new Date());
+    });
+    // console.log(new Date().toDateString());
   };
   fetchDate();
   document.querySelector(
