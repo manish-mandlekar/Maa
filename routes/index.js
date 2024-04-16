@@ -191,5 +191,13 @@ router.get("/allStaff", (req, res, next) => {
     res.render("allStaff", { staff });
   });
 });
+router.get("/edit/:username",async(req, res, next) => {
+  const founduser = await studentModel
+  .findOne({
+    firstName: req.params.username,
+  })
+    res.render("edit",{founduser});
+  });
+
 
 module.exports = router;

@@ -34,12 +34,13 @@
                 <th>Due Date</th>
                 <th>Mobile Number</th>
                 <th>Due Amount</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               <% students.reverse().forEach(e=>{ %>
               <tr>
-                <td><%= e.firstName %></td>
+                <td><a href="/stdprofile/<%=e.firstName %>"><%= e.firstName %> <%= e.lastName %></a></td>
                 <td><%= e.fatherName %></td>
                 <td><% e.course.forEach(c=>{ %>
                   <%= c.courseName %> 
@@ -47,6 +48,9 @@
                 <td><%= e.dueDate %></td>
                 <td><%= e.contactNumber %></td>
                 <td><%= e.due %></td>
+                <td><a href="/edit/<%=e.firstName %>"><button type="button" class="btn btn-primary">Edit</button></a>
+                  <button type="button" class="btn btn-danger">Delete</button>
+                </td>
               </tr>
               <% }) %>
               <!-- Add more rows as needed -->
