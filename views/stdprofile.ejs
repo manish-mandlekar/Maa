@@ -23,68 +23,67 @@
       <%- include('./partials/header') %>
       <div id="right">
         <%- include('./partials/right-header') %>
-        <div class="popa">
+        <form action="/update/profile/<%= founduser._id %>" method="post" class="popa">
           <h1>Student Profile</h1>
-          <div>
+          <div class="flex">
             <label for="firstName">First Name:</label>
-            <span id="firstName"><%=founduser.firstName %></span>
+            <input style="width: 50%;" name="firstName" type="text" value="<%=founduser.firstName %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="lastName">Last Name:</label>
-            <span id="lastName"><%=founduser.lastName %></span>
+            <input style="width: 50%;" name="lastName" type="text" value="<%=founduser.lastName %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="email">Email:</label>
-            <span id="email"><%=founduser.email %></span>
+            <input style="width: 50%;" name="email" type="text" value="<%=founduser.email %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="gender">Gender:</label>
-            <span id="gender"><%=founduser.gender %></span>
+            <input style="width: 50%;" name="gender" type="text" value="<%=founduser.gender %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="contactNumber">Contact Number:</label>
-            <span id="contactNumber"><%=founduser.contactNumber %></span>
+            <input style="width: 50%;" name="contactNumber" type="text" value="<%=founduser.contactNumber %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="course">Course:</label>
-            <span id="course"
-              ><%founduser.course.forEach(e=>{ %> <%= e.courseCode %> <% })
-              %></span
-            >
+            <span id="course" ><%founduser.course.forEach(e=>{ %> <%= e.courseCode %> <% }) %></span>
           </div>
-          <div>
+          <div class="flex">
             <label for="qualification">Qualification:</label>
-            <span id="qualification"><%=founduser.qualification %></span>
+            <input style="width: 50%;" name="qualification" type="text" value="<%=founduser.qualification %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="address">Address:</label>
-            <span id="address"><%=founduser.address %></span>
+            <input style="width: 50%;" name="address" type="text" value="<%=founduser.address %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="enquiryDate">Enquiry Date:</label>
             <span id="enquiryDate"
               ><%=founduser.enquiryDate.toDateString() %></span
             >
           </div>
-          <div>
+          <div class="flex">
             <label for="joiningDate">Joining Date:</label>
             <span id="joiningDate"
               ><%=founduser.joiningDate.toDateString() %></span
             >
           </div>
-          <div>
+          <div class="flex">
             <label for="installmentAmount">Installment Amount:</label>
-            <span id="installmentAmount"><%=founduser.installment %></span>
+            <input style="width: 50%;" name="installment" type="text" value="<%=founduser.installment %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="dueAmount">Due Amount:</label>
-            <span id="dueAmount"><%=founduser.due %></span>
+            <input style="width: 50%;" name="due" type="text" value="<%=founduser.due %>">
           </div>
-          <div>
+          <div class="flex">
             <label for="paymentStatus">Payment Status:</label>
-            <span id="paymentStatus"><%=founduser.registrationPayment %></span>
+            <span id="registrationPayment"
+              ><%=founduser.registrationPayment %></span
+            >
           </div>
-          <div>
+          <div class="flex">
             <label for="registrationPayment"
               >Registration Payment Method:</label
             >
@@ -92,10 +91,11 @@
               ><%=founduser.registrationPaymentMode %></span
             >
           </div>
-          <div>
+          <div class="flex">
             <label for="registrationPayment">Due Amount Date: </label>
             <span id="registrationPayment"><%=founduser.dueDate %></span>
           </div>
+          <button class="btn btn-primary">update</button>
         </div>
       </div>
     </div>

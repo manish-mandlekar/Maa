@@ -40,15 +40,24 @@
             <tbody>
               <% students.reverse().forEach(e=>{ %>
               <tr>
-                <td><a href="/stdprofile/<%=e.firstName %>"><%= e.firstName %> <%= e.lastName %></a></td>
+                <td>
+                  <a href="/stdprofile/<%=e._id %>"
+                    ><%= e.firstName %> <%= e.lastName %></a
+                  >
+                </td>
                 <td><%= e.fatherName %></td>
-                <td><% e.course.forEach(c=>{ %>
-                  <%= c.courseName %> 
-                  <% }) %></td>
+                <td>
+                  <% e.course.forEach(c=>{ %> <%= c.courseName %> <% }) %>
+                </td>
                 <td><%= e.dueDate %></td>
                 <td><%= e.contactNumber %></td>
                 <td><%= e.due %></td>
-                <td><a href="/edit/<%=e.firstName %>"><button type="button" class="btn btn-primary">Edit</button></a>
+                <td>
+                  <a href="/edit/<%=e._id %>"
+                    ><button type="button" class="btn btn-primary">
+                      Edit
+                    </button></a
+                  >
                   <button type="button" class="btn btn-danger">Delete</button>
                 </td>
               </tr>

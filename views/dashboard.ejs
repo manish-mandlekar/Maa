@@ -57,7 +57,7 @@
         </div>
         <div style="width: 100%; height: 22rem; display: flex; align-items: center; gap: 1vmax; padding: 1vmax 2vmax; background-color: #f1f5fa; ">
          <div class="monthly-report">
-          <h5 style="margin-bottom: 1vmax;">Student Report</h5>
+          <h5 style="margin-bottom: 1vmax;">Monthly Report</h5>
           <table class="table">
             <thead>
               <tr class="table-info">
@@ -65,20 +65,22 @@
                 <th scope="col">Student Name</th>
                 <th scope="col">Course</th>
                 <th scope="col">EMI Date</th>
-                <th scope="col">EMI Amount</th>
+                <th scope="col">Installment</th>
                 <th scope="col">Action</th>
 
               </tr>
             </thead>
             <tbody>
+             <%student.forEach((std,i) =>{%>
               <tr>
-                <th scope="row">1</th>
-                <td>Simran</td>
-                <td>CCC</td>
-                <td>20-3-2024</td>
-                <td>1300</td>
-                <td>Cash</td>
+                <th scope="row"><%=i+1%></th>
+                <td><%=std.firstName%></td>
+                <td><%=std.course%></td>
+                <td><%=std.dueDate%></td>
+                <td><%=std.installment%></td>
+                <td><%=std.registrationPaymentMode%></td>
               </tr>
+            <% })%>
           
             </tbody>
           </table>

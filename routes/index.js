@@ -5,6 +5,7 @@ const userModel = require("../models/Usermodel");
 const staffModel = require("../models/staff");
 const studentModel = require("../models/student");
 const courseModel = require("../models/course");
+const feesModel = require("../models/fees");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 
@@ -60,7 +61,9 @@ function isLoggedIn(req, res, next) {
 }
 
 router.get("/dashboard", (req, res, next) => {
-  res.render("dashboard");
+  studentModel.find().then((student) => {
+    res.render("dashboard", { student });
+  });
 });
 // Course routes
 router.get("/course", (req, res, next) => {
@@ -169,19 +172,19 @@ router.get("/fees", async (req, res, next) => {
   students.sort(function (a, b) {
     return new Date(b.dueDate) - new Date(a.dueDate);
   });
-  res.render("fees", { students: students });
+  res.render("fees", { students: students.filter((e) => e.due > 0) });
 });
 router.get("/getdate", async (req, res, next) => {
   const students = await studentModel.find().populate("course");
   students.sort(function (a, b) {
     return new Date(a.dueDate) - new Date(b.dueDate);
   });
-  res.json({ students: students });
+  res.json({ students: students.filter((e) => e.due > 0) });
 });
-router.get("/stdprofile/:username", async (req, res, next) => {
+router.get("/stdprofile/:id", async (req, res, next) => {
   const founduser = await studentModel
     .findOne({
-      firstName: req.params.username,
+      _id: req.params.id,
     })
     .populate("course");
   res.render("stdprofile", { founduser });
@@ -191,13 +194,36 @@ router.get("/allStaff", (req, res, next) => {
     res.render("allStaff", { staff });
   });
 });
-router.get("/edit/:username",async(req, res, next) => {
-  const founduser = await studentModel
-  .findOne({
-    firstName: req.params.username,
-  })
-    res.render("edit",{founduser});
+router.get("/edit/:id", async (req, res, next) => {
+  const founduser = await studentModel.findOne({
+    _id: req.params.id,
   });
+  res.render("edit", { founduser });
+});
+router.post("/update/profile/:id", async (req, res, next) => {
+  await studentModel.findOneAndUpdate(
+    {
+      _id: req.params.id,
+    },
+    req.body
+  );
 
+  res.redirect("back");
+});
+router.post("/update/due/:id", async (req, res, next) => {
+  const foundstudent = await studentModel.findOneAndUpdate(
+    {
+      _id: req.params.id,
+    },
+    {
+      due: req.body.due - req.body.paid,
+    }
+  );
+  await feesModel.create({
+    student: foundstudent._id,
+    payment: req.body.paid,
+  });
+  res.redirect("/fees");
+});
 
 module.exports = router;

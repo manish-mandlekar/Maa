@@ -24,31 +24,51 @@
       <div id="right">
         <%- include('./partials/right-header') %>
         <div class="pop">
-            <div class="dbai">
-                <div id="popupForm" class="popup-container">
-                    <form action="" method="POST">
-                        <h2>Due Amount Fees</h2>
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" value="<%=founduser.firstName %> <%=founduser.lastName %>" disabled required>
-                        
-                        <label for="email">Contact Number</label>
-                        <input type="email" id="email" name="email" value="<%=founduser.contactNumber %>" disabled required>
-                
-                        <label for="amount">Due Amount:</label>
-                        <input type="number" id="amount" name="amount" value="<%=founduser.due %>" required>
-                
-                        <button type="submit">Paid</button>
-                        <a href="/fees"><button type="button">Still Pending</button></a>
-                    </form>
-                </div>
+          <div class="dbai">
+            <div id="popupForm" class="popup-container">
+              <form action="/update/due/<%= founduser._id %>" method="POST">
+                <h2>Due Amount Fees</h2>
+                <label for="name">Name:</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value="<%=founduser.firstName %> <%=founduser.lastName %>"
+                  disabled
+                  required
+                />
+
+                <label for="email">Contact Number</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value="<%=founduser.contactNumber %>"
+                  disabled
+                  required
+                />
+                <label for="email">Due Amount</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value="<%= founduser.due %>"
+                  disabled
+                  required
+                />
+
+                <label for="paid">Amount Paid:</label>
+                <input type="number" id="paid" name="paid" required />
+
+                <button type="submit">Update</button>
+                <a href="/fees"><button type="button">Cancel</button></a>
+              </form>
             </div>
+          </div>
         </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        
-    
-    </script>
+    <script></script>
   </body>
 </html>

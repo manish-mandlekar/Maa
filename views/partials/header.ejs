@@ -45,20 +45,19 @@
   <a href="/fees" style="text-decoration: none">
     <div class="cnt">
       <ion-icon name="wallet-outline"></ion-icon>
-      <h3>Fees</h3>
+      <h3 class="flex">
+        Fees
+        <div class="noti-dot">0</div>
+      </h3>
     </div>
   </a>
   <div class="cnt">
     <ion-icon name="calendar-outline"></ion-icon>
-    <h3>Attendance</h3>
+    <h3>Fees Management</h3>
   </div>
   <div class="cnt">
     <ion-icon name="settings-outline"></ion-icon>
     <h3>Setup</h3>
-  </div>
-  <div class="cnt">
-    <ion-icon name="refresh-circle-outline"></ion-icon>
-    <h3>Notification</h3>
   </div>
 </div>
 <script
@@ -68,15 +67,18 @@
   referrerpolicy="no-referrer"
 ></script>
 <script>
+  var noti = document.querySelector(".noti-dot");
   const fetchDate = async () => {
     const date = await axios.get("/getdate");
-    date.data.students.forEach(elem => {
-      console.log(new Date(elem.dueDate)<new Date());
+    var count = 0;
+    date.data.students.forEach((elem) => {
+      new Date(elem.dueDate) < new Date() && count++;
     });
+    noti.innerHTML = count;
     // console.log(new Date().toDateString());
   };
   fetchDate();
-  document.querySelector(
-    `#${window.location.pathname.split("/")[1]} h3`
-  ).style.fontWeight = "800";
+  // document.querySelector(
+  //   `#${window.location.pathname.split("/")[1]} h3`
+  // ).style.fontWeight = "800";
 </script>
