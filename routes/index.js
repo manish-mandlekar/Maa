@@ -249,4 +249,9 @@ router.post("/update/due/:id", async (req, res, next) => {
   res.redirect("/fees");
 });
 
+
+router.get("/feesManagement", (req, res, next) => {
+  res.render("feesManagement");
+});
+
 module.exports = router;
