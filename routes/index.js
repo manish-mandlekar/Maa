@@ -8,6 +8,19 @@ const courseModel = require("../models/course");
 const feesModel = require("../models/fees");
 const passport = require("passport");
 const localStrategy = require("passport-local");
+var fs = require("fs");
+const pdfDoc = require("pdfkit");
+
+function buildPDF(Datacallback, Endcallback) {
+  const doc = new pdfDoc();
+  doc.on("data", Datacallback);
+  doc.on("end", Endcallback);
+  doc
+    .fontSize(25)
+    .text("MAA Computer education institute spoken english & P.D. Classes");
+
+  doc.end();
+}
 
 passport.use(new localStrategy(userModel.authenticate()));
 mongoose
@@ -20,6 +33,18 @@ mongoose
 router.get("/", function (req, res, next) {
   res.render("index");
 });
+
+router.get("/invoice", (req, res, next) => {
+  const stream = res.writeHead(200, {
+    "Content-Type": "application/pdf",
+    "Content-Disposition": `attachment;filename=invoice.pdf`,
+  });
+  buildPDF(
+    (chunk) => stream.write(chunk),
+    () => stream.end()
+  );
+});
+
 router.get("/signup", function (req, res, next) {
   res.render("signup");
 });
@@ -211,15 +236,13 @@ router.post("/update/profile/:id", async (req, res, next) => {
   res.redirect("back");
 });
 router.post("/update/due/:id", async (req, res, next) => {
-  const foundstudent = await studentModel.findOneAndUpdate(
-    {
-      _id: req.params.id,
-    },
-    {
-      due: req.body.due - req.body.paid,
-    }
-  );
+  const foundstudent = await studentModel.findOne({
+    _id: req.params.id,
+  });
+  foundstudent.due = foundstudent.due - +req.body.paid;
+  await foundstudent.save();
   await feesModel.create({
+    registrationPaymentMode: req.body.registrationPaymentMode,
     student: foundstudent._id,
     payment: req.body.paid,
   });

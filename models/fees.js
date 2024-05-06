@@ -6,6 +6,7 @@ const feesSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "StudentEnquiry",
   },
+  registrationPaymentMode: String,
   payment: Number,
   payDate: {
     type: Date,

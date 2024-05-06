@@ -35,7 +35,6 @@
                   name="name"
                   value="<%=founduser.firstName %> <%=founduser.lastName %>"
                   disabled
-                  required
                 />
 
                 <label for="email">Contact Number</label>
@@ -45,17 +44,32 @@
                   name="email"
                   value="<%=founduser.contactNumber %>"
                   disabled
-                  required
                 />
-                <label for="email">Due Amount</label>
+
+                <label for="due">Due Amount</label>
                 <input
                   type="email"
-                  id="email"
-                  name="email"
+                  id="due"
+                  name="due"
                   value="<%= founduser.due %>"
                   disabled
-                  required
                 />
+                <div class="col-md-12">
+                  <label for="inputState" class="form-label"
+                    >Registration Payment Mode:</label
+                  >
+                  <select
+                    name="registrationPaymentMode"
+                    id="inputState"
+                    class="form-select"
+                  >
+                    <option selected>Cash</option>
+                    <option>Phone pe</option>
+                    <option>Google pay</option>
+                    <option>Paytm</option>
+                    <option>Cheque</option>
+                  </select>
+                </div>
 
                 <label for="paid">Amount Paid:</label>
                 <input type="number" id="paid" name="paid" required />
