@@ -16,8 +16,17 @@ function buildPDF(Datacallback, Endcallback) {
   doc.on("data", Datacallback);
   doc.on("end", Endcallback);
   doc
+    .image("./images/logo.png", {
+      fit: [250, 300],
+      align: "center",
+      valign: "center",
+    })
     .fontSize(25)
-    .text("MAA Computer education institute spoken english & P.D. Classes");
+    .text("Name: ")
+    .text("Course: ")
+    .text("Registration Numbe: ")
+    .text("Date: ")
+    .text("Fee Amount: ");
 
   doc.end();
 }
@@ -249,9 +258,18 @@ router.post("/update/due/:id", async (req, res, next) => {
   res.redirect("/fees");
 });
 
-
-router.get("/feesManagement", (req, res, next) => {
-  res.render("feesManagement");
+router.get("/feesManagement", async (req, res, next) => {
+  var fees = await feesModel.find().populate("student");
+  // console.log(fees[0].payDate.toLocaleDateString()<new Date().toLocaleDateString());
+  fees = fees.filter(f => f.payDate.toLocaleDateString() === new Date().toLocaleDateString());
+  console.log(fees);
+  res.render("feesManagement", { fees });
+});
+router.get("/delete/transaction/:id", async (req, res, next) => {
+  await feesModel.findOneAndDelete({
+    _id: req.params.id,
+  });
+  res.redirect("/feesManagement");
 });
 
 module.exports = router;
