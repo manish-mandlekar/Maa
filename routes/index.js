@@ -259,22 +259,13 @@ router.post("/update/due/:id", async (req, res, next) => {
 });
 
 router.get("/feesManagement", async (req, res, next) => {
-  var fees = await feesModel.find().populate("student");
-  fees = fees.filter(
-    (f) => f.payDate.toLocaleDateString() === new Date().toLocaleDateString()
-  );
-  res.render("feesManagement", { fees });
-});
-
-router.post("/feesManagement", async (req, res, next) => {
-  console.log();
-  var fees = await feesModel
-    .find({ payDate: { $gte: req.body.prev, $lte: req.body.next } })
-    .populate("student");
-
-  // console.log(fees[0].payDate.toLocaleDateString() > req.body.next);
-  // fees = fees.filter(f => f.payDate.toLocaleDateString() === new Date().toLocaleDateString());
-  // console.log(fees);
+  if (req.query.prev) {
+    var fees = await feesModel
+      .find({ payDate: { $gte: req.query.prev, $lte: req.query.next } })
+      .populate("student");
+  } else {
+    var fees = await feesModel.find().populate("student");
+  }
   res.render("feesManagement", { fees });
 });
 
