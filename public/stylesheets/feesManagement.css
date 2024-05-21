@@ -144,3 +144,17 @@
         max-width: 50px;
         max-height: 50px;
       }
+     
+     
+     
+#toll{
+width: 100%;
+height: fit-content;
+display: flex;
+align-items: center;
+gap: 1vw;
+ }
+
+.btn-primary{
+    margin-top: 1.5vw;
+}      
