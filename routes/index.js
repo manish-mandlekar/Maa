@@ -142,126 +142,6 @@ function buildPDF(Datacallback, Endcallback) {
   doc.end();
 }
 
-function buildPDF2(Datacallback, Endcallback) {
-  const doc = new pdfDoc();
-  // doc.on("data", Datacallback);
-  // Pipe the document to a file
-  doc.pipe(fs.createWriteStream("receipt.pdf"));
-
-  // Header Section
-  doc.fontSize(12).text("जय संतोषी माँ ||", { align: "center" });
-  doc.fontSize(16).text("MAA COMPUTER EDUCATION INSTITUTE", {
-    align: "center",
-    underline: true,
-  });
-  doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
-  doc
-    .fontSize(10)
-    .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
-  doc
-    .fontSize(10)
-    .text("Regd. by Govt. of India (1877/IND/S/2010)", { align: "center" });
-  doc
-    .fontSize(10)
-    .text("Run By: Youth Kayastha Education Welfare Society Rau", {
-      align: "center",
-    });
-
-  // Branch Info
-  doc
-    .moveDown()
-    .fontSize(10)
-    .text("Branch 1: Above Andhra Bank, 2nd Floor, Station Road, Rau")
-    .text("Branch 2: Bohra Colony, Cat Road, Rau M. 9407093676")
-    .text("Mobile: +91 9617678702, 9229697696, 9039442551")
-    .text("Email: mceiindia229@gmail.com", { underline: true });
-
-  // Receipt Details
-  doc
-    .moveDown()
-    .fontSize(10)
-    .text("No. 839", 50, 200)
-    .text("Receipt", 400, 200)
-    .text("Date: ...............................", 400, 220)
-    .text("Reg. No.: ...............................", 50, 240);
-
-  // Name and Course
-  doc
-    .moveDown()
-    .text(
-      "Name: ..................................................................................................................",
-      50,
-      270
-    )
-    .text(
-      "Course: ..................................................................................................................",
-      50,
-      290
-    );
-
-  // Table Header
-  doc
-    .moveDown()
-    .text("S.No.", 50, 320)
-    .text("Particulars", 150, 320)
-    .text("Amount", 450, 320);
-
-  // Table Rows
-  const tableRows = [
-    { sno: "1", particulars: "Reg. Fee", amount: "" },
-    { sno: "2", particulars: "Monthly Fee", amount: "" },
-    { sno: "3", particulars: "Late Fee", amount: "" },
-    { sno: "4", particulars: "Exam Fee", amount: "" },
-    { sno: "5", particulars: "Other", amount: "" },
-  ];
-
-  let y = 340;
-  tableRows.forEach((row) => {
-    doc
-      .text(row.sno, 50, y)
-      .text(row.particulars, 150, y)
-      .text(row.amount, 450, y);
-    y += 20;
-  });
-
-  // Total
-  doc
-    .moveDown()
-    .text("Total", 150, y)
-    .text(".........................................................", 450, y);
-
-  // Footer Section
-  doc
-    .moveDown()
-    .fontSize(10)
-    .text(
-      "Received a sum of Rupee ........................................................ by Cash/Cheque No. .............................",
-      50,
-      y + 40
-    )
-    .text("Dated ........................................", 50, y + 60)
-    .text("For: MCEI", 50, y + 80)
-    .text("Receiver's Signature", 400, y + 80);
-
-  // Signature Section
-  doc.moveDown().text("Student's/Parent's Signature", 50, y + 120);
-
-  // Logo and Additional Info
-  doc
-    .image("./public/images/logo.png", 50, y + 160, { width: 100 })
-    .fontSize(10)
-    .text("SunRise INTERNATIONAL SCHOOL", 200, y + 160)
-    .text("Run by Y.K. Education Welfare Society, Rau", 200, y + 180)
-    .text("Campus: Bohra Colony, Cat Road, Rau", 200, y + 200)
-    .text(
-      "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
-      50,
-      y + 220
-    );
-  doc.on("end", Endcallback);
-  doc.end();
-}
-
 passport.use(new localStrategy(userModel.authenticate()));
 mongoose
   .connect("mongodb://0.0.0.0/mark")
@@ -283,7 +163,6 @@ router.get("/invoice", (req, res, next) => {
     (chunk) => stream.write(chunk),
     () => stream.end()
   );
-  // buildPDF();
 });
 
 router.get("/signup", function (req, res, next) {
