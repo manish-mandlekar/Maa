@@ -56,6 +56,10 @@ const studentEnquirySchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  registered: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Create a model from the schema
