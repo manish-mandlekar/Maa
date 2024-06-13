@@ -29,21 +29,31 @@
         <%- include('./partials/right-header') %>
         <div class="contain">
           <h1>Transaction History</h1>
+          <h4>Add filter</h4>
           <form action="/feesManagement">
-          <div id="toll">
-            <div class="col-md-2">
-              <label for="inputZip" class="form-label">prev date</label>
-               <input name="prev"  type="date" class="form-control" id="inputZip">
+            <div id="toll">
+              <label for="inputZip">Before date</label>
+              <input
+                name="prev"
+                type="date"
+                class="form-control w-25"
+                id="inputZip"
+              />
+              <label for="inputZip">After date</label>
+              <input
+                name="next"
+                type="date"
+                class="form-control w-25"
+                id="inputZip"
+              />
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <a href="/feesManagement"
+                ><button type="button" class="btn btn-success">
+                  Show all Transactions
+                </button></a
+              >
             </div>
-            <div class="col-md-2">
-              <label for="inputZip" class="form-label">next date</label>
-               <input name="next"  type="date" class="form-control" id="inputZip">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </div>
           </form>
-          <a  href="/feesManagement"><button style="margin-top: 1vw;" type="button" class="btn btn-success">Show all Transactions</button></a>
-
 
           <table>
             <thead>
@@ -59,12 +69,19 @@
             <tbody>
               <% fees.forEach(elem=>{ %>
               <tr>
-                <td><%= elem.payDate.toLocaleTimeString() %> - <%= elem.payDate.toLocaleDateString('en-GB') %></td>
-                <td><%= elem.student.firstName %> <%= elem.student.lastName %></td>
+                <td>
+                  <%= elem.payDate.toLocaleTimeString() %> - <%=
+                  elem.payDate.toLocaleDateString('en-GB') %>
+                </td>
+                <td>
+                  <%= elem.student.firstName %> <%= elem.student.lastName %>
+                </td>
                 <td><%= elem.registrationPaymentMode %></td>
                 <td><i class="ri-arrow-right-down-line"></i> Credited</td>
                 <td>₹<%= elem.payment %>.00</td>
-                <td> <a href="/delete/transaction/<%= elem._id %>">delete</a> </td>
+                <td>
+                  <a href="/delete/transaction/<%= elem._id %>">delete</a>
+                </td>
               </tr>
               <% }) %>
 
