@@ -23,7 +23,7 @@ function buildPDF(Datacallback, Endcallback) {
   const doc = new pdfDoc();
   doc.on("data", Datacallback);
   doc.on("end", Endcallback);
-  doc.text("Fee Amount: ");
+  // doc.text("Fee Amount: ");
 
   // doc.on("data", Datacallback);
   // Pipe the document to a file
@@ -38,45 +38,45 @@ function buildPDF(Datacallback, Endcallback) {
   doc
     .fontSize(10)
     .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
-  doc
-    .fontSize(10)
-    .text("Regd. by Govt. of India (1877/IND/S/2010)", { align: "center" });
-  doc
-    .fontSize(10)
-    .text("Run By: Youth Kayastha Education Welfare Society Rau", {
-      align: "center",
-    });
+  // doc
+  //   .fontSize(10)
+  //   .text("Regd. by Govt. of India (1877/IND/S/2010)", { align: "center" });
+  // doc
+  //   .fontSize(10)
+  //   .text("Run By: Youth Kayastha Education Welfare Society Rau", {
+  //     align: "center",
+  //   });
 
   // Branch Info
   doc
     .moveDown()
     .fontSize(10)
-    .text("Branch 1: Above Andhra Bank, 2nd Floor, Station Road, Rau")
-    .text("Branch 2: Bohra Colony, Cat Road, Rau M. 9407093676")
+    .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau")
+    // .text("Branch 2: Bohra Colony, Cat Road, Rau M. 9407093676")
     .text("Mobile: +91 9617678702, 9229697696, 9039442551")
     .text("Email: mceiindia229@gmail.com", { underline: true });
 
   // Receipt Details
   doc
-    .moveDown()
+    // .moveDown()
     .fontSize(10)
-    .text("No. 839", 50, 220)
-    .text("Receipt", 400, 220)
-    .text("Date: ...............................", 400, 240)
-    .text("Reg. No.: ...............................", 50, 260);
+    // .text("No. 839", 50, 220)
+    // .text("Receipt", 400, 220)
+    .text("Reg. No.: ..........................................................", 50, 180)
+    .text("Date: ..........................................................", 350, 180);
 
-  // Name and Course
+  // Name and Course 
   doc
     .moveDown()
     .text(
-      "Name: ..................................................................................................................",
+      "Name: .............................................................",
       50,
-      290
+      200
     )
     .text(
-      "Course: ..................................................................................................................",
-      50,
-      310
+      "Course: ......................................................",
+      350,
+      200
     );
 
   // Table Header
@@ -130,9 +130,9 @@ function buildPDF(Datacallback, Endcallback) {
   doc
     .image("./public/images/logo.png", 50, y + 160, { width: 100 })
     .fontSize(10)
-    .text("SunRise INTERNATIONAL SCHOOL", 200, y + 160)
-    .text("Run by Y.K. Education Welfare Society, Rau", 200, y + 180)
-    .text("Campus: Bohra Colony, Cat Road, Rau", 200, y + 200)
+    // .text("SunRise INTERNATIONAL SCHOOL", 200, y + 160)
+    // .text("Run by Y.K. Education Welfare Society, Rau", 200, y + 180)
+    // .text("Campus: Bohra Colony, Cat Road, Rau", 200, y + 200)
     .text(
       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
       50,
@@ -153,8 +153,11 @@ mongoose
 router.get("/", function (req, res, next) {
   res.render("index");
 });
+router.get("/register", function (req, res, next) {
+  res.render("register");
+});
 
-router.get("/invoice", (req, res, next) => {
+router.get("/invoice", isLoggedIn, (req, res, next) => {
   const stream = res.writeHead(200, {
     "Content-Type": "application/pdf",
     "Content-Disposition": `attachment;filename=receipt.pdf`,
@@ -205,18 +208,18 @@ function isLoggedIn(req, res, next) {
   }
 }
 
-router.get("/dashboard", (req, res, next) => {
+router.get("/dashboard",isLoggedIn, (req, res, next) => {
   studentModel.find().then((student) => {
     res.render("dashboard", { student });
   });
 });
 // Course routes
-router.get("/course", (req, res, next) => {
+router.get("/course",isLoggedIn, (req, res, next) => {
   courseModel.find().then((course) => {
     res.render("course", { course });
   });
 });
-router.post("/course", (req, res, next) => {
+router.post("/course",isLoggedIn,  (req, res, next) => {
   courseModel
     .create({
       courseName: req.body.courseName,
@@ -227,67 +230,67 @@ router.post("/course", (req, res, next) => {
       res.redirect("/course");
     });
 });
-router.get("/addFeeStructure", (req, res, next) => {
+router.get("/addFeeStructure",isLoggedIn,  (req, res, next) => {
   courseModel.find().then((course) => {
     res.render("addFeeStructure", { course });
   });
 });
-router.post("/addFeeStructure", async (req, res, next) => {
+router.post("/addFeeStructure", isLoggedIn, async (req, res, next) => {
   const { selectCourse, totalFee } = req.body;
   const course = await courseModel.findOne({ _id: selectCourse });
   course.totalFee = totalFee;
   await course.save();
   res.redirect("/addFeeStructure");
 });
-router.get("/deletecourse/:id", async (req, res, next) => {
+router.get("/deletecourse/:id",isLoggedIn,  async (req, res, next) => {
   await courseModel.findOneAndDelete({ _id: req.params.id });
   res.redirect("back");
 });
 
 // Inquiry routes
-router.get("/inquiry", async (req, res, next) => {
+router.get("/inquiry", isLoggedIn, async (req, res, next) => {
   const course = await courseModel.find();
   res.render("inquiry", { course });
 });
-router.post("/inquiry", async (req, res, next) => {
+router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   console.log(req.body);
   await studentModel.create(req.body);
   res.redirect("/allenquiry");
 });
-router.get("/allenquiry", async (req, res, next) => {
+router.get("/allenquiry",isLoggedIn,  async (req, res, next) => {
   const students = await studentModel
     .find({ rejected: false })
     .populate("course");
   res.render("allenquiry", { students });
 });
-router.get("/delete/enquiry/:id", async (req, res, next) => {
+router.get("/delete/enquiry/:id",isLoggedIn,  async (req, res, next) => {
   const student = await studentModel.findById({ _id: req.params.id });
   student.rejected = true;
   await student.save();
   res.redirect("back");
 });
-router.get("/accepted/enquiry/:id", async (req, res, next) => {
+router.get("/accepted/enquiry/:id",isLoggedIn,  async (req, res, next) => {
   const student = await studentModel.findById({ _id: req.params.id });
   student.rejected = false;
   await student.save();
   res.redirect("back");
 });
-router.get("/rejected", async (req, res, next) => {
+router.get("/rejected",isLoggedIn,  async (req, res, next) => {
   const students = await studentModel
     .find({ rejected: true })
     .populate("course");
   res.render("rejected", { students });
 });
 
-router.get("/student", (req, res, next) => {
+router.get("/student",isLoggedIn,  (req, res, next) => {
   studentModel.find().then((std) => {
     res.render("student", { std });
   });
 });
-router.get("/addStaff", (req, res, next) => {
+router.get("/addStaff", isLoggedIn, (req, res, next) => {
   res.render("addStaff");
 });
-router.post("/addStaff", (req, res, next) => {
+router.post("/addStaff", isLoggedIn, (req, res, next) => {
   staffModel
     .create({
       firstName: req.body.firstName,
@@ -309,24 +312,24 @@ router.post("/addStaff", (req, res, next) => {
       res.redirect("/allStaff");
     });
 });
-router.get("/profile", (req, res, next) => {
+router.get("/profile",isLoggedIn,  (req, res, next) => {
   res.render("profile");
 });
-router.get("/fees", async (req, res, next) => {
+router.get("/fees",isLoggedIn,  async (req, res, next) => {
   const students = await studentModel.find().populate("course");
   students.sort(function (a, b) {
     return new Date(b.dueDate) - new Date(a.dueDate);
   });
   res.render("fees", { students: students.filter((e) => e.due > 0) });
 });
-router.get("/getdate", async (req, res, next) => {
+router.get("/getdate",isLoggedIn,  async (req, res, next) => {
   const students = await studentModel.find().populate("course");
   students.sort(function (a, b) {
     return new Date(a.dueDate) - new Date(b.dueDate);
   });
   res.json({ students: students.filter((e) => e.due > 0) });
 });
-router.get("/stdprofile/:id", async (req, res, next) => {
+router.get("/stdprofile/:id",isLoggedIn,  async (req, res, next) => {
   const founduser = await studentModel
     .findOne({
       _id: req.params.id,
@@ -334,18 +337,18 @@ router.get("/stdprofile/:id", async (req, res, next) => {
     .populate("course");
   res.render("stdprofile", { founduser });
 });
-router.get("/allStaff", (req, res, next) => {
+router.get("/allStaff", isLoggedIn, (req, res, next) => {
   staffModel.find().then((staff) => {
     res.render("allStaff", { staff });
   });
 });
-router.get("/edit/:id", async (req, res, next) => {
+router.get("/edit/:id",isLoggedIn,  async (req, res, next) => {
   const founduser = await studentModel.findOne({
     _id: req.params.id,
   });
   res.render("edit", { founduser });
 });
-router.post("/update/profile/:id", async (req, res, next) => {
+router.post("/update/profile/:id", isLoggedIn, async (req, res, next) => {
   await studentModel.findOneAndUpdate(
     {
       _id: req.params.id,
@@ -355,7 +358,7 @@ router.post("/update/profile/:id", async (req, res, next) => {
 
   res.redirect("back");
 });
-router.post("/update/due/:id", async (req, res, next) => {
+router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
   const foundstudent = await studentModel.findOne({
     _id: req.params.id,
   });
@@ -368,7 +371,7 @@ router.post("/update/due/:id", async (req, res, next) => {
   });
   res.redirect("/fees");
 });
-router.get("/feesManagement", async (req, res, next) => {
+router.get("/feesManagement",isLoggedIn,  async (req, res, next) => {
   if (req.query.prev) {
     var fees = await feesModel
       .find({ payDate: { $gte: req.query.prev, $lte: req.query.next } })
@@ -378,7 +381,7 @@ router.get("/feesManagement", async (req, res, next) => {
   }
   res.render("feesManagement", { fees });
 });
-router.get("/delete/transaction/:id", async (req, res, next) => {
+router.get("/delete/transaction/:id",isLoggedIn,  async (req, res, next) => {
   await feesModel.findOneAndDelete({
     _id: req.params.id,
   });

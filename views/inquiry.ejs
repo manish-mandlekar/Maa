@@ -68,90 +68,11 @@
                             <label for="inputZip" class="form-label">Enquiry Date</label>
                              <input name="enquiryDate" required type="date" class="form-control" id="inputZip">
                           </div>
-                        
-                        </div>
-                       <div class="inq">
-                        <div class="col-md-4" style="margin-bottom: 1vmax;">
-                    
-                            <label for="male">Male</label>
-                             <input required type="radio" id="male" name="gender" value="male">
-                            
-                            <label for="female">Female</label>
-                             <input required type="radio" id="female" name="gender" value="female">
+                          <div class="col-12"style="margin-top: 1vmax;" >
+                            <button type="submit" class="btn btn-primary">Submit</button>
                           </div>
-                          
-                           <div class="row g-3">
-                            <div class="col-md-12">
-                                <label for="inputEmail4" class="form-label">Select Course</label>
-                                <select name="course" id="inputState" class="form-select">
-                                  <% course.forEach(e=>{ %>
-                                    <option value="<%= e._id %>"><%= e.courseName %></option>
-                                  <% }) %> 
-                                </select>
-                              </div>
-                              <div class="col-6">
-                                <label for="inputAddress" class="form-label">Enquiry By</label>
-                                 <input required type="text" name="enquiryBy" class="form-control" id="inputAddress" placeholder="Enter Name">
-                              </div>
-                              <div class="col-6">
-                                <label for="inputAddress2" class="form-label"> Like To Join </label>
-                                 <input required type="date" name="joiningDate" class="form-control" id="inputAddress2" >
-                              </div>
-                              <div class="col-md-4">
-                                <label for="inputState" class="form-label">You Came To Know About Institute By:</label>
-                                <select id="inputState" name="reference" class="form-select">
-                                  <option selected>Choose...</option>
-                                  <option>Sign Board</option>
-                                  <option>Advertisement Papers</option>
-                                  <option>Google Search</option>
-                                  <option>Instagram</option>
-                                  <option>Facebook</option>
-                                  <option>Personal Reference</option>
-                                  <option>Other</option>
-                                </select>
-                              </div>
-                              <div class="col-md-4">
-                                <label for="inputState" class="form-label">Registration Payment Mode:</label>
-                                <select name="registrationPaymentMode" id="inputState" class="form-select">
-                                  <option selected>Cash</option>
-                                  <option>Phone pe</option>
-                                  <option>Google pay</option>
-                                  <option>Cheque</option>
-                                  
-                                  
-                                </select>
-                              </div>
-                            
-                           </div>
-                            <div class="row g-3" style="margin-top: 1vmax;">
-                              <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Installment</label>
-                                 <input required type="number" name="installment" class="form-control" id="inputEmail4" placeholder="Enter Installment Amount">
-                              </div>
-                              <div class="col-md-6" style="margin-top: 1vmax;">
-                                <label for="inputPassword4" class="form-label">Due</label>
-                                 <input required type="number" name="due" class="form-control" id="inputPassword4" placeholder="Enter Due Amount">
-                              </div>
-                            </div>
-                            <div class="col-md-4" style="margin-top: 1vmax;">
-                              <label for="inputState" class="form-label">Registration Payment:</label>
-                              <select name="registrationPayment" id="inputState" class="form-select">
-                                <option selected>Done</option>
-                                <option>Not Done</option>
-                                
-                                
-                                
-                              </select>
-                            </div>
-                            <div class="col-md-6" style="margin-top: 1vmax;">
-                              <label for="inputPassword4" class="form-label">Due Amount Date</label>
-                               <input required type="date" name="dueDate" class="form-control" id="inputPassword4" placeholder="Enter Due Amount date">
-                            </div>
-                          
-                        <div class="col-12"style="margin-top: 1vmax;" >
-                          <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
-                    </div>
+                      
                 </form>
                          
                   </div>
