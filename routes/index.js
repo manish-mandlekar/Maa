@@ -11,6 +11,15 @@ const localStrategy = require("passport-local");
 var fs = require("fs");
 const pdfDoc = require("pdfkit");
 
+function isLoggedIn(req, res, next) {
+  return next();
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    res.redirect("/");
+  }
+}
+
 // function buildPDF(Datacallback, Endcallback) {
 //   const doc = new pdfDoc();
 //   doc.on("data", Datacallback);
@@ -19,18 +28,13 @@ const pdfDoc = require("pdfkit");
 
 //   doc.end();
 // }
-function buildPDF(Datacallback, Endcallback) {
+function buildPDF(Datacallback, Endcallback,reg_no,date,name,course,reg_fee,paid_fee,payment_mode) {
   const doc = new pdfDoc();
   doc.on("data", Datacallback);
   doc.on("end", Endcallback);
-  // doc.text("Fee Amount: ");
 
-  // doc.on("data", Datacallback);
-  // Pipe the document to a file
-  // doc.pipe(fs.createWriteStream("receipt.pdf"));
-
-  // Header Section
-  doc.fontSize(16).text("MAA COMPUTER EDUCATION INSTITUTE", {
+  // Student Section
+  doc.fontSize(16).text("MAA COMPUTER EDUCATION INSTITUTE", 70, 10, {
     align: "center",
     underline: true,
   });
@@ -38,64 +42,57 @@ function buildPDF(Datacallback, Endcallback) {
   doc
     .fontSize(10)
     .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
-  // doc
-  //   .fontSize(10)
-  //   .text("Regd. by Govt. of India (1877/IND/S/2010)", { align: "center" });
-  // doc
-  //   .fontSize(10)
-  //   .text("Run By: Youth Kayastha Education Welfare Society Rau", {
-  //     align: "center",
-  //   });
 
   // Branch Info
   doc
     .moveDown()
     .fontSize(10)
-    .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau")
-    // .text("Branch 2: Bohra Colony, Cat Road, Rau M. 9407093676")
-    .text("Mobile: +91 9617678702, 9229697696, 9039442551")
+    .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
+    .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
     .text("Email: mceiindia229@gmail.com", { underline: true });
 
   // Receipt Details
   doc
-    // .moveDown()
     .fontSize(10)
-    // .text("No. 839", 50, 220)
-    // .text("Receipt", 400, 220)
-    .text("Reg. No.: ..........................................................", 50, 180)
-    .text("Date: ..........................................................", 350, 180);
+    .text(
+      "Reg. No.: ..........................................................",
+      50,
+      105
+    )
+    .text(
+      "Date: ..........................................................",
+      350,
+      105
+    );
 
-  // Name and Course 
+  // Name and Course
   doc
     .moveDown()
     .text(
       "Name: .............................................................",
       50,
-      200
+      125
     )
     .text(
       "Course: ......................................................",
       350,
-      200
+      125
     );
 
   // Table Header
   doc
     .moveDown()
-    .text("S.No.", 50, 340)
-    .text("Particulars", 150, 340)
-    .text("Amount", 450, 340);
+    .text("S.No.", 50, 145)
+    .text("Particulars", 150, 145)
+    .text("Amount", 450, 145);
 
   // Table Rows
   const tableRows = [
-    { sno: "1", particulars: "Reg. Fee", amount: "" },
-    { sno: "2", particulars: "Monthly Fee", amount: "" },
-    { sno: "3", particulars: "Late Fee", amount: "" },
-    { sno: "4", particulars: "Exam Fee", amount: "" },
-    { sno: "5", particulars: "Other", amount: "" },
+    { sno: "1.", particulars: "Reg. Fee", amount: "1000" },
+    { sno: "2.", particulars: "Paid Fee", amount: "3000" },
   ];
 
-  let y = 360;
+  let y = 165;
   tableRows.forEach((row) => {
     doc
       .text(row.sno, 50, y)
@@ -108,36 +105,143 @@ function buildPDF(Datacallback, Endcallback) {
   doc
     .moveDown()
     .text("Total", 150, y)
-    .text(".........................................................", 450, y);
+    .text("................................", 450, y);
 
   // Footer Section
   doc
-    .moveDown()
     .fontSize(10)
     .text(
-      "Received a sum of Rupee ........................................................ by Cash/Cheque No. .............................",
+      "Received a sum of Rupee ........................................................ Payment By: .............................",
       50,
       y + 40
     )
     .text("Dated ........................................", 50, y + 60)
-    .text("For: MCEI", 50, y + 80)
+    .text("Student's/Parent's Signature", 50, y + 80)
     .text("Receiver's Signature", 400, y + 80);
 
-  // Signature Section
-  doc.moveDown().text("Student's/Parent's Signature", 50, y + 120);
-
-  // Logo and Additional Info
   doc
-    .image("./public/images/logo.png", 50, y + 160, { width: 100 })
     .fontSize(10)
-    // .text("SunRise INTERNATIONAL SCHOOL", 200, y + 160)
-    // .text("Run by Y.K. Education Welfare Society, Rau", 200, y + 180)
-    // .text("Campus: Bohra Colony, Cat Road, Rau", 200, y + 200)
     .text(
       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
       50,
-      y + 220
+      y + 120
     );
+
+  // Faculty Section
+  y = y + 20;
+  doc
+    .moveDown()
+    .fontSize(16)
+    .text("MAA COMPUTER EDUCATION INSTITUTE", 70, y + 130, {
+      align: "center",
+      underline: true,
+    });
+  doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
+  doc
+    .fontSize(10)
+    .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
+
+  // Branch Info
+  doc
+    .moveDown()
+    .fontSize(10)
+    .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
+    .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
+    .text("Email: mceiindia229@gmail.com", { underline: true });
+
+  // Receipt Details
+  doc
+    .fontSize(10)
+    .text(
+      "Reg. No.: ..........................................................",
+      50,
+      y + 130 + 105
+    )
+    .text(
+      "Date: ..........................................................",
+      350,
+      y + 130 + 105
+    );
+
+  // Name and Course
+  doc
+    .moveDown()
+    .text(
+      "Name: .............................................................",
+      50,
+      y + 130 + 125
+    )
+    .text(
+      "Course: ......................................................",
+      350,
+      y + 130 + 125
+    );
+
+  // Table Header
+  doc
+    .moveDown()
+    .text("S.No.", 50, y + 130 + 145)
+    .text("Particulars", 150, y + 130 + 145)
+    .text("Amount", 450, y + 130 + 145);
+
+  // Table Rows
+  y = y + 295;
+  tableRows.forEach((row) => {
+    doc
+      .text(row.sno, 50, y)
+      .text(row.particulars, 150, y)
+      .text(row.amount, 450, y);
+    y += 20;
+  });
+
+  // Total
+  doc
+    .moveDown()
+    .text("Total", 150, y)
+    .text("................................", 450, y);
+
+  // Footer Section
+  doc
+    .fontSize(10)
+    .text(
+      "Received a sum of Rupee ........................................................ Payment By: .............................",
+      50,
+      y + 40
+    )
+    .text("Dated ........................................", 50, y + 60)
+    .text("Student's/Parent's Signature", 50, y + 80)
+    .text("Receiver's Signature", 400, y + 80);
+
+  doc
+    .fontSize(10)
+    .text(
+      "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
+      50,
+      y + 120
+    );
+
+  doc.text(
+    "--------------------------------------------------------------------------------------------------------------------------------------",
+    50,
+    340,
+    { align: "center" }
+  );
+  doc.text("(For Student)", 50, 10);
+  doc.text("(For Faculty)", 50, 360);
+
+  doc
+    .rotate(330)
+    .opacity(0.2)
+    .image("./public/images/black.png", -100, 200, {
+      width: 470,
+      height: 170,
+    });
+  doc
+    .opacity(0.2)
+    .image("./public/images/black.png", -250, 510, {
+      width: 470,
+      height: 170,
+    });
   doc.on("end", Endcallback);
   doc.end();
 }
@@ -200,26 +304,19 @@ router.get("/logout", function (req, res, next) {
   req.logOut();
   res.redirect("/");
 });
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  } else {
-    res.redirect("/");
-  }
-}
 
-router.get("/dashboard",isLoggedIn, (req, res, next) => {
+router.get("/dashboard", isLoggedIn, (req, res, next) => {
   studentModel.find().then((student) => {
     res.render("dashboard", { student });
   });
 });
 // Course routes
-router.get("/course",isLoggedIn, (req, res, next) => {
+router.get("/course", isLoggedIn, (req, res, next) => {
   courseModel.find().then((course) => {
     res.render("course", { course });
   });
 });
-router.post("/course",isLoggedIn,  (req, res, next) => {
+router.post("/course", isLoggedIn, (req, res, next) => {
   courseModel
     .create({
       courseName: req.body.courseName,
@@ -230,7 +327,7 @@ router.post("/course",isLoggedIn,  (req, res, next) => {
       res.redirect("/course");
     });
 });
-router.get("/addFeeStructure",isLoggedIn,  (req, res, next) => {
+router.get("/addFeeStructure", isLoggedIn, (req, res, next) => {
   courseModel.find().then((course) => {
     res.render("addFeeStructure", { course });
   });
@@ -242,7 +339,7 @@ router.post("/addFeeStructure", isLoggedIn, async (req, res, next) => {
   await course.save();
   res.redirect("/addFeeStructure");
 });
-router.get("/deletecourse/:id",isLoggedIn,  async (req, res, next) => {
+router.get("/deletecourse/:id", isLoggedIn, async (req, res, next) => {
   await courseModel.findOneAndDelete({ _id: req.params.id });
   res.redirect("back");
 });
@@ -257,32 +354,32 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   await studentModel.create(req.body);
   res.redirect("/allenquiry");
 });
-router.get("/allenquiry",isLoggedIn,  async (req, res, next) => {
+router.get("/allenquiry", isLoggedIn, async (req, res, next) => {
   const students = await studentModel
     .find({ rejected: false })
     .populate("course");
   res.render("allenquiry", { students });
 });
-router.get("/delete/enquiry/:id",isLoggedIn,  async (req, res, next) => {
+router.get("/delete/enquiry/:id", isLoggedIn, async (req, res, next) => {
   const student = await studentModel.findById({ _id: req.params.id });
   student.rejected = true;
   await student.save();
   res.redirect("back");
 });
-router.get("/accepted/enquiry/:id",isLoggedIn,  async (req, res, next) => {
+router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
   const student = await studentModel.findById({ _id: req.params.id });
   student.rejected = false;
   await student.save();
   res.redirect("back");
 });
-router.get("/rejected",isLoggedIn,  async (req, res, next) => {
+router.get("/rejected", isLoggedIn, async (req, res, next) => {
   const students = await studentModel
     .find({ rejected: true })
     .populate("course");
   res.render("rejected", { students });
 });
 
-router.get("/student",isLoggedIn,  (req, res, next) => {
+router.get("/student", isLoggedIn, (req, res, next) => {
   studentModel.find().then((std) => {
     res.render("student", { std });
   });
@@ -312,24 +409,24 @@ router.post("/addStaff", isLoggedIn, (req, res, next) => {
       res.redirect("/allStaff");
     });
 });
-router.get("/profile",isLoggedIn,  (req, res, next) => {
+router.get("/profile", isLoggedIn, (req, res, next) => {
   res.render("profile");
 });
-router.get("/fees",isLoggedIn,  async (req, res, next) => {
+router.get("/fees", isLoggedIn, async (req, res, next) => {
   const students = await studentModel.find().populate("course");
   students.sort(function (a, b) {
     return new Date(b.dueDate) - new Date(a.dueDate);
   });
   res.render("fees", { students: students.filter((e) => e.due > 0) });
 });
-router.get("/getdate",isLoggedIn,  async (req, res, next) => {
+router.get("/getdate", isLoggedIn, async (req, res, next) => {
   const students = await studentModel.find().populate("course");
   students.sort(function (a, b) {
     return new Date(a.dueDate) - new Date(b.dueDate);
   });
   res.json({ students: students.filter((e) => e.due > 0) });
 });
-router.get("/stdprofile/:id",isLoggedIn,  async (req, res, next) => {
+router.get("/stdprofile/:id", isLoggedIn, async (req, res, next) => {
   const founduser = await studentModel
     .findOne({
       _id: req.params.id,
@@ -342,7 +439,7 @@ router.get("/allStaff", isLoggedIn, (req, res, next) => {
     res.render("allStaff", { staff });
   });
 });
-router.get("/edit/:id",isLoggedIn,  async (req, res, next) => {
+router.get("/edit/:id", isLoggedIn, async (req, res, next) => {
   const founduser = await studentModel.findOne({
     _id: req.params.id,
   });
@@ -371,7 +468,7 @@ router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
   });
   res.redirect("/fees");
 });
-router.get("/feesManagement",isLoggedIn,  async (req, res, next) => {
+router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
   if (req.query.prev) {
     var fees = await feesModel
       .find({ payDate: { $gte: req.query.prev, $lte: req.query.next } })
@@ -381,7 +478,7 @@ router.get("/feesManagement",isLoggedIn,  async (req, res, next) => {
   }
   res.render("feesManagement", { fees });
 });
-router.get("/delete/transaction/:id",isLoggedIn,  async (req, res, next) => {
+router.get("/delete/transaction/:id", isLoggedIn, async (req, res, next) => {
   await feesModel.findOneAndDelete({
     _id: req.params.id,
   });
