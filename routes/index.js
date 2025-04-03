@@ -453,7 +453,7 @@ router.post("/update/profile/:id", isLoggedIn, async (req, res, next) => {
     req.body
   );
 
-  res.redirect("back");
+  res.redirect("/student");
 });
 router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
   const foundstudent = await studentModel.findOne({
