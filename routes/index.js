@@ -28,7 +28,17 @@ function isLoggedIn(req, res, next) {
 
 //   doc.end();
 // }
-function buildPDF(Datacallback, Endcallback,reg_no,date,name,course,reg_fee,paid_fee,payment_mode) {
+function buildPDF(
+  Datacallback,
+  Endcallback,
+  reg_no,
+  date,
+  name,
+  course,
+  reg_fee,
+  paid_fee,
+  payment_mode
+) {
   const doc = new pdfDoc();
   doc.on("data", Datacallback);
   doc.on("end", Endcallback);
@@ -229,19 +239,14 @@ function buildPDF(Datacallback, Endcallback,reg_no,date,name,course,reg_fee,paid
   doc.text("(For Student)", 50, 10);
   doc.text("(For Faculty)", 50, 360);
 
-  doc
-    .rotate(330)
-    .opacity(0.2)
-    .image("./public/images/black.png", -100, 200, {
-      width: 470,
-      height: 170,
-    });
-  doc
-    .opacity(0.2)
-    .image("./public/images/black.png", -250, 510, {
-      width: 470,
-      height: 170,
-    });
+  doc.rotate(330).opacity(0.2).image("./public/images/black.png", -100, 200, {
+    width: 470,
+    height: 170,
+  });
+  doc.opacity(0.2).image("./public/images/black.png", -250, 510, {
+    width: 470,
+    height: 170,
+  });
   doc.on("end", Endcallback);
   doc.end();
 }
@@ -258,7 +263,9 @@ router.get("/", function (req, res, next) {
   res.render("index");
 });
 router.get("/register", function (req, res, next) {
-  res.render("register");
+  courseModel.find().then((course) => {
+    res.render("register", { course });
+  });
 });
 
 router.get("/invoice", isLoggedIn, (req, res, next) => {
@@ -350,7 +357,6 @@ router.get("/inquiry", isLoggedIn, async (req, res, next) => {
   res.render("inquiry", { course });
 });
 router.post("/inquiry", isLoggedIn, async (req, res, next) => {
-  console.log(req.body);
   await studentModel.create(req.body);
   res.redirect("/allenquiry");
 });
@@ -380,9 +386,12 @@ router.get("/rejected", isLoggedIn, async (req, res, next) => {
 });
 
 router.get("/student", isLoggedIn, (req, res, next) => {
-  studentModel.find().then((std) => {
-    res.render("student", { std });
-  });
+  studentModel
+    .find()
+    .populate("course")
+    .then((std) => {
+      res.render("student", { std });
+    });
 });
 router.get("/addStaff", isLoggedIn, (req, res, next) => {
   res.render("addStaff");
@@ -414,10 +423,13 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
 });
 router.get("/fees", isLoggedIn, async (req, res, next) => {
   const students = await studentModel.find().populate("course");
-  students.sort(function (a, b) {
-    return new Date(b.dueDate) - new Date(a.dueDate);
-  });
-  res.render("fees", { students: students.filter((e) => e.due > 0) });
+  const today = new Date(); // Get current date
+
+  const filteredStudents = students
+    .filter((e) => e.due > 0 && new Date(e.dueDate) < today) // Only past due dates
+    .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)); // Sort in descending order
+
+  res.render("fees", { students: filteredStudents });
 });
 router.get("/getdate", isLoggedIn, async (req, res, next) => {
   const students = await studentModel.find().populate("course");

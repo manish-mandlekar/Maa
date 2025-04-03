@@ -61,10 +61,11 @@
                   <td><%=std.enquiryDate.toDateString()%></td>
                   <td><%=std.joiningDate.toDateString() %></td>
                   <td>
-                    <a href="/delete/enquiry/<%= std._id %>">
+                    <a style="font-size: 25px;" href="/delete/enquiry/<%= std._id %>">
                       ❌
                     </a>
-                    <a href="/accepted/enquiry/<%= std._id %>">
+                    &nbsp;&nbsp;
+                    <a style="font-size: 25px;" href="/accepted/enquiry/<%= std._id %>">
                       ✅
                     </a>
                   </td>

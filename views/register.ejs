@@ -67,7 +67,12 @@
                            <div class="row g-3">
                             <div class="col-md-12">
                                 <label for="inputEmail4" class="form-label">Select Course</label>
-                               
+                              <select name="course" class="form-select" required>
+                                <option selected disabled>Choose a course...</option>
+                                <% course.forEach(function(singlecourse) { %>
+                                  <option value="<%= singlecourse._id %>"><%= singlecourse.courseCode %></option>
+                                <% }); %>
+                              </select>
                               </div>
                               <div class="col-6">
                                 <label for="inputAddress" class="form-label">Enquiry By</label>

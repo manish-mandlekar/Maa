@@ -18,7 +18,7 @@
         <div class="inq">
           <div class="cola">
             <h2>Registered Student Details</h2>
-            <div class="container mt-5">
+            <div class="mt-5">
               <table class="table">
                 <thead>
                   <tr class="table-info">
@@ -39,11 +39,11 @@
                       >
                     </td>
                     <td><%=std.contactNumber %></td>
-                    <td><%=std.course %></td>
+                    <td><%= std.course[0].courseCode %></td>
                     
                     <td><%=std.joiningDate.toDateString() %></td>
                   </tr>
-                  <% }); %>
+                  <% }) %>
                   <!-- Add more rows for additional students -->
                 </tbody>
               </table>
