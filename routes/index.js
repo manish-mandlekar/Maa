@@ -6,6 +6,7 @@ const staffModel = require("../models/staff");
 const studentModel = require("../models/student");
 const courseModel = require("../models/course");
 const feesModel = require("../models/fees");
+const universityModel = require("../models/university");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
@@ -262,10 +263,10 @@ mongoose
 router.get("/", function (req, res, next) {
   res.render("index");
 });
-router.get("/register", function (req, res, next) {
-  courseModel.find().then((course) => {
-    res.render("register", { course });
-  });
+router.get("/register", async function (req, res, next) {
+  const course = await courseModel.find();
+  const universities = await universityModel.find();
+  res.render("register", { course, universities });
 });
 
 router.get("/invoice", isLoggedIn, (req, res, next) => {
@@ -307,9 +308,13 @@ router.post(
   }),
   function (req, res, next) {}
 );
-router.get("/logout", function (req, res, next) {
-  req.logOut();
-  res.redirect("/");
+router.get("/logout", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
 });
 
 router.get("/dashboard", isLoggedIn, (req, res, next) => {
@@ -339,6 +344,10 @@ router.get("/addFeeStructure", isLoggedIn, (req, res, next) => {
     res.render("addFeeStructure", { course });
   });
 });
+router.get("/addUniversity", isLoggedIn, (req, res, next) => {
+  res.render("addUniversity");
+});
+
 router.post("/addFeeStructure", isLoggedIn, async (req, res, next) => {
   const { selectCourse, totalFee } = req.body;
   const course = await courseModel.findOne({ _id: selectCourse });
@@ -481,15 +490,48 @@ router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
   res.redirect("/fees");
 });
 router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
-  if (req.query.prev) {
-    var fees = await feesModel
-      .find({ payDate: { $gte: req.query.prev, $lte: req.query.next } })
-      .populate("student");
-  } else {
-    var fees = await feesModel.find().populate("student");
+  try {
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Dates
+    const prev = req.query.prev ? new Date(req.query.prev) : null;
+    const next = req.query.next ? new Date(req.query.next) : null;
+
+    // If only prev is provided, default next to today
+    const query = {};
+    if (prev && next) {
+      query.payDate = { $gte: prev, $lte: next };
+    } else if (prev && !next) {
+      query.payDate = { $gte: prev, $lte: new Date() };
+    } else if (!prev && next) {
+      query.payDate = { $lte: next };
+    }
+
+    // Fetch paginated and filtered fees
+    const [fees, totalFees] = await Promise.all([
+      await feesModel.find(query).populate("student").skip(skip).limit(limit),
+      feesModel.countDocuments(query),
+    ]);
+
+    const totalPages = Math.ceil(totalFees / limit);
+
+    res.render("feesManagement", {
+      fees,
+      currentPage: page,
+      totalPages,
+      totalFees,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      query: req.query, // useful for keeping filters on the frontend
+    });
+  } catch (err) {
+    next(err);
   }
-  res.render("feesManagement", { fees });
 });
+
 router.get("/delete/transaction/:id", isLoggedIn, async (req, res, next) => {
   await feesModel.findOneAndDelete({
     _id: req.params.id,
