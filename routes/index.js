@@ -345,7 +345,27 @@ router.get("/addFeeStructure", isLoggedIn, (req, res, next) => {
   });
 });
 router.get("/addUniversity", isLoggedIn, (req, res, next) => {
-  res.render("addUniversity");
+  universityModel.find().then((universities)=>{
+
+    res.render("addUniversity",{universities});
+  })
+});
+router.post('/addUniversity',isLoggedIn , async (req,res,next)=>{
+  universityModel.create({
+    name:req.body.addUniversity,
+    location:req.body.location
+  }).then(()=>{
+    res.redirect('/addUniversity')
+  })
+})
+router.delete('/universities/:id', async (req, res) => {
+  try {
+    await universityModel.findByIdAndDelete(req.params.id);
+    res.redirect('/addUniversity'); 
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting university");
+  }
 });
 
 router.post("/addFeeStructure", isLoggedIn, async (req, res, next) => {

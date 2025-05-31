@@ -155,10 +155,10 @@
                       >Select University</label
                     >
                     <select name="course" class="form-select" required>
-                      <option selected disabled>Choose a course...</option>
+                      <option selected disabled>Choose a University...</option>
                       <% universities.forEach(function(university) { %>
                       <option value="<%= university._id %>">
-                        <%= university.courseCode %>
+                        <%= university.name %> <%=university.location %>
                       </option>
                       <% }); %>
                     </select>
