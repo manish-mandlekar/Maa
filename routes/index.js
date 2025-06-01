@@ -11,6 +11,9 @@ const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
 const pdfDoc = require("pdfkit");
+const { MessageMedia } = require("whatsapp-web.js");
+const whatsappClient = require("./whatsapp"); // your whatsapp.js file
+const { WritableStreamBuffer } = require("stream-buffers");
 
 function isLoggedIn(req, res, next) {
   return next();
@@ -21,26 +24,25 @@ function isLoggedIn(req, res, next) {
   }
 }
 
-// function buildPDF(Datacallback, Endcallback) {
-//   const doc = new pdfDoc();
-//   doc.on("data", Datacallback);
-//   doc.on("end", Endcallback);
-//   doc.text("Fee Amount: ");
-
-//   doc.end();
-// }
 function buildPDF(
   Datacallback,
   Endcallback,
   reg_no,
   date,
   name,
+  lastName,
   course,
   reg_fee,
   paid_fee,
+  contactNumber,
   payment_mode
 ) {
-  const doc = new pdfDoc();
+  const doc = new pdfDoc({
+    size: "A4",
+    margin: 100,
+  });
+
+  // Set up event listeners
   doc.on("data", Datacallback);
   doc.on("end", Endcallback);
 
@@ -62,33 +64,17 @@ function buildPDF(
     .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
     .text("Email: mceiindia229@gmail.com", { underline: true });
 
-  // Receipt Details
+  // Receipt Details - Use actual values instead of dots
   doc
     .fontSize(10)
-    .text(
-      "Reg. No.: ..........................................................",
-      50,
-      105
-    )
-    .text(
-      "Date: ..........................................................",
-      350,
-      105
-    );
+    // .text(`Reg. No.: ${reg_no || "N/A"}`, 50, 105)
+    .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 350, 105);
 
-  // Name and Course
+  // Name and Course - Use actual values
   doc
     .moveDown()
-    .text(
-      "Name: .............................................................",
-      50,
-      125
-    )
-    .text(
-      "Course: ......................................................",
-      350,
-      125
-    );
+    .text(`Name: ${name || "N/A"} ${lastName || "N/A"}`, 50, 125)
+    .text(`Contact: ${contactNumber || "N/A"}`, 350, 125);
 
   // Table Header
   doc
@@ -97,10 +83,10 @@ function buildPDF(
     .text("Particulars", 150, 145)
     .text("Amount", 450, 145);
 
-  // Table Rows
+  // Table Rows - Use actual values
   const tableRows = [
-    { sno: "1.", particulars: "Reg. Fee", amount: "1000" },
-    { sno: "2.", particulars: "Paid Fee", amount: "3000" },
+    { sno: "1.", particulars: "Paid Fee", amount: paid_fee || "3000" },
+    // { sno: "1.", particulars: "Reg. Fee", amount: reg_fee || "1000" },
   ];
 
   let y = 165;
@@ -112,21 +98,21 @@ function buildPDF(
     y += 20;
   });
 
+  // Calculate total
+  const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
+
   // Total
-  doc
-    .moveDown()
-    .text("Total", 150, y)
-    .text("................................", 450, y);
+  doc.moveDown().text("Total", 150, y).text(total.toString(), 450, y);
 
   // Footer Section
   doc
     .fontSize(10)
     .text(
-      "Received a sum of Rupee ........................................................ Payment By: .............................",
+      `Received a sum of Rupee ${total} Payment By: ${payment_mode || "Cash"}`,
       50,
       y + 40
     )
-    .text("Dated ........................................", 50, y + 60)
+    .text(`Dated ${date || new Date().toLocaleDateString("en-GB")}`, 50, y + 60)
     .text("Student's/Parent's Signature", 50, y + 80)
     .text("Receiver's Signature", 400, y + 80);
 
@@ -139,123 +125,42 @@ function buildPDF(
     );
 
   // Faculty Section
-  y = y + 20;
-  doc
-    .moveDown()
-    .fontSize(16)
-    .text("MAA COMPUTER EDUCATION INSTITUTE", 70, y + 130, {
-      align: "center",
-      underline: true,
-    });
-  doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
-  doc
-    .fontSize(10)
-    .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
 
-  // Branch Info
-  doc
-    .moveDown()
-    .fontSize(10)
-    .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
-    .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
-    .text("Email: mceiindia229@gmail.com", { underline: true });
-
-  // Receipt Details
-  doc
-    .fontSize(10)
-    .text(
-      "Reg. No.: ..........................................................",
-      50,
-      y + 130 + 105
-    )
-    .text(
-      "Date: ..........................................................",
-      350,
-      y + 130 + 105
-    );
-
-  // Name and Course
-  doc
-    .moveDown()
-    .text(
-      "Name: .............................................................",
-      50,
-      y + 130 + 125
-    )
-    .text(
-      "Course: ......................................................",
-      350,
-      y + 130 + 125
-    );
-
-  // Table Header
-  doc
-    .moveDown()
-    .text("S.No.", 50, y + 130 + 145)
-    .text("Particulars", 150, y + 130 + 145)
-    .text("Amount", 450, y + 130 + 145);
-
-  // Table Rows
-  y = y + 295;
-  tableRows.forEach((row) => {
-    doc
-      .text(row.sno, 50, y)
-      .text(row.particulars, 150, y)
-      .text(row.amount, 450, y);
-    y += 20;
-  });
-
-  // Total
-  doc
-    .moveDown()
-    .text("Total", 150, y)
-    .text("................................", 450, y);
-
-  // Footer Section
-  doc
-    .fontSize(10)
-    .text(
-      "Received a sum of Rupee ........................................................ Payment By: .............................",
-      50,
-      y + 40
-    )
-    .text("Dated ........................................", 50, y + 60)
-    .text("Student's/Parent's Signature", 50, y + 80)
-    .text("Receiver's Signature", 400, y + 80);
-
-  doc
-    .fontSize(10)
-    .text(
-      "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
-      50,
-      y + 120
-    );
-
-  doc.text(
-    "--------------------------------------------------------------------------------------------------------------------------------------",
-    50,
-    340,
-    { align: "center" }
-  );
   doc.text("(For Student)", 50, 10);
-  doc.text("(For Faculty)", 50, 360);
+  // doc.text("(For Faculty)", 50, 360);
 
-  doc.rotate(330).opacity(0.2).image("./public/images/black.png", -100, 200, {
-    width: 470,
-    height: 170,
-  });
-  doc.opacity(0.2).image("./public/images/black.png", -250, 510, {
-    width: 470,
-    height: 170,
-  });
-  doc.on("end", Endcallback);
+  // Comment out or remove image operations that might be causing issues
+  // Only include if the image files exist and are accessible
+  try {
+    if (fs.existsSync("./public/images/black.png")) {
+      doc
+        .rotate(330)
+        .opacity(0.2)
+        .image("./public/images/black.png", -100, 200, {
+          width: 470,
+          height: 170,
+        });
+      // doc.opacity(0.2).image("./public/images/black.png", -250, 510, {
+      //   width: 470,
+      //   height: 170,
+      // });
+    }
+  } catch (error) {
+    console.log("Warning: Could not load watermark image");
+  }
+
+  // Remove the duplicate 'end' event listener - it's already set up at the top
+  // doc.on("end", Endcallback); // Remove this line
+
   doc.end();
 }
 
 passport.use(new localStrategy(userModel.authenticate()));
 mongoose
   .connect("mongodb://0.0.0.0/mark")
-  .then(() => {})
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
   .catch((err) => {
     err;
   });
@@ -269,14 +174,144 @@ router.get("/register", async function (req, res, next) {
   res.render("register", { course, universities });
 });
 
-router.get("/invoice", isLoggedIn, (req, res, next) => {
+router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
+  const { id } = req.query;
+  if (!id) return res.status(400).send("❌ Fee ID is required");
+  // populate student and course details
+  const Fees = await feesModel.findById(id).populate({
+    path: "student",
+    populate: {
+      path: "course",
+    },
+  });
+  if (!Fees) return res.status(404).send("❌ Fee record not found");
+
+  const student = Fees.student;
+  if (!student) return res.status(404).send("❌ Student record not found");
+  // Validate contact number
+  // res.json(Fees.student);
+
+  const { payment, registrationPaymentMode, payDate } = Fees;
+  const { reg_no, firstName, lastName, course, reg_fee, contactNumber } =
+    student;
   const stream = res.writeHead(200, {
     "Content-Type": "application/pdf",
     "Content-Disposition": `attachment;filename=receipt.pdf`,
   });
   buildPDF(
     (chunk) => stream.write(chunk),
-    () => stream.end()
+    () => stream.end(),
+    reg_no,
+    payDate
+      ? payDate.toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB"),
+    firstName,
+    lastName,
+    course,
+    reg_fee,
+    payment,
+    contactNumber,
+    registrationPaymentMode
+  );
+});
+router.get("/invoice", async (req, res) => {
+  const { id } = req.query;
+  if (!id) return res.status(400).send("❌ Fee ID is required");
+  // populate student and course details
+  const Fees = await feesModel.findById(id).populate({
+    path: "student",
+    populate: {
+      path: "course",
+    },
+  });
+  if (!Fees) return res.status(404).send("❌ Fee record not found");
+
+  const student = Fees.student;
+  if (!student) return res.status(404).send("❌ Student record not found");
+  // Validate contact number
+  if (!student.contactNumber || !/^[6-9]\d{9}$/.test(student.contactNumber)) {
+    return res
+      .status(400)
+      .send("❌ Invalid Indian phone number (10 digits required)");
+  }
+  // Prepare data for PDF
+  console.log(Fees);
+
+  const { payment, registrationPaymentMode, payDate } = Fees;
+  const { reg_no, firstName, lastName, course, reg_fee, contactNumber } =
+    student;
+  if (!contactNumber || !/^[6-9]\d{9}$/.test(contactNumber)) {
+    return res
+      .status(400)
+      .send("❌ Invalid Indian phone number (10 digits required)");
+  }
+
+  // const chatId = `91${contactNumber}@c.us`;
+  const chatId = `917089369114@c.us`;
+
+  const bufferStream = new WritableStreamBuffer();
+
+  let responseSent = false;
+
+  buildPDF(
+    (chunk) => bufferStream.write(chunk),
+    async () => {
+      try {
+        const buffer = bufferStream.getContents();
+        if (!buffer) {
+          if (!responseSent) {
+            responseSent = true;
+            return res.status(500).send("❌ PDF generation failed");
+          }
+          return;
+        }
+
+        const base64 = buffer.toString("base64");
+        const media = new MessageMedia(
+          "application/pdf",
+          base64,
+          "invoice.pdf"
+        );
+
+        await whatsappClient.sendMessage(chatId, media);
+
+        if (!responseSent) {
+          responseSent = true;
+          return res.send(
+            `<html>
+            <body>
+              <h1>✅ Invoice Sent Successfully!</h1>
+              <p>Invoice has been sent to ${contactNumber} on WhatsApp.</p>
+              <p><a href="/invoice/download?id=${Fees._id}">Download Invoice</a></p>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`
+          );
+        }
+      } catch (error) {
+        console.error("❌ WhatsApp Send Error:", error.message);
+
+        if (!responseSent) {
+          responseSent = true;
+          return res
+            .status(500)
+            .send(
+              "❌ Failed to send invoice. Make sure the number is registered on WhatsApp."
+            );
+        }
+      }
+    },
+    reg_no,
+    payDate
+      ? payDate.toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB"),
+    firstName,
+    lastName,
+    course,
+    reg_fee,
+    payment,
+    contactNumber,
+    registrationPaymentMode
   );
 });
 
@@ -345,23 +380,24 @@ router.get("/addFeeStructure", isLoggedIn, (req, res, next) => {
   });
 });
 router.get("/addUniversity", isLoggedIn, (req, res, next) => {
-  universityModel.find().then((universities)=>{
-
-    res.render("addUniversity",{universities});
-  })
+  universityModel.find().then((universities) => {
+    res.render("addUniversity", { universities });
+  });
 });
-router.post('/addUniversity',isLoggedIn , async (req,res,next)=>{
-  universityModel.create({
-    name:req.body.addUniversity,
-    location:req.body.location
-  }).then(()=>{
-    res.redirect('/addUniversity')
-  })
-})
-router.delete('/universities/:id', async (req, res) => {
+router.post("/addUniversity", isLoggedIn, async (req, res, next) => {
+  universityModel
+    .create({
+      name: req.body.addUniversity,
+      location: req.body.location,
+    })
+    .then(() => {
+      res.redirect("/addUniversity");
+    });
+});
+router.delete("/universities/:id", async (req, res) => {
   try {
     await universityModel.findByIdAndDelete(req.params.id);
-    res.redirect('/addUniversity'); 
+    res.redirect("/addUniversity");
   } catch (err) {
     console.error(err);
     res.status(500).send("Error deleting university");
@@ -391,7 +427,7 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
 });
 router.get("/allenquiry", isLoggedIn, async (req, res, next) => {
   const students = await studentModel
-    .find({ rejected: false })
+    .find({ rejected: true })
     .populate("course");
   res.render("allenquiry", { students });
 });
@@ -509,6 +545,7 @@ router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
   });
   res.redirect("/fees");
 });
+
 router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
   try {
     // Pagination
@@ -532,7 +569,12 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
 
     // Fetch paginated and filtered fees
     const [fees, totalFees] = await Promise.all([
-      await feesModel.find(query).populate("student").skip(skip).limit(limit),
+      await feesModel
+        .find(query)
+        .sort({ _id: -1 })
+        .populate("student")
+        .skip(skip)
+        .limit(limit),
       feesModel.countDocuments(query),
     ]);
 

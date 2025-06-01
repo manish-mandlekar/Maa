@@ -73,7 +73,9 @@
                 <td>₹<%= elem.payment %>.00</td>
                 <td>
                   <!-- <a href="/delete/transaction/<%= elem._id %>">delete</a> -->
-                  <a href="/invoice">invoice</a>
+                  <a href="/invoice/download?id=<%= elem._id %>">download</a>
+                  <br>
+                  <a href="/invoice?id=<%= elem._id %>">send</a>
                 </td>
               </tr>
               <% }) %>

@@ -1,2 +1,4 @@
 node_modules
 invoice.pdf
+.wwebjs_auth
+.wwebjs_cache
