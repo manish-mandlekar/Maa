@@ -39,11 +39,35 @@
                 id="inputZip"
               />
               <button type="submit" class="btn btn-primary">Submit</button>
-              <a href="/feesManagement"
-                ><button type="button" class="btn btn-success">
-                  Show all Transactions
-                </button></a
-              >
+              <a href="/feesManagement">
+                <button type="button" class="btn btn-success">
+                  Recent Transactions
+                </button>
+              </a>
+            </div>
+            <br />
+            <div id="toll">
+              <!-- Transaction Limit in number -->
+              <label for="inputZip">Transaction Limit</label>
+              <input
+                name="limit"
+                type="number"
+                class="form-control w-25"
+                id="inputZip"
+                placeholder="Enter limit"
+              />
+              <div class="col-md-3">
+                <label for="registrationPaymentMode" class="form-label"
+                  >Payment Mode</label
+                >
+                <select class="form-select" name="registrationPaymentMode">
+                  <option value="">All</option>
+                  <option value="cash" <%= query.registrationPaymentMode === 'cash' ? 'selected' : '' %>>Cash</option>
+                  <option value="upi" <%= query.registrationPaymentMode === 'upi' ? 'selected' : '' %>>
+                    UPI (PhonePe / Google Pay / Paytm)
+                  </option>
+                </select>
+              </div>
             </div>
           </form>
 
@@ -74,7 +98,7 @@
                 <td>
                   <!-- <a href="/delete/transaction/<%= elem._id %>">delete</a> -->
                   <a href="/invoice/download?id=<%= elem._id %>">download</a>
-                  <br>
+                  <br />
                   <a href="/invoice?id=<%= elem._id %>">send</a>
                 </td>
               </tr>

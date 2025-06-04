@@ -8,7 +8,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     />
-    <link rel="stylesheet" href="./stylesheets/inquiry.css" />
+    <link rel="stylesheet" href="/stylesheets/inquiry.css" />
   </head>
   <body>
     <div id="main">
@@ -17,7 +17,11 @@
         <%- include('./partials/right-header') %>
         <div id="cover">
           <div class="inq">
-            <form action="/inquiry" method="post" class="row g-3">
+            <form
+              action="/accepted/enquiry/<%= student._id %>"
+              method="post"
+              class="row g-3"
+            >
               <div class="col-md-6">
                 <label for="inputEmail4" class="form-label">Student Name</label>
                 <input
@@ -25,6 +29,7 @@
                   type="text"
                   placeholder="Enter First Name"
                   name="firstName"
+                  value="<%= student?.firstName %>"
                   class="form-control"
                   id="inputEmail4"
                 />
@@ -37,6 +42,7 @@
                   required
                   type="text"
                   name="lastName"
+                  value="<%= student?.lastName %>"
                   placeholder="Enter Last Name"
                   class="form-control"
                   id="inputPassword4"
@@ -50,6 +56,7 @@
                   required
                   type="email"
                   name="email"
+                  value="<%= student?.email %>"
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Email Address"
@@ -63,6 +70,7 @@
                   required
                   type="text"
                   name="fatherName"
+                  value="<%= student?.fatherName %>"
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Name Of Father / Husband"
@@ -76,6 +84,7 @@
                   required
                   type="number"
                   name="contactNumber"
+                  value="<%= student?.contactNumber %>"
                   class="form-control"
                   id="inputAddress2"
                   placeholder="Enter Contact Number"
@@ -86,6 +95,7 @@
                 <input
                   required
                   name="qualification"
+                  value="<%= student?.qualification %>"
                   type="text"
                   class="form-control"
                   placeholder="Enter Qualification"
@@ -98,6 +108,7 @@
                 >
                 <input
                   name="address"
+                  value="<%= student?.address %>"
                   required
                   type="text"
                   placeholder="Address"
@@ -109,6 +120,7 @@
                 <label for="inputZip" class="form-label">Enquiry Date</label>
                 <input
                   name="enquiryDate"
+                  value="<%= student?.enquiryDate.toISOString().split('T')[0] %>"
                   required
                   type="date"
                   class="form-control"
@@ -157,7 +169,7 @@
                     <select name="course" class="form-select" required>
                       <option selected disabled>Choose a University...</option>
                       <% universities.forEach(function(university) { %>
-                      <option value="<%= university._id %>">
+                      <option value="<%= university._id %>" >
                         <%= university.name %> <%=university.location %>
                       </option>
                       <% }); %>
@@ -165,7 +177,7 @@
                   </div>
                   <div class="col-md-12">
                     <label for="inputEmail4" class="form-label">Session</label>
-                    <select name="course" class="form-select" required>
+                    <select name="session" class="form-select" required>
                       <option selected disabled>Choose a Session...</option>
                       <option value="2023-2024">2022-2023</option>
                       <option value="2023-2024">2023-2024</option>
@@ -185,6 +197,7 @@
                       required
                       type="text"
                       name="enquiryBy"
+                      value="<%= student?.enquiryBy %>"
                       class="form-control"
                       id="inputAddress"
                       placeholder="Enter Name"
@@ -198,6 +211,7 @@
                       required
                       type="date"
                       name="joiningDate"
+                      value="<%= student?.joiningDate?.toISOString()?.split('T')[0] %>"
                       class="form-control"
                       id="inputAddress2"
                     />
@@ -246,6 +260,7 @@
                       required
                       type="number"
                       name="installment"
+                      value="<%= student?.installment %>"
                       class="form-control"
                       id="inputEmail4"
                       placeholder="Enter Installment Amount"
@@ -257,6 +272,7 @@
                       required
                       type="number"
                       name="due"
+                      value="<%= student?.due %>"
                       class="form-control"
                       id="inputPassword4"
                       placeholder="Enter Due Amount"
@@ -284,6 +300,7 @@
                     required
                     type="date"
                     name="dueDate"
+                    
                     class="form-control"
                     id="inputPassword4"
                     placeholder="Enter Due Amount date"
@@ -291,7 +308,7 @@
                 </div>
 
                 <div class="col-12" style="margin-top: 1vmax">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" class="btn btn-primary">Update</button>
                 </div>
               </div>
             </form>

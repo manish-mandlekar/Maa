@@ -36,7 +36,6 @@ const studentEnquirySchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ["male", "female"],
-    required: true,
   },
   course: [
     {
@@ -52,6 +51,10 @@ const studentEnquirySchema = new mongoose.Schema({
   due: Number,
   registrationPayment: String,
   dueDate: String,
+  session: {
+    type: String,
+    default: "2023-2024",
+  },
   rejected: {
     type: Boolean,
     default: false,

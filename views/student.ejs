@@ -17,6 +17,43 @@
         <%- include('./partials/right-header') %>
         <div class="inq">
           <div class="cola">
+            <form class="row g-3 mb-4" method="GET" action="/student">
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  placeholder="Search by name"
+                  value="<%= query.name || '' %>"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="contactNumber"
+                  placeholder="Mobile Number"
+                  value="<%= query.contactNumber || '' %>"
+                />
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" name="session">
+                  <option value="">All Sessions</option>
+                  <% sessions.forEach(session => { %>
+                  <option value="<%= session %>"  <%= query.session === session ? 'selected' : '' %>><%= session %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                  Filter
+                </button>
+                <!-- clear filter btn -->
+                <a href="/student" class="btn btn-secondary w-100 mt-2">
+                  Clear Filter
+                </a>
+              </div>
+            </form>
             <h2>Registered Student Details</h2>
             <div class="mt-5">
               <table class="table">
@@ -27,6 +64,7 @@
                     <th>Mobile No.</th>
                     <th>Course</th>
                     <th>Admission Date</th>
+                    <th>Session</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -39,14 +77,31 @@
                       >
                     </td>
                     <td><%=std.contactNumber %></td>
-                    <td><%= std.course[0].courseCode %></td>
-                    
-                    <td><%=std.joiningDate.toDateString() %></td>
+                    <td><%= std?.course[0]?.courseCode %></td>
+
+                    <td><%=std?.joiningDate?.toDateString() %></td>
+                    <td><%=std.session %></td>
                   </tr>
                   <% }) %>
                   <!-- Add more rows for additional students -->
                 </tbody>
               </table>
+              <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-end">
+                  <% Array.from({ length: totalPages }, (_, i) => i +
+                  1).forEach(p => { %>
+                  <li
+                    class="page-item <%= p === currentPage ? 'active' : '' %>"
+                  >
+                    <a
+                      class="page-link"
+                      href="?<%= new URLSearchParams({ ...query, page: p }).toString() %>"
+                      ><%= p %></a
+                    >
+                  </li>
+                  <% }) %>
+                </ul>
+              </nav>
             </div>
           </div>
         </div>
