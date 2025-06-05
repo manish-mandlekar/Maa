@@ -13,8 +13,8 @@ const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
 const pdfDoc = require("pdfkit");
-const { MessageMedia } = require("whatsapp-web.js");
-const whatsappClient = require("./whatsapp"); // your whatsapp.js file
+// const { MessageMedia } = require("whatsapp-web.js");
+// const whatsappClient = require("./whatsapp"); // your whatsapp.js file
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
   return next();
@@ -38,98 +38,116 @@ function buildPDF(
   contactNumber,
   payment_mode
 ) {
-  const doc = new pdfDoc({
-    size: "A4",
-    margin: 100,
-  });
+  const doc = new pdfDoc({ size: "A4", margin: 50 });
 
-  // Set up event listeners
+  // Listeners
   doc.on("data", Datacallback);
   doc.on("end", Endcallback);
 
-  // Student Section
-  doc.fontSize(16).text("MAA COMPUTER EDUCATION INSTITUTE", 70, 10, {
-    align: "center",
-    underline: true,
-  });
-  doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
+  const blue = '#0000ff';
+
+  // Header
+  doc
+    .fillColor(blue)
+    .fontSize(18)
+    .text("MAA COMPUTER EDUCATION INSTITUTE™", { align: "center", underline: true })
+    .fontSize(14)
+    .text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" })
+    .fontSize(10)
+    .text("Many Mind's One Vision Quality Education", { align: "center", underline: true });
+
+  doc
+    .moveDown(0.5)
+    .fontSize(10)
+    .text("BRANCH -1: Above Union Bank 2nd Floor, Station Road Rau Indore", { align: "center" })
+    .text("BRANCH -1: Cat Road Rau Indore    M. 9407093676", { align: "center" });
+
+  // Space
+  doc.moveDown(1);
+
+  // Receipt Info
   doc
     .fontSize(10)
-    .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
+    .fillColor("black")
+    .text(`Reg. No.: ${reg_no || "N/A"}`, 50)
+    .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 400);
 
-  // Branch Info
   doc
     .moveDown()
-    .fontSize(10)
-    .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
-    .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
-    .text("Email: mceiindia229@gmail.com", { underline: true });
+    .text(`Name: ${name || "N/A"} ${lastName || ""}`, 50)
+    .text(`Course: ${course?.courseName || "N/A"}`, 50)
+    .text(`Contact: ${contactNumber || "N/A"}`, 400);
 
-  // Receipt Details - Use actual values instead of dots
-  doc
-    .fontSize(10)
-    // .text(`Reg. No.: ${reg_no || "N/A"}`, 50, 105)
-    .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 350, 105);
-
-  // Name and Course - Use actual values
+  // Table Headers
   doc
     .moveDown()
-    .text(`Name: ${name || "N/A"} ${lastName || "N/A"}`, 50, 125)
-    .text(`Contact: ${contactNumber || "N/A"}`, 350, 125);
+    .fillColor(blue)
+    .text("S.No.", 50)
+    .text("Particulars", 150)
+    .text("Amount", 450);
 
-  // Table Header
+  // Table Data
+  let y = doc.y + 5;
   doc
-    .moveDown()
-    .text("S.No.", 50, 145)
-    .text("Particulars", 150, 145)
-    .text("Amount", 450, 145);
+    .fillColor("black")
+    .text("1.", 50, y)
+    .text("Paid Fee", 150, y)
+    .text(`${paid_fee || "0"}`, 450, y);
 
-  // Table Rows - Use actual values
-  const tableRows = [
-    { sno: "1.", particulars: "Paid Fee", amount: paid_fee || "3000" },
-    // { sno: "1.", particulars: "Reg. Fee", amount: reg_fee || "1000" },
-  ];
-
-  let y = 165;
-  tableRows.forEach((row) => {
+  y += 20;
+  if (reg_fee) {
     doc
-      .text(row.sno, 50, y)
-      .text(row.particulars, 150, y)
-      .text(row.amount, 450, y);
+      .text("2.", 50, y)
+      .text("Registration Fee", 150, y)
+      .text(`${reg_fee}`, 450, y);
     y += 20;
-  });
+  }
 
-  // Calculate total
   const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
-
-  // Total
-  doc.moveDown().text("Total", 150, y).text(total.toString(), 450, y);
-
-  // Footer Section
   doc
-    .fontSize(10)
+    .font("Helvetica-Bold")
+    .text("Total", 150, y)
+    .text(`${total}`, 450, y);
+
+  // Payment Info
+  doc
+    .moveDown()
+    .font("Helvetica")
     .text(
-      `Received a sum of Rupee ${total} Payment By: ${payment_mode || "Cash"}`,
+      `Received a sum of Rupees ${total} by ${payment_mode || "Cash"}.`,
       50,
       y + 40
     )
-    .text(`Dated ${date || new Date().toLocaleDateString("en-GB")}`, 50, y + 60)
-    .text("Student's/Parent's Signature", 50, y + 80)
-    .text("Receiver's Signature", 400, y + 80);
+    .text(
+      `Date: ${date || new Date().toLocaleDateString("en-GB")}`,
+      50,
+      y + 60
+    )
+    .text("Student's/Parent's Signature", 50, y + 100)
+    .text("Receiver's Signature", 400, y + 100);
 
+  // Footer Note
   doc
-    .fontSize(10)
+    .moveDown()
+    .fontSize(9)
+    .fillColor("red")
     .text(
       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
       50,
-      y + 120
+      y + 130,
+      { width: 500 }
     );
 
-  doc.text("(For Student)", 50, 10);
-  // doc.text("(For Faculty)", 50, 360);
+  // Bottom Footer
+  doc
+    .fontSize(9)
+    .fillColor(blue)
+    .text("Visit Us: www.mceiindia.in", 50, 770)
+    .text("📞 Help line: 9617767802, 9229967996, 9039442551, 9131990309", 50, 785)
+    .text("📧 Email: mceiindia229@gmail.com", 50, 800)
+    .text("📱 Instagram/Facebook: @mceiindiarau", 50, 815);
 
-  // Comment out or remove image operations that might be causing issues
-  // Only include if the image files exist and are accessible
+  // Watermark (if available)
   try {
     if (fs.existsSync("./public/images/black.png")) {
       doc
@@ -139,17 +157,10 @@ function buildPDF(
           width: 470,
           height: 170,
         });
-      // doc.opacity(0.2).image("./public/images/black.png", -250, 510, {
-      //   width: 470,
-      //   height: 170,
-      // });
     }
   } catch (error) {
-    console.log("Warning: Could not load watermark image");
+    console.warn("Watermark image not found.");
   }
-
-  // Remove the duplicate 'end' event listener - it's already set up at the top
-  // doc.on("end", Endcallback); // Remove this line
 
   doc.end();
 }
@@ -501,9 +512,16 @@ router.get("/inquiry", isLoggedIn, async (req, res, next) => {
 });
 router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   // add enquiryBy in student model from req.user
-  if (req.user) req.body.enquiryBy = req.user.username;
-  await studentModel.create(req.body);
-  res.redirect("/allenquiry");
+  try{
+    console.log(req.body); 
+    if (req.user) req.body.enquiryBy = req.user.username;
+    await studentModel.create(req.body);
+    res.redirect("/allenquiry");
+  }catch(err){
+    console.log(err.message);
+    
+    res.send("Internal Server Error")
+  }
 });
 router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
   const { id } = req.query;

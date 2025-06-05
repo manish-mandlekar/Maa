@@ -145,7 +145,7 @@
                       <option selected disabled>Choose a course...</option>
                       <% course.forEach(function(singlecourse) { %>
                       <option value="<%= singlecourse._id %>">
-                        <%= singlecourse.courseCode %>
+                        <%= singlecourse.courseName %>
                       </option>
                       <% }); %>
                     </select>
@@ -154,10 +154,10 @@
                     <label for="inputEmail4" class="form-label"
                       >Select University</label
                     >
-                    <select name="course" class="form-select" required>
+                    <select name="university" class="form-select" required>
                       <option selected disabled>Choose a University...</option>
                       <% universities.forEach(function(university) { %>
-                      <option value="<%= university._id %>">
+                      <option value="<%= university.name %>">
                         <%= university.name %> <%=university.location %>
                       </option>
                       <% }); %>
@@ -165,7 +165,7 @@
                   </div>
                   <div class="col-md-12">
                     <label for="inputEmail4" class="form-label">Session</label>
-                    <select name="course" class="form-select" required>
+                    <select name="session" class="form-select" required>
                       <option selected disabled>Choose a Session...</option>
                       <option value="2023-2024">2022-2023</option>
                       <option value="2023-2024">2023-2024</option>

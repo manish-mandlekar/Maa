@@ -6,7 +6,10 @@ const feesSchema = new mongoose.Schema({
     ref: "StudentEnquiry",
   },
   registrationPaymentMode: String,
-  payment: Number,
+  payment: {
+    type: Number,
+    required: true
+  },
   payDate: {
     type: Date,
     default: Date.now,

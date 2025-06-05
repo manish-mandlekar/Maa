@@ -43,6 +43,9 @@ const studentEnquirySchema = new mongoose.Schema({
       ref: "Course",
     },
   ],
+  university: {
+    type: String
+  },
   enquiryBy: String,
   joiningDate: Date,
   reference: String,
