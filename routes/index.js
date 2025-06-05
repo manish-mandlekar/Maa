@@ -12,7 +12,7 @@ const universityModel = require("../models/university");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
-const pdfDoc = require("pdfkit");
+const PDFDocument = require("pdfkit");
 // const { MessageMedia } = require("whatsapp-web.js");
 // const whatsappClient = require("./whatsapp"); // your whatsapp.js file
 const { WritableStreamBuffer } = require("stream-buffers");
@@ -24,6 +24,136 @@ function isLoggedIn(req, res, next) {
     res.redirect("/");
   }
 }
+
+// function buildPDF(
+//   Datacallback,
+//   Endcallback,
+//   reg_no,
+//   date,
+//   name,
+//   lastName,
+//   course,
+//   reg_fee,
+//   paid_fee,
+//   contactNumber,
+//   payment_mode
+// ) {
+//   const doc = new pdfDoc({
+//     size: "A4",
+//     margin: 100,
+//   });
+
+//   // Set up event listeners
+//   doc.on("data", Datacallback);
+//   doc.on("end", Endcallback);
+
+//   // Student Section
+//   doc.fontSize(16).text("MAA COMPUTER EDUCATION INSTITUTE", 70, 10, {
+//     align: "center",
+//     underline: true,
+//   });
+//   doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
+//   doc
+//     .fontSize(10)
+//     .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
+
+//   // Branch Info
+//   doc
+//     .moveDown()
+//     .fontSize(10)
+//     .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
+//     .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
+//     .text("Email: mceiindia229@gmail.com", { underline: true });
+
+//   // Receipt Details - Use actual values instead of dots
+//   doc
+//     .fontSize(10)
+//     // .text(`Reg. No.: ${reg_no || "N/A"}`, 50, 105)
+//     .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 350, 105);
+
+//   // Name and Course - Use actual values
+//   doc
+//     .moveDown()
+//     .text(`Name: ${name || "N/A"} ${lastName || "N/A"}`, 50, 125)
+//     .text(`Contact: ${contactNumber || "N/A"}`, 350, 125);
+
+//   // Table Header
+//   doc
+//     .moveDown()
+//     .text("S.No.", 50, 145)
+//     .text("Particulars", 150, 145)
+//     .text("Amount", 450, 145);
+
+//   // Table Rows - Use actual values
+//   const tableRows = [
+//     { sno: "1.", particulars: "Paid Fee", amount: paid_fee || "3000" },
+//     // { sno: "1.", particulars: "Reg. Fee", amount: reg_fee || "1000" },
+//   ];
+
+//   let y = 165;
+//   tableRows.forEach((row) => {
+//     doc
+//       .text(row.sno, 50, y)
+//       .text(row.particulars, 150, y)
+//       .text(row.amount, 450, y);
+//     y += 20;
+//   });
+
+//   // Calculate total
+//   const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
+
+//   // Total
+//   doc.moveDown().text("Total", 150, y).text(total.toString(), 450, y);
+
+//   // Footer Section
+//   doc
+//     .fontSize(10)
+//     .text(
+//       `Received a sum of Rupee ${total} Payment By: ${payment_mode || "Cash"}`,
+//       50,
+//       y + 40
+//     )
+//     .text(`Dated ${date || new Date().toLocaleDateString("en-GB")}`, 50, y + 60)
+//     .text("Student's/Parent's Signature", 50, y + 80)
+//     .text("Receiver's Signature", 400, y + 80);
+
+//   doc
+//     .fontSize(10)
+//     .text(
+//       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
+//       50,
+//       y + 120
+//     );
+
+//   doc.text("(For Student)", 50, 10);
+//   // doc.text("(For Faculty)", 50, 360);
+
+//   // Comment out or remove image operations that might be causing issues
+//   // Only include if the image files exist and are accessible
+//   try {
+//     if (fs.existsSync("./public/images/black.png")) {
+//       doc
+//         .rotate(330)
+//         .opacity(0.2)
+//         .image("./public/images/black.png", -100, 200, {
+//           width: 470,
+//           height: 170,
+//         });
+//       // doc.opacity(0.2).image("./public/images/black.png", -250, 510, {
+//       //   width: 470,
+//       //   height: 170,
+//       // });
+//     }
+//   } catch (error) {
+//     console.log("Warning: Could not load watermark image");
+//   }
+
+//   // Remove the duplicate 'end' event listener - it's already set up at the top
+//   // doc.on("end", Endcallback); // Remove this line
+
+//   doc.end();
+// }
+
 
 function buildPDF(
   Datacallback,
@@ -38,121 +168,247 @@ function buildPDF(
   contactNumber,
   payment_mode
 ) {
-  const doc = new pdfDoc({
-    size: "A4",
-    margin: 100,
-  });
+  const doc = new PDFDocument({ size: "A4", margin: 50 });
 
-  // Set up event listeners
   doc.on("data", Datacallback);
   doc.on("end", Endcallback);
 
-  // Student Section
-  doc.fontSize(16).text("MAA COMPUTER EDUCATION INSTITUTE", 70, 10, {
-    align: "center",
-    underline: true,
-  });
-  doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
-  doc
-    .fontSize(10)
-    .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
+  const blue = "#0000ff";
+  const red = "#ff0000";
 
-  // Branch Info
-  doc
-    .moveDown()
-    .fontSize(10)
-    .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
-    .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
-    .text("Email: mceiindia229@gmail.com", { underline: true });
-
-  // Receipt Details - Use actual values instead of dots
-  doc
-    .fontSize(10)
-    // .text(`Reg. No.: ${reg_no || "N/A"}`, 50, 105)
-    .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 350, 105);
-
-  // Name and Course - Use actual values
-  doc
-    .moveDown()
-    .text(`Name: ${name || "N/A"} ${lastName || "N/A"}`, 50, 125)
-    .text(`Contact: ${contactNumber || "N/A"}`, 350, 125);
-
-  // Table Header
-  doc
-    .moveDown()
-    .text("S.No.", 50, 145)
-    .text("Particulars", 150, 145)
-    .text("Amount", 450, 145);
-
-  // Table Rows - Use actual values
-  const tableRows = [
-    { sno: "1.", particulars: "Paid Fee", amount: paid_fee || "3000" },
-    // { sno: "1.", particulars: "Reg. Fee", amount: reg_fee || "1000" },
-  ];
-
-  let y = 165;
-  tableRows.forEach((row) => {
+  // Draw the header logo/image at the top
+  try {
+    if (fs.existsSync("./public/images/real.jpeg")) {
+      doc.image("./public/images/real.jpeg", 50, 0, {
+        width: 495,
+        align: "top",
+      });
+      doc.moveDown(8); // Move down after logo
+    } else {
+      // Fallback: Create a placeholder header
+      doc
+        .fontSize(24)
+        .fillColor(blue)
+        .font("Helvetica-Bold")
+        .text("MAA COMPUTERS", 50, 50, { align: "center" })
+        .fontSize(14)
+        .text("EDUCATION INSTITUTE", 50, 80, { align: "center" });
+      doc.moveDown(3);
+    }
+  } catch (err) {
+    console.warn("Header logo image not found, using text header.");
+    // Fallback header
     doc
-      .text(row.sno, 50, y)
-      .text(row.particulars, 150, y)
-      .text(row.amount, 450, y);
-    y += 20;
-  });
+      .fontSize(24)
+      .fillColor(blue)
+      .font("Helvetica-Bold")
+      .text("MAA COMPUTERS", 50, 50, { align: "center" })
+      .fontSize(14)
+      .text("EDUCATION INSTITUTE", 50, 80, { align: "center" });
+    doc.moveDown(3);
+  }
 
-  // Calculate total
+  // Receipt header info with larger font - exactly as in original
+  const currentY = doc.y;
+  doc
+    .fontSize(12)
+    .fillColor("black")
+    .font("Helvetica")
+    .text(`Reg. No.: ${reg_no || "N/A"}`, 50, currentY)
+    .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 400, currentY);
+
+  // Student details with larger font
+  doc.moveDown(1);
+  const detailsY = doc.y;
+  doc
+    .fontSize(12)
+    .text(`Name: ${name || "N/A"}${lastName ? " " + lastName : ""}`, 50, detailsY)
+    .text(`Contact: ${contactNumber || "N/A"}`, 400, detailsY);
+
+  doc.moveDown(0.5);
+
+  
+  doc.fontSize(12).text(`Course Enrolled: ${course[0].courseName || "N/A"}`, 50);
+
+  // Table section with proper borders and increased font size
+  doc.moveDown(1.5);
+  const tableStartY = doc.y;
+  const tableWidth = 495;
+  const col1Width = 60;
+  const col2Width = 285;
+  const col3Width = 150;
+  
+  // Draw table border
+  doc.rect(50, tableStartY, tableWidth, 100).stroke();
+  
+  // Draw vertical lines
+  doc.moveTo(50 + col1Width, tableStartY).lineTo(50 + col1Width, tableStartY + 100).stroke();
+  doc.moveTo(50 + col1Width + col2Width, tableStartY).lineTo(50 + col1Width + col2Width, tableStartY + 100).stroke();
+  
+  // Draw horizontal lines
+  doc.moveTo(50, tableStartY + 25).lineTo(545, tableStartY + 25).stroke(); // After header
+  doc.moveTo(50, tableStartY + 50).lineTo(545, tableStartY + 50).stroke(); // After row 1
+  doc.moveTo(50, tableStartY + 75).lineTo(545, tableStartY + 75).stroke(); // After row 2
+  
+  // Table headers with blue color and larger font
+  doc
+    .fillColor(blue)
+    .fontSize(12)
+    .font("Helvetica-Bold")
+    .text("S.No.", 55, tableStartY + 8, { width: col1Width - 10, align: "center" })
+    .text("Particulars", 115, tableStartY + 8, { width: col2Width - 10, align: "center" })
+    .text("Amount", 405, tableStartY + 8, { width: col3Width - 10, align: "center" });
+
+  // Table rows with larger font
+  doc.fillColor("black").font("Helvetica").fontSize(11);
+
+  // Row 1: Registration Fee
+  doc
+    .text("1", 55, tableStartY + 33, { width: col1Width - 10, align: "center" })
+    .text("Registration Fee", 115, tableStartY + 33, { width: col2Width - 10, align: "left" })
+    .text(`${reg_fee || "0"}`, 395, tableStartY + 33, { width: col3Width - 10, align: "center" });
+
+  // Row 2: Paid Fee
+  doc
+    .text("2", 55, tableStartY + 58, { width: col1Width - 10, align: "center" })
+    .text("Paid Fee", 115, tableStartY + 58, { width: col2Width - 10, align: "left" })
+    .text(`${paid_fee || "0"}`, 395, tableStartY + 58, { width: col3Width - 10, align: "center" });
+
+  // Total row with bold font
   const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
-
-  // Total
-  doc.moveDown().text("Total", 150, y).text(total.toString(), 450, y);
-
-  // Footer Section
   doc
-    .fontSize(10)
-    .text(
-      `Received a sum of Rupee ${total} Payment By: ${payment_mode || "Cash"}`,
-      50,
-      y + 40
-    )
-    .text(`Dated ${date || new Date().toLocaleDateString("en-GB")}`, 50, y + 60)
-    .text("Student's/Parent's Signature", 50, y + 80)
-    .text("Receiver's Signature", 400, y + 80);
+    .font("Helvetica-Bold")
+    .fontSize(12)
+    .text("Total", 115, tableStartY + 83, { width: col2Width - 10, align: "left" })
+    .text(`${total}`, 395, tableStartY + 83, { width: col3Width - 10, align: "center" });
 
+  // Payment information with larger font
+  doc.moveDown(2);
   doc
-    .fontSize(10)
+    .font("Helvetica")
+    .fontSize(12)
+    .text(`Received a sum of Rupees ${total} by ${payment_mode || "UPI"}.`);
+
+  doc.moveDown(1);
+  doc.fontSize(12).text(`Dated: ${date || new Date().toLocaleDateString("en-GB")}`);
+
+  // Signature section with larger font
+  doc.moveDown(3);
+  const signatureY = doc.y;
+  doc
+    .fontSize(12)
+    .text("Student's/Parent's Signature", 50, signatureY)
+    .text("Receiver's Signature", 400, signatureY);
+
+  // Important note in red with larger font
+  doc.moveDown(2);
+  doc
+    .fontSize(11)
+    .fillColor(red)
     .text(
       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
       50,
-      y + 120
+      doc.y,
+      { width: 495 }
     );
 
-  doc.text("(For Student)", 50, 10);
-  // doc.text("(For Faculty)", 50, 360);
+  // Footer contact information with larger font
+  doc.moveDown(2);
+  doc
+    .fontSize(11)
+    .fillColor("black")
+    .text("Visit Us: www.mceiindia.in", 50);
 
-  // Comment out or remove image operations that might be causing issues
-  // Only include if the image files exist and are accessible
-  try {
-    if (fs.existsSync("./public/images/black.png")) {
-      doc
-        .rotate(330)
-        .opacity(0.2)
-        .image("./public/images/black.png", -100, 200, {
-          width: 470,
-          height: 170,
-        });
-      // doc.opacity(0.2).image("./public/images/black.png", -250, 510, {
-      //   width: 470,
-      //   height: 170,
-      // });
-    }
-  } catch (error) {
-    console.log("Warning: Could not load watermark image");
-  }
-
-  // Remove the duplicate 'end' event listener - it's already set up at the top
-  // doc.on("end", Endcallback); // Remove this line
+  doc.text("Help line: 9617767802, 9229967996, 9039442551, 9131990309", 50);
+  doc.text("Email: mceiindia229@gmail.com | Social: @mceiindiarau", 50);
 
   doc.end();
 }
+
+// Example usage function
+function generateReceipt() {
+  const chunks = [];
+  
+  buildPDF(
+    // Data callback - collect PDF chunks
+    (chunk) => chunks.push(chunk),
+    
+    // End callback - create and download PDF
+    () => {
+      const pdfBlob = new Blob(chunks, { type: "application/pdf" });
+      const url = URL.createObjectURL(pdfBlob);
+      
+      // Create download link
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Receipt_${new Date().getTime()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
+    
+    // Receipt parameters
+    "MCEI-2025-001",              // reg_no
+    "05/06/2025",                 // date
+    "Manish",                     // name
+    "Mandlekar",                  // lastName
+    "Full Stack Development",      // course
+    "1000",                       // reg_fee
+    "3000",                       // paid_fee
+    "9876543210",                 // contactNumber
+    "UPI"                         // payment_mode
+  );
+}
+
+// Required imports for Node.js (add these at the top of your routes/index.js file):
+
+
+// For browser environment, include:
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfkit/0.13.0/pdfkit.standalone.min.js"></script>
+
+// Example usage function
+function generateReceipt() {
+  const chunks = [];
+  
+  buildPDF(
+    // Data callback - collect PDF chunks
+    (chunk) => chunks.push(chunk),
+    
+    // End callback - create and download PDF
+    () => {
+      const pdfBlob = new Blob(chunks, { type: "application/pdf" });
+      const url = URL.createObjectURL(pdfBlob);
+      
+      // Create download link
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Receipt_${new Date().getTime()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
+    
+    // Receipt parameters
+    "MCEI-2025-001",              // reg_no
+    "05/06/2025",                 // date
+    "Manish",                     // name
+    "Mandlekar",                  // lastName
+    "Full Stack Development",      // course
+    "1000",                       // reg_fee
+    "3000",                       // paid_fee
+    "9876543210",                 // contactNumber
+    "UPI"                         // payment_mode
+  );
+}
+
+// For Node.js environment, you would also need:
+// const PDFDocument = require('pdfkit');
+// const fs = require('fs');
+
+// For browser environment, include:
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfkit/0.13.0/pdfkit.standalone.min.js"></script>
 
 passport.use(new localStrategy(userModel.authenticate()));
 mongoose
