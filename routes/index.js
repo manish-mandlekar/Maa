@@ -666,6 +666,13 @@ router.get("/logout", (req, res, next) => {
 router.get("/profile", isLoggedIn, (req, res, next) => {
   res.render("profile");
 });
+//admission form
+router.get('/admission', async function (req,res,next) {
+  res.render("admission")
+})
+router.get('/shortTermCourse', async function (req,res,next) {
+  res.render("shortTermCourse")
+})
 
 // R
 router.get("/register", async function (req, res, next) {
@@ -696,6 +703,7 @@ router.get("/rejected", isLoggedIn, async (req, res, next) => {
     .populate("course");
   res.render("rejected", { students });
 });
+
 
 // S
 router.get("/signup", function (req, res, next) {
