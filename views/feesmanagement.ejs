@@ -74,10 +74,10 @@
           <table>
             <thead>
               <tr>
+                <th>R.No.</th>
                 <th>Date</th>
                 <th>Sender</th>
-                <th>Mode of Payment</th>
-                <th>Credit</th>
+                <th>Payment Mode</th>
                 <th>Amount</th>
                 <th>Action</th>
               </tr>
@@ -85,6 +85,7 @@
             <tbody>
               <% fees.forEach(elem=>{ %>
               <tr>
+                <td><%= elem?.receiptNumber %></td>
                 <td>
                   <%= elem.payDate.toLocaleTimeString() %> - <%=
                   elem.payDate.toLocaleDateString('en-GB') %>
@@ -93,7 +94,7 @@
                   <%= elem.student.firstName %> <%= elem.student.lastName %>
                 </td>
                 <td><%= elem.registrationPaymentMode %></td>
-                <td><i class="ri-arrow-right-down-line"></i> Credited</td>
+                <!-- <td><i class="ri-arrow-right-down-line"></i> Credited</td> -->
                 <td>₹<%= elem.payment %>.00</td>
                 <td>
                   <!-- <a href="/delete/transaction/<%= elem._id %>">delete</a> -->

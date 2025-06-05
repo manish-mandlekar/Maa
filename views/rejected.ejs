@@ -49,10 +49,10 @@
                 <% students.forEach(student=>{ %>
                 <tr>
                   <th scope="row"><%= student.firstName %></th>
-                  <td><%= student.contactNumber %></td>
-                  <td><%= student.course[0].courseCode %></td>
-                  <td><%= student.due %></td>
-                  <td><%= student.enquiryDate.toDateString() %></td>
+                  <td><%= student?.contactNumber %></td>
+                  <td><%= student?.course[0]?.courseCode %></td>
+                  <td><%= student?.due %></td>
+                  <td><%= student?.enquiryDate?.toDateString() %></td>
                   <td>
                     <!-- <a href="">
                       ❌

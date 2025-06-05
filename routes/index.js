@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 const userModel = require("../models/Usermodel");
 const staffModel = require("../models/staff");
 const studentModel = require("../models/student");
+const admissionModel = require("../models/admission");
 const courseModel = require("../models/course");
+const shortCourseModel = require("../models/shortCourse");
 const feesModel = require("../models/fees");
 const universityModel = require("../models/university");
 const passport = require("passport");
@@ -14,7 +16,6 @@ const pdfDoc = require("pdfkit");
 const { MessageMedia } = require("whatsapp-web.js");
 const whatsappClient = require("./whatsapp"); // your whatsapp.js file
 const { WritableStreamBuffer } = require("stream-buffers");
-
 function isLoggedIn(req, res, next) {
   return next();
   if (req.isAuthenticated()) {
@@ -23,90 +24,6 @@ function isLoggedIn(req, res, next) {
     res.redirect("/");
   }
 }
-
-// y = y + 20;
-//   doc
-//     .moveDown()
-//     .fontSize(16)
-//     .text("MAA COMPUTER EDUCATION INSTITUTE", 70, y + 130, {
-//       align: "center",
-//       underline: true,
-//     });
-//   doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
-//   doc
-//     .fontSize(10)
-//     .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
-
-//   // Branch Info
-//   doc
-//     .moveDown()
-//     .fontSize(10)
-//     .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
-//     .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
-//     .text("Email: mceiindia229@gmail.com", { underline: true });
-
-//   // Receipt Details
-//   doc
-//     .fontSize(10)
-//     // .text(`Reg. No.: ${reg_no || "N/A"}`, 50, y + 130 + 105)
-//     .text(
-//       `Date: ${date || new Date().toLocaleDateString()}`,
-//       350,
-//       y + 130 + 105
-//     );
-
-//   // Name and Course
-//   doc
-//     .moveDown()
-//     .text(`Name: ${name || "N/A"}`, 50, y + 130 + 125)
-//     .text(`Course: ${course || "N/A"}`, 350, y + 130 + 125);
-
-//   // Table Header
-//   doc
-//     .moveDown()
-//     .text("S.No.", 50, y + 130 + 145)
-//     .text("Particulars", 150, y + 130 + 145)
-//     .text("Amount", 450, y + 130 + 145);
-
-//   // Table Rows
-//   y = y + 295;
-//   tableRows.forEach((row) => {
-//     doc
-//       .text(row.sno, 50, y)
-//       .text(row.particulars, 150, y)
-//       .text(row.amount, 450, y);
-//     y += 20;
-//   });
-
-//   // Total
-//   doc.moveDown().text("Total", 150, y).text(total.toString(), 450, y);
-
-//   // Footer Section
-//   doc
-//     .fontSize(10)
-//     .text(
-//       `Received a sum of Rupee ${total} Payment By: ${payment_mode || "Cash"}`,
-//       50,
-//       y + 40
-//     )
-//     .text(`Dated ${date || new Date().toLocaleDateString()}`, 50, y + 60)
-//     .text("Student's/Parent's Signature", 50, y + 80)
-//     .text("Receiver's Signature", 400, y + 80);
-
-//   doc
-//     .fontSize(10)
-//     .text(
-//       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
-//       50,
-//       y + 120
-//     );
-
-//   doc.text(
-//     "--------------------------------------------------------------------------------------------------------------------------------------",
-//     50,
-//     340,
-//     { align: "center" }
-//   );
 
 function buildPDF(
   Datacallback,
@@ -208,8 +125,6 @@ function buildPDF(
       y + 120
     );
 
-  // Faculty Section
-
   doc.text("(For Student)", 50, 10);
   // doc.text("(For Faculty)", 50, 360);
 
@@ -249,6 +164,35 @@ mongoose
     err;
   });
 /* GET home page. */
+async function backfillReceiptNumbers() {
+  const existing = await feesModel.find({}); // sort chronologically if needed
+  let counter = 3502;
+
+  for (const doc of existing) {
+    if (!doc.receiptNumber) {
+      doc.receiptNumber = counter++;
+      await doc.save();
+    }
+  }
+  console.log("backup fill");
+}
+// backfillReceiptNumbers()
+// removeReceiptNumbers()
+async function removeReceiptNumbers() {
+  try {
+    const result = await feesModel.updateMany(
+      { receiptNumber: { $exists: true } },
+      { $unset: { receiptNumber: 1 } }
+    );
+
+    console.log(
+      `Removed receiptNumber from ${result.modifiedCount} documents.`
+    );
+  } catch (error) {
+    console.error("Error while removing receiptNumber:", error);
+  }
+}
+
 router.get("/", function (req, res, next) {
   res.render("index");
 });
@@ -292,6 +236,68 @@ router.post("/addFeeStructure", isLoggedIn, async (req, res, next) => {
   course.totalFee = totalFee;
   await course.save();
   res.redirect("/addFeeStructure");
+});
+router.get("/admission", async function (req, res, next) {
+  const shortCourses = await shortCourseModel.find();
+  res.render("admission", { shortCourses });
+});
+router.post("/admission", async function (req, res, next) {
+  await admissionModel.create(req.body);
+  console.log(req.body);
+  res.redirect("back");
+});
+router.get("/admission-student", isLoggedIn, async (req, res, next) => {
+  try {
+    const { name, contactNumber, page = 1 } = req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    let query;
+
+    // Build dynamic query
+
+    if (name) {
+      query.$or = [
+        { firstName: new RegExp(name, "i") },
+        { lastName: new RegExp(name, "i") },
+      ];
+    }
+
+    if (contactNumber) {
+      query.contactNumber = contactNumber;
+    }
+
+    console.log(query);
+
+    const [std, totalCount] = await Promise.all([
+      admissionModel
+        .find(query)
+        .populate("course")
+        .skip(skip)
+        .limit(limit)
+        .sort({ joiningDate: -1 }),
+      admissionModel.countDocuments(query),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+    res.render("admissionStudent", {
+      std,
+      query: req.query,
+      currentPage: parseInt(page),
+      totalPages,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+router.get("/admprofile/:id", isLoggedIn, async (req, res, next) => {
+  const courses = await shortCourseModel.find();
+  const founduser = await admissionModel
+    .findOne({
+      _id: req.params.id,
+    })
+    .populate("course");
+
+  res.render("admprofile", { founduser, courses });
 });
 router.get("/addStaff", isLoggedIn, (req, res, next) => {
   res.render("addStaff");
@@ -389,12 +395,6 @@ router.get("/dashboard", isLoggedIn, async (req, res, next) => {
   const courses = await courseModel.find();
   res.render("dashboard", { student, courses });
 });
-router.get("/reject/enquiry/:id", isLoggedIn, async (req, res, next) => {
-  const student = await studentModel.findById({ _id: req.params.id });
-  student.rejected = true;
-  await student.save();
-  res.redirect("back");
-});
 router.get("/delete/transaction/:id", isLoggedIn, async (req, res, next) => {
   await feesModel.findOneAndDelete({
     _id: req.params.id,
@@ -485,7 +485,9 @@ router.get("/fees", isLoggedIn, async (req, res, next) => {
 
 // G
 router.get("/getdate", isLoggedIn, async (req, res, next) => {
-  const students = await studentModel.find({ registered: true, rejected: false }).populate("course");
+  const students = await studentModel
+    .find({ registered: true, rejected: false })
+    .populate("course");
   students.sort(function (a, b) {
     return new Date(a.dueDate) - new Date(b.dueDate);
   });
@@ -499,7 +501,7 @@ router.get("/inquiry", isLoggedIn, async (req, res, next) => {
 });
 router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   // add enquiryBy in student model from req.user
-  req.body.enquiryBy = req.user.username;
+  if (req.user) req.body.enquiryBy = req.user.username;
   await studentModel.create(req.body);
   res.redirect("/allenquiry");
 });
@@ -666,13 +668,6 @@ router.get("/logout", (req, res, next) => {
 router.get("/profile", isLoggedIn, (req, res, next) => {
   res.render("profile");
 });
-//admission form
-router.get('/admission', async function (req,res,next) {
-  res.render("admission")
-})
-router.get('/shortTermCourse', async function (req,res,next) {
-  res.render("shortTermCourse")
-})
 
 // R
 router.get("/register", async function (req, res, next) {
@@ -701,9 +696,16 @@ router.get("/rejected", isLoggedIn, async (req, res, next) => {
   const students = await studentModel
     .find({ rejected: true })
     .populate("course");
+  console.log(students);
+
   res.render("rejected", { students });
 });
-
+router.get("/reject/enquiry/:id", isLoggedIn, async (req, res, next) => {
+  const student = await studentModel.findById({ _id: req.params.id });
+  student.rejected = true;
+  await student.save();
+  res.redirect("back");
+});
 
 // S
 router.get("/signup", function (req, res, next) {
@@ -758,12 +760,29 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
   }
 });
 router.get("/stdprofile/:id", isLoggedIn, async (req, res, next) => {
+  const courses = await courseModel.find();
   const founduser = await studentModel
     .findOne({
       _id: req.params.id,
     })
     .populate("course");
-  res.render("stdprofile", { founduser });
+
+  res.render("stdprofile", { founduser, courses });
+});
+router.post("/short-course", isLoggedIn, (req, res, next) => {
+  shortCourseModel
+    .create({
+      courseName: req.body.courseName,
+      courseCode: req.body.courseCode,
+      courseDuration: req.body.courseDuration,
+    })
+    .then(() => {
+      res.redirect("back");
+    });
+});
+router.get("/shortTermCourse", async function (req, res, next) {
+  const shortCourses = await shortCourseModel.find();
+  res.render("shortTermCourse", { shortCourses });
 });
 
 // U
@@ -777,26 +796,76 @@ router.delete("/universities/:id", async (req, res) => {
   }
 });
 router.post("/update/profile/:id", isLoggedIn, async (req, res, next) => {
-  await studentModel.findOneAndUpdate(
-    {
-      _id: req.params.id,
-    },
-    req.body
-  );
+  try {
+    const updateData = { ...req.body };
 
-  res.redirect("/student");
+    // Ensure course is always treated as an array of ObjectIds
+    if (req.body.course) {
+      updateData.course = Array.isArray(req.body.course)
+        ? req.body.course
+        : [req.body.course];
+    }
+
+    await studentModel.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
+
+    res.redirect("/student");
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+router.post("/update/admprofile/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    const updateData = { ...req.body };
+
+    // Ensure course is always treated as an array of ObjectIds
+    if (req.body.course) {
+      updateData.course = Array.isArray(req.body.course)
+        ? req.body.course
+        : [req.body.course];
+    }
+
+    await admissionModel.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
+
+    res.redirect("back");
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+router.post("/update-course/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    await courseModel.findOneAndUpdate({ _id: req.params.id }, req.body);
+    res.redirect("back");
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+router.post("/update-short-course/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    await shortCourseModel.findOneAndUpdate({ _id: req.params.id }, req.body);
+    res.redirect("back");
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
   const foundstudent = await studentModel.findOne({
     _id: req.params.id,
   });
-  foundstudent.due = foundstudent.due - +req.body.paid;
-  await foundstudent.save();
   await feesModel.create({
     registrationPaymentMode: req.body.registrationPaymentMode,
     student: foundstudent._id,
     payment: req.body.paid,
   });
+  foundstudent.due = foundstudent.due - +req.body.paid;
+  await foundstudent.save();
   res.redirect("/fees");
 });
 

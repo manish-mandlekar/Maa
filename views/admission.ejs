@@ -16,9 +16,9 @@
       <div id="right">
         <%- include('./partials/right-header') %>
         <div id="cover">
-            <h1>Admission Form</h1>
+          <h1>Admission Form</h1>
           <div class="inq">
-            <form action="/inquiry" method="post" class="row g-3">
+            <form action="/admission" method="post" class="row g-3">
               <div class="col-md-6">
                 <label for="inputEmail4" class="form-label">Student Name</label>
                 <input
@@ -43,7 +43,7 @@
                   id="inputPassword4"
                 />
               </div>
-             
+
               <div class="col-12">
                 <label for="inputAddress" class="form-label"
                   >Name of Father / Husband</label
@@ -57,13 +57,12 @@
                   placeholder="Enter Name Of Father / Husband"
                 />
               </div>
-               <div class="col-12">
+              <div class="col-12">
                 <label for="inputAddress" class="form-label"
                   >Name of Mother</label
                 >
                 <input
-                  
-                  type="email"
+                  type="text"
                   name="motherName"
                   class="form-control"
                   id="inputAddress"
@@ -84,7 +83,9 @@
                 />
               </div>
               <div class="col-md-6">
-                <label for="inputCity" class="form-label">Academic Qualification</label>
+                <label for="inputCity" class="form-label"
+                  >Academic Qualification</label
+                >
                 <input
                   required
                   name="qualification"
@@ -95,11 +96,9 @@
                 />
               </div>
               <div class="col-md-2">
-                <label for="inputZip" class="form-label"
-                  >Date Of Joining</label
-                >
+                <label for="inputZip" class="form-label">Date Of Joining</label>
                 <input
-                  name="JoiningDate"
+                  name="joiningDate"
                   required
                   type="date"
                   placeholder="Address"
@@ -145,11 +144,9 @@
                     >
                     <select name="course" class="form-select" required>
                       <option selected disabled>Choose a course...</option>
-                      
-                      <option value="">
-                        
-                      </option>
-                     
+                      <% shortCourses.forEach(course=>{ %>
+                      <option value="<%= course._id %>"><%= course.courseName %></option>
+                      <% }) %>
                     </select>
                   </div>
                   <div class="col-md-12">
@@ -157,30 +154,30 @@
                       >Permanent Address</label
                     >
                     <input
-                  required
-                  name="qualification"
-                  type="text"
-                  class="form-control"
-                  placeholder="Enter Permanent Address"
-                  id="inputCity"
-                />
-                  </div>
-            
-
-                  <div class="col-6">
-                    <label for="inputAddress" class="form-label"
-                      >Enquiry By</label
-                    >
-                    <input
                       required
+                      name="address"
                       type="text"
-                      name="enquiryBy"
                       class="form-control"
-                      id="inputAddress"
-                      placeholder="Enter Name"
+                      placeholder="Enter Permanent Address"
+                      id="inputCity"
                     />
                   </div>
-                  <div class="col-md-4">
+                </div>
+                <div class="row g-3" style="margin-top: 1vmax">
+                  <div class="col-md-6" style="margin-top: 1vmax">
+                    <label for="inputState" class="form-label"
+                      >Registration Payment:</label
+                    >
+                    <select
+                      name="registrationPayment"
+                      id="inputState"
+                      class="form-select"
+                    >
+                      <option selected>Done</option>
+                      <option>Not Done</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
                     <label for="inputState" class="form-label"
                       >Registration Payment Mode:</label
                     >
@@ -189,10 +186,11 @@
                       id="inputState"
                       class="form-select"
                     >
-                      <option selected>Cash</option>
-                      <option>Phone pe</option>
-                      <option>Google pay</option>
-                      <option>Cheque</option>
+                      <option value="Cash" selected>Cash</option>
+                      <option value="Phone pe">Phone pe</option>
+                      <option value="Google pay">Google pay</option>
+                      <option value="Paytm">Paytm</option>
+                      <option value="Cheque">Cheque</option>
                     </select>
                   </div>
                 </div>
@@ -222,19 +220,7 @@
                     />
                   </div>
                 </div>
-                <div class="col-md-4" style="margin-top: 1vmax">
-                  <label for="inputState" class="form-label"
-                    >Registration Payment:</label
-                  >
-                  <select
-                    name="registrationPayment"
-                    id="inputState"
-                    class="form-select"
-                  >
-                    <option selected>Done</option>
-                    <option>Not Done</option>
-                  </select>
-                </div>
+
                 <div class="col-md-6" style="margin-top: 1vmax">
                   <label for="inputPassword4" class="form-label"
                     >Due Amount Date</label

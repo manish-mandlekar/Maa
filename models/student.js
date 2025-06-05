@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// Define a schema for student inquiries
 const studentEnquirySchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -21,6 +20,7 @@ const studentEnquirySchema = new mongoose.Schema({
   contactNumber: {
     type: Number,
     required: true,
+    unique: true,
   },
   qualification: {
     type: String,

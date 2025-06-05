@@ -50,7 +50,7 @@
       <%- include('./partials/header') %>
       <div id="right">
         <%- include('./partials/right-header') %>
-        <form action="/update/profile/<%= founduser._id %>" method="post">
+        <form action="/update/admprofile/<%= founduser._id %>" method="post">
           <h1>Student Profile</h1>
           <div class="form-group">
             <label>First Name:</label>
@@ -77,15 +77,6 @@
               name="fatherName"
               class="form-control"
               value="<%= founduser.fatherName %>"
-            />
-          </div>
-          <div class="form-group">
-            <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              class="form-control"
-              value="<%= founduser.email %>"
             />
           </div>
           <div class="form-group">
@@ -137,12 +128,6 @@
               class="form-control"
               value="<%= founduser.address %>"
             />
-          </div>
-          <div class="form-group">
-            <label>Enquiry Date:</label>
-            <span class="readonly-text"
-              ><%= founduser.enquiryDate.toDateString() %></span
-            >
           </div>
           <div class="form-group">
             <label>Joining Date:</label>

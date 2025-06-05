@@ -17,27 +17,26 @@ body {
   border-right: 1px solid #dadada;
   background-color: white;
 }
-.cnt {
+.nav-item {
   width: 100%;
   height: 4vw;
   padding: 0 1vmax;
   display: flex;
   align-items: center;
-  margin-top: 1vmax;
   gap: 1vmax;
 }
-.cnt > ion-icon {
+.nav-item > ion-icon {
   font-size: 1.5vw;
   color: black;
 }
-.cnt > h3 {
+.nav-item > h3 {
   font-weight: 400;
   color: #315a51;
   text-transform: uppercase;
   font-size: 1.3vw;
   margin-top: .5vw;
 }
-.cnt:hover {
+.nav-item:hover {
   background-color: #f1f5fa;
 }
 .flex{
