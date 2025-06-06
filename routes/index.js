@@ -154,7 +154,6 @@ function isLoggedIn(req, res, next) {
 //   doc.end();
 // }
 
-
 function buildPDF(
   Datacallback,
   Endcallback,
@@ -215,20 +214,29 @@ function buildPDF(
     .fillColor("black")
     .font("Helvetica")
     .text(`Reg. No.: ${reg_no || "N/A"}`, 50, currentY)
-    .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 400, currentY);
+    .text(
+      `Date: ${date || new Date().toLocaleDateString("en-GB")}`,
+      400,
+      currentY
+    );
 
   // Student details with larger font
   doc.moveDown(1);
   const detailsY = doc.y;
   doc
     .fontSize(12)
-    .text(`Name: ${name || "N/A"}${lastName ? " " + lastName : ""}`, 50, detailsY)
+    .text(
+      `Name: ${name || "N/A"}${lastName ? " " + lastName : ""}`,
+      50,
+      detailsY
+    )
     .text(`Contact: ${contactNumber || "N/A"}`, 400, detailsY);
 
   doc.moveDown(0.5);
 
-  
-  doc.fontSize(12).text(`Course Enrolled: ${course[0].courseName || "N/A"}`, 50);
+  doc
+    .fontSize(12)
+    .text(`Course Enrolled: ${course[0].courseName || "N/A"}`, 50);
 
   // Table section with proper borders and increased font size
   doc.moveDown(1.5);
@@ -237,27 +245,51 @@ function buildPDF(
   const col1Width = 60;
   const col2Width = 285;
   const col3Width = 150;
-  
+
   // Draw table border
   doc.rect(50, tableStartY, tableWidth, 100).stroke();
-  
+
   // Draw vertical lines
-  doc.moveTo(50 + col1Width, tableStartY).lineTo(50 + col1Width, tableStartY + 100).stroke();
-  doc.moveTo(50 + col1Width + col2Width, tableStartY).lineTo(50 + col1Width + col2Width, tableStartY + 100).stroke();
-  
+  doc
+    .moveTo(50 + col1Width, tableStartY)
+    .lineTo(50 + col1Width, tableStartY + 100)
+    .stroke();
+  doc
+    .moveTo(50 + col1Width + col2Width, tableStartY)
+    .lineTo(50 + col1Width + col2Width, tableStartY + 100)
+    .stroke();
+
   // Draw horizontal lines
-  doc.moveTo(50, tableStartY + 25).lineTo(545, tableStartY + 25).stroke(); // After header
-  doc.moveTo(50, tableStartY + 50).lineTo(545, tableStartY + 50).stroke(); // After row 1
-  doc.moveTo(50, tableStartY + 75).lineTo(545, tableStartY + 75).stroke(); // After row 2
-  
+  doc
+    .moveTo(50, tableStartY + 25)
+    .lineTo(545, tableStartY + 25)
+    .stroke(); // After header
+  doc
+    .moveTo(50, tableStartY + 50)
+    .lineTo(545, tableStartY + 50)
+    .stroke(); // After row 1
+  doc
+    .moveTo(50, tableStartY + 75)
+    .lineTo(545, tableStartY + 75)
+    .stroke(); // After row 2
+
   // Table headers with blue color and larger font
   doc
-    .fillColor(blue)
+    .fillColor("black")
     .fontSize(12)
     .font("Helvetica-Bold")
-    .text("S.No.", 55, tableStartY + 8, { width: col1Width - 10, align: "center" })
-    .text("Particulars", 115, tableStartY + 8, { width: col2Width - 10, align: "center" })
-    .text("Amount", 405, tableStartY + 8, { width: col3Width - 10, align: "center" });
+    .text("S.No.", 55, tableStartY + 8, {
+      width: col1Width - 10,
+      align: "center",
+    })
+    .text("Particulars", 115, tableStartY + 8, {
+      width: col2Width - 10,
+      align: "center",
+    })
+    .text("Amount", 405, tableStartY + 8, {
+      width: col3Width - 10,
+      align: "center",
+    });
 
   // Table rows with larger font
   doc.fillColor("black").font("Helvetica").fontSize(11);
@@ -265,32 +297,56 @@ function buildPDF(
   // Row 1: Registration Fee
   doc
     .text("1", 55, tableStartY + 33, { width: col1Width - 10, align: "center" })
-    .text("Registration Fee", 115, tableStartY + 33, { width: col2Width - 10, align: "left" })
-    .text(`${reg_fee || "0"}`, 395, tableStartY + 33, { width: col3Width - 10, align: "center" });
+    .text("Registration Fee", 115, tableStartY + 33, {
+      width: col2Width - 10,
+      align: "left",
+    })
+    .text(`${reg_fee || "0"}`, 395, tableStartY + 33, {
+      width: col3Width - 10,
+      align: "center",
+    });
 
   // Row 2: Paid Fee
   doc
     .text("2", 55, tableStartY + 58, { width: col1Width - 10, align: "center" })
-    .text("Paid Fee", 115, tableStartY + 58, { width: col2Width - 10, align: "left" })
-    .text(`${paid_fee || "0"}`, 395, tableStartY + 58, { width: col3Width - 10, align: "center" });
+    .text("Paid Fee", 115, tableStartY + 58, {
+      width: col2Width - 10,
+      align: "left",
+    })
+    .text(`${paid_fee || "0"}`, 395, tableStartY + 58, {
+      width: col3Width - 10,
+      align: "center",
+    });
 
   // Total row with bold font
   const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
   doc
     .font("Helvetica-Bold")
     .fontSize(12)
-    .text("Total", 115, tableStartY + 83, { width: col2Width - 10, align: "left" })
-    .text(`${total}`, 395, tableStartY + 83, { width: col3Width - 10, align: "center" });
+    .text("Total", 115, tableStartY + 83, {
+      width: col2Width - 10,
+      align: "left",
+    })
+    .text(`${total}`, 395, tableStartY + 83, {
+      width: col3Width - 10,
+      align: "center",
+    });
 
   // Payment information with larger font
   doc.moveDown(2);
   doc
     .font("Helvetica")
     .fontSize(12)
-    .text(`Received a sum of Rupees ${total} by ${payment_mode || "UPI"}.`);
+    .text(
+      `Received a sum of Rupees ${total} by ${payment_mode || "UPI"}.`,
+      50,
+      400
+    );
 
   doc.moveDown(1);
-  doc.fontSize(12).text(`Dated: ${date || new Date().toLocaleDateString("en-GB")}`);
+  doc
+    .fontSize(12)
+    .text(`Dated: ${date || new Date().toLocaleDateString("en-GB")}`);
 
   // Signature section with larger font
   doc.moveDown(3);
@@ -314,101 +370,13 @@ function buildPDF(
 
   // Footer contact information with larger font
   doc.moveDown(2);
-  doc
-    .fontSize(11)
-    .fillColor("black")
-    .text("Visit Us: www.mceiindia.in", 50);
+  doc.fontSize(11).fillColor("black").text("Visit Us: www.mceiindia.in", 50);
 
   doc.text("Help line: 9617767802, 9229967996, 9039442551, 9131990309", 50);
   doc.text("Email: mceiindia229@gmail.com | Social: @mceiindiarau", 50);
 
   doc.end();
 }
-
-// Example usage function
-function generateReceipt() {
-  const chunks = [];
-  
-  buildPDF(
-    // Data callback - collect PDF chunks
-    (chunk) => chunks.push(chunk),
-    
-    // End callback - create and download PDF
-    () => {
-      const pdfBlob = new Blob(chunks, { type: "application/pdf" });
-      const url = URL.createObjectURL(pdfBlob);
-      
-      // Create download link
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `Receipt_${new Date().getTime()}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    },
-    
-    // Receipt parameters
-    "MCEI-2025-001",              // reg_no
-    "05/06/2025",                 // date
-    "Manish",                     // name
-    "Mandlekar",                  // lastName
-    "Full Stack Development",      // course
-    "1000",                       // reg_fee
-    "3000",                       // paid_fee
-    "9876543210",                 // contactNumber
-    "UPI"                         // payment_mode
-  );
-}
-
-// Required imports for Node.js (add these at the top of your routes/index.js file):
-
-
-// For browser environment, include:
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfkit/0.13.0/pdfkit.standalone.min.js"></script>
-
-// Example usage function
-function generateReceipt() {
-  const chunks = [];
-  
-  buildPDF(
-    // Data callback - collect PDF chunks
-    (chunk) => chunks.push(chunk),
-    
-    // End callback - create and download PDF
-    () => {
-      const pdfBlob = new Blob(chunks, { type: "application/pdf" });
-      const url = URL.createObjectURL(pdfBlob);
-      
-      // Create download link
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `Receipt_${new Date().getTime()}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    },
-    
-    // Receipt parameters
-    "MCEI-2025-001",              // reg_no
-    "05/06/2025",                 // date
-    "Manish",                     // name
-    "Mandlekar",                  // lastName
-    "Full Stack Development",      // course
-    "1000",                       // reg_fee
-    "3000",                       // paid_fee
-    "9876543210",                 // contactNumber
-    "UPI"                         // payment_mode
-  );
-}
-
-// For Node.js environment, you would also need:
-// const PDFDocument = require('pdfkit');
-// const fs = require('fs');
-
-// For browser environment, include:
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfkit/0.13.0/pdfkit.standalone.min.js"></script>
 
 passport.use(new localStrategy(userModel.authenticate()));
 mongoose
@@ -785,9 +753,8 @@ router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
   // Validate contact number
   // res.json(Fees.student);
 
-  const { payment, registrationPaymentMode, payDate } = Fees;
-  const { reg_no, firstName, lastName, course, reg_fee, contactNumber } =
-    student;
+  const { payment, registrationPaymentMode, payDate, receiptNumber } = Fees;
+  const { firstName, lastName, course, reg_fee, contactNumber } = student;
   const stream = res.writeHead(200, {
     "Content-Type": "application/pdf",
     "Content-Disposition": `attachment;filename=receipt.pdf`,
@@ -795,7 +762,7 @@ router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
   buildPDF(
     (chunk) => stream.write(chunk),
     () => stream.end(),
-    reg_no,
+    receiptNumber,
     payDate
       ? payDate.toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB"),
@@ -828,12 +795,9 @@ router.get("/invoice", async (req, res) => {
       .status(400)
       .send("❌ Invalid Indian phone number (10 digits required)");
   }
-  // Prepare data for PDF
-  console.log(Fees);
 
-  const { payment, registrationPaymentMode, payDate } = Fees;
-  const { reg_no, firstName, lastName, course, reg_fee, contactNumber } =
-    student;
+  const { payment, registrationPaymentMode, payDate, receiptNumber } = Fees;
+  const { firstName, lastName, course, reg_fee, contactNumber } = student;
   if (!contactNumber || !/^[6-9]\d{9}$/.test(contactNumber)) {
     return res
       .status(400)
@@ -895,7 +859,7 @@ router.get("/invoice", async (req, res) => {
         }
       }
     },
-    reg_no,
+    receiptNumber,
     payDate
       ? payDate.toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB"),
@@ -1062,23 +1026,33 @@ router.post("/update/profile/:id", isLoggedIn, async (req, res, next) => {
   try {
     const updateData = { ...req.body };
 
-    // Ensure course is always treated as an array of ObjectIds
-    if (req.body.course) {
-      updateData.course = Array.isArray(req.body.course)
-        ? req.body.course
-        : [req.body.course];
+    // Only process 'course' if it's provided and not empty
+    if (updateData.course) {
+      updateData.course = Array.isArray(updateData.course)
+        ? updateData.course
+        : [updateData.course];
+    } else {
+      // Explicitly remove 'course' field if it's not provided to avoid unintended overwrite
+      delete updateData.course;
     }
 
-    await studentModel.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
+    const updatedStudent = await studentModel.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
 
-    res.redirect("/student");
+    if (!updatedStudent) {
+      return res.status(404).send("Student not found");
+    }
+
+    res.redirect("back");
   } catch (error) {
     console.error("Error updating student profile:", error);
     res.status(500).send("Internal Server Error");
   }
 });
+
 router.post("/update/admprofile/:id", isLoggedIn, async (req, res, next) => {
   try {
     const updateData = { ...req.body };
@@ -1088,6 +1062,9 @@ router.post("/update/admprofile/:id", isLoggedIn, async (req, res, next) => {
       updateData.course = Array.isArray(req.body.course)
         ? req.body.course
         : [req.body.course];
+    } else {
+      // Explicitly remove 'course' field if it's not provided to avoid unintended overwrite
+      delete updateData.course;
     }
 
     await admissionModel.findByIdAndUpdate(req.params.id, updateData, {
@@ -1119,17 +1096,39 @@ router.post("/update-short-course/:id", isLoggedIn, async (req, res, next) => {
   }
 });
 router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
-  const foundstudent = await studentModel.findOne({
-    _id: req.params.id,
-  });
-  await feesModel.create({
-    registrationPaymentMode: req.body.registrationPaymentMode,
-    student: foundstudent._id,
-    payment: req.body.paid,
-  });
-  foundstudent.due = foundstudent.due - +req.body.paid;
-  await foundstudent.save();
-  res.redirect("/fees");
+  try {
+    const foundstudent = await studentModel.findById(req.params.id);
+
+    // Validate before proceeding
+    const paidAmount = +req.body.paid;
+    if (paidAmount > foundstudent.due) {
+      return res.send("❌ Invalid Entry: Paid amount is greater than due");
+    }
+
+    // Find the last receiptNumber and increment
+    const lastFee = await feesModel.findOne({}).sort({ receiptNumber: -1 });
+    let nextReceiptNumber = 1;
+    if (lastFee?.receiptNumber) {
+      nextReceiptNumber = lastFee.receiptNumber + 1;
+    }
+
+    // Create the fee entry
+    await feesModel.create({
+      registrationPaymentMode: req.body.registrationPaymentMode,
+      student: foundstudent._id,
+      payment: paidAmount,
+      receiptNumber: nextReceiptNumber,
+    });
+
+    // Update the student's due
+    foundstudent.due = foundstudent.due - paidAmount;
+    await foundstudent.save();
+
+    res.redirect("/fees");
+  } catch (error) {
+    console.error("❌ Error in /update/due:", error);
+    next(error);
+  }
 });
 
 const studentdata = require("../data/student.json");

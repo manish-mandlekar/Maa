@@ -14,6 +14,9 @@ const feesSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  receiptNumber: {
+    type: Number
+  }
 });
 
 module.exports = mongoose.model("feesSchema", feesSchema);

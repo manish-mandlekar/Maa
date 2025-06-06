@@ -63,7 +63,7 @@
           <div class="box">
             <h6 style="font-weight: 600">Our Courses</h6>
             <div class="course-list">
-              <% courses.forEach((course) => { %>
+              <% courses.slice(0, 3).forEach((course) => { %>
               <div class="course-item">
                 <h6><%= course.courseName %></h6>
                 <p>Duration: <%= course.courseDuration %> Months</p>
@@ -75,7 +75,7 @@
         <div
           style="
             width: 100%;
-            height: 22rem;
+            height: 25rem;
             display: flex;
             align-items: center;
             gap: 1vmax;
@@ -97,7 +97,7 @@
                 </tr>
               </thead>
               <tbody>
-                <%student.forEach((std,i) =>{%>
+                <%student.slice(0, 5).forEach((std,i) =>{%>
                 <tr>
                   <th scope="row"><%=i+1%></th>
                   <td><%=std.firstName%></td>
