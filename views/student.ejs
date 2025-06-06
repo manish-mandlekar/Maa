@@ -59,7 +59,7 @@
               <table class="table">
                 <thead>
                   <tr class="table-info">
-                    <th>Roll No.</th>
+                    <th>R No.</th>
                     <th>Name</th>
                     <th>Mobile No.</th>
                     <th>Course</th>
@@ -70,7 +70,7 @@
                 <tbody>
                   <% std.forEach((std,i) => {%>
                   <tr>
-                    <td><%=i+1 %></td>
+                    <td><%= std.r_no %></td>
                     <td>
                       <a href="/stdprofile/<%=std._id %>"
                         ><%=std.firstName %> <%=std.lastName %></a

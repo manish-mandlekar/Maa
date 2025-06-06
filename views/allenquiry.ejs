@@ -40,7 +40,6 @@
                   <th scope="col">Name</th>
                   <th scope="col">Mobile</th>
                   <th scope="col">Course</th>
-                  <th scope="col">Fees</th>
                   <th scope="col">Enquiry Date</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -53,8 +52,10 @@
                   <td>
                     <% std.course.forEach(e=>{ %> <%= e.courseCode %> <% }) %>
                   </td>
-                  <td><%=std.due %></td>
-                  <td><%=std?.enquiryDate?.toDateString()%></td>
+                  <td>
+                  <%= std?.enquiryDate?.toLocaleTimeString() %> - <%=
+                  std?.enquiryDate?.toLocaleDateString('en-GB') %>
+                  </td>
                   <td>
                     <a
                       style="font-size: 25px"

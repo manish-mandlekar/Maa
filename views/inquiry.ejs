@@ -44,22 +44,28 @@
                            <input required type="text" name="fatherName" class="form-control" id="inputAddress" placeholder="Enter Name Of Father / Husband">
                         </div>
                         <div class="col-12">
-                          <label for="inputAddress2" class="form-label">Contact Number/ WhatsAap Number</label>
+                          <label for="inputAddress2" class="form-label">Contact Number/ WhatsApp Number</label>
                            <input required type="number" name="contactNumber" class="form-control" id="inputAddress2" placeholder="Enter Contact Number">
+                        </div>
+                        <div class="col-md-12">
+                          <label for="inputEmail4" class="form-label">Select Course</label>
+                          <select name="course" class="form-select">
+                            <option selected disabled>Choose a course...</option>
+                            <% course.forEach(function(singlecourse) { %>
+                              <option value="<%= singlecourse._id %>">
+                                  <%= singlecourse.courseName %>
+                              </option>
+                            <% }); %>
+                          </select>
                         </div>
                         <div class="col-md-6">
                           <label for="inputCity" class="form-label">Qualification</label>
                            <input required name="qualification" type="text" class="form-control" placeholder="Enter Qualification" id="inputCity">
                         </div>
-                        
                         <div class="col-md-6">
                           <label for="inputZip" class="form-label">Permanent Address</label>
                            <input name="address" required type="text" placeholder="Address" class="form-control" id="inputZip">
                         </div>
-                        <div class="col-md-2">
-                            <label for="inputZip" class="form-label">Enquiry Date</label>
-                             <input name="enquiryDate" required type="date" class="form-control" id="inputZip">
-                          </div>
                           <div class="col-12"style="margin-top: 1vmax;" >
                             <button type="submit" class="btn btn-primary">Submit</button>
                           </div>

@@ -20,7 +20,6 @@ const studentEnquirySchema = new mongoose.Schema({
   contactNumber: {
     type: Number,
     required: true,
-    unique: true,
   },
   qualification: {
     type: String,
@@ -28,6 +27,9 @@ const studentEnquirySchema = new mongoose.Schema({
   address: {
     type: String,
     required: true,
+  },
+  r_no: {
+    type: Number
   },
   enquiryDate: {
     type: Date,
@@ -44,7 +46,7 @@ const studentEnquirySchema = new mongoose.Schema({
     },
   ],
   university: {
-    type: String
+    type: String,
   },
   enquiryBy: String,
   joiningDate: Date,

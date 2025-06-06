@@ -40,7 +40,6 @@
                   <th scope="col">Name</th>
                   <th scope="col">Mobile</th>
                   <th scope="col">Course</th>
-                  <th scope="col">Due Fees</th>
                   <th scope="col">Enquiry Date</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -51,7 +50,6 @@
                   <th scope="row"><%= student.firstName %></th>
                   <td><%= student?.contactNumber %></td>
                   <td><%= student?.course[0]?.courseCode %></td>
-                  <td><%= student?.due %></td>
                   <td><%= student?.enquiryDate?.toDateString() %></td>
                   <td>
                     <!-- <a href="">

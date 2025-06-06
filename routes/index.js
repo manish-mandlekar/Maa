@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-const mongoose = require("mongoose");
 const userModel = require("../models/Usermodel");
 const staffModel = require("../models/staff");
 const studentModel = require("../models/student");
@@ -13,8 +12,8 @@ const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
 const PDFDocument = require("pdfkit");
-// const { MessageMedia } = require("whatsapp-web.js");
-// const whatsappClient = require("./whatsapp"); // your whatsapp.js file
+const { MessageMedia } = require("whatsapp-web.js");
+const whatsappClient = require("./whatsapp"); // your whatsapp.js file
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
   return next();
@@ -24,135 +23,6 @@ function isLoggedIn(req, res, next) {
     res.redirect("/");
   }
 }
-
-// function buildPDF(
-//   Datacallback,
-//   Endcallback,
-//   reg_no,
-//   date,
-//   name,
-//   lastName,
-//   course,
-//   reg_fee,
-//   paid_fee,
-//   contactNumber,
-//   payment_mode
-// ) {
-//   const doc = new pdfDoc({
-//     size: "A4",
-//     margin: 100,
-//   });
-
-//   // Set up event listeners
-//   doc.on("data", Datacallback);
-//   doc.on("end", Endcallback);
-
-//   // Student Section
-//   doc.fontSize(16).text("MAA COMPUTER EDUCATION INSTITUTE", 70, 10, {
-//     align: "center",
-//     underline: true,
-//   });
-//   doc.fontSize(12).text("SPOKEN ENGLISH & P.D. CLASSES", { align: "center" });
-//   doc
-//     .fontSize(10)
-//     .text("An ISO 9001: 2015 Certified Institute", { align: "center" });
-
-//   // Branch Info
-//   doc
-//     .moveDown()
-//     .fontSize(10)
-//     .text("Location: Above Andhra Bank, 2nd Floor, Station Road, Rau", 50)
-//     .text("Mobile: +91 9617678702, 9229697696, 9039442551", 50)
-//     .text("Email: mceiindia229@gmail.com", { underline: true });
-
-//   // Receipt Details - Use actual values instead of dots
-//   doc
-//     .fontSize(10)
-//     // .text(`Reg. No.: ${reg_no || "N/A"}`, 50, 105)
-//     .text(`Date: ${date || new Date().toLocaleDateString("en-GB")}`, 350, 105);
-
-//   // Name and Course - Use actual values
-//   doc
-//     .moveDown()
-//     .text(`Name: ${name || "N/A"} ${lastName || "N/A"}`, 50, 125)
-//     .text(`Contact: ${contactNumber || "N/A"}`, 350, 125);
-
-//   // Table Header
-//   doc
-//     .moveDown()
-//     .text("S.No.", 50, 145)
-//     .text("Particulars", 150, 145)
-//     .text("Amount", 450, 145);
-
-//   // Table Rows - Use actual values
-//   const tableRows = [
-//     { sno: "1.", particulars: "Paid Fee", amount: paid_fee || "3000" },
-//     // { sno: "1.", particulars: "Reg. Fee", amount: reg_fee || "1000" },
-//   ];
-
-//   let y = 165;
-//   tableRows.forEach((row) => {
-//     doc
-//       .text(row.sno, 50, y)
-//       .text(row.particulars, 150, y)
-//       .text(row.amount, 450, y);
-//     y += 20;
-//   });
-
-//   // Calculate total
-//   const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
-
-//   // Total
-//   doc.moveDown().text("Total", 150, y).text(total.toString(), 450, y);
-
-//   // Footer Section
-//   doc
-//     .fontSize(10)
-//     .text(
-//       `Received a sum of Rupee ${total} Payment By: ${payment_mode || "Cash"}`,
-//       50,
-//       y + 40
-//     )
-//     .text(`Dated ${date || new Date().toLocaleDateString("en-GB")}`, 50, y + 60)
-//     .text("Student's/Parent's Signature", 50, y + 80)
-//     .text("Receiver's Signature", 400, y + 80);
-
-//   doc
-//     .fontSize(10)
-//     .text(
-//       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
-//       50,
-//       y + 120
-//     );
-
-//   doc.text("(For Student)", 50, 10);
-//   // doc.text("(For Faculty)", 50, 360);
-
-//   // Comment out or remove image operations that might be causing issues
-//   // Only include if the image files exist and are accessible
-//   try {
-//     if (fs.existsSync("./public/images/black.png")) {
-//       doc
-//         .rotate(330)
-//         .opacity(0.2)
-//         .image("./public/images/black.png", -100, 200, {
-//           width: 470,
-//           height: 170,
-//         });
-//       // doc.opacity(0.2).image("./public/images/black.png", -250, 510, {
-//       //   width: 470,
-//       //   height: 170,
-//       // });
-//     }
-//   } catch (error) {
-//     console.log("Warning: Could not load watermark image");
-//   }
-
-//   // Remove the duplicate 'end' event listener - it's already set up at the top
-//   // doc.on("end", Endcallback); // Remove this line
-
-//   doc.end();
-// }
 
 function buildPDF(
   Datacallback,
@@ -213,15 +83,15 @@ function buildPDF(
     .fontSize(12)
     .fillColor("black")
     .font("Helvetica")
-    .text(`Reg. No.: ${reg_no || "N/A"}`, 50, currentY)
+    .text(`Reg. No.: ${reg_no || "N/A"}`, 50, currentY - 50)
     .text(
       `Date: ${date || new Date().toLocaleDateString("en-GB")}`,
       400,
-      currentY
+      currentY - 50
     );
 
   // Student details with larger font
-  doc.moveDown(1);
+  // doc.moveDown(1);
   const detailsY = doc.y;
   doc
     .fontSize(12)
@@ -240,7 +110,7 @@ function buildPDF(
 
   // Table section with proper borders and increased font size
   doc.moveDown(1.5);
-  const tableStartY = doc.y;
+  const tableStartY = doc.y - 10;
   const tableWidth = 495;
   const col1Width = 60;
   const col2Width = 285;
@@ -333,23 +203,17 @@ function buildPDF(
     });
 
   // Payment information with larger font
-  doc.moveDown(2);
+  doc.moveDown(1);
   doc
     .font("Helvetica")
     .fontSize(12)
     .text(
       `Received a sum of Rupees ${total} by ${payment_mode || "UPI"}.`,
       50,
-      400
+      280
     );
-
-  doc.moveDown(1);
-  doc
-    .fontSize(12)
-    .text(`Dated: ${date || new Date().toLocaleDateString("en-GB")}`);
-
   // Signature section with larger font
-  doc.moveDown(3);
+  doc.moveDown(1);
   const signatureY = doc.y;
   doc
     .fontSize(12)
@@ -357,7 +221,7 @@ function buildPDF(
     .text("Receiver's Signature", 400, signatureY);
 
   // Important note in red with larger font
-  doc.moveDown(2);
+  doc.moveDown(1);
   doc
     .fontSize(11)
     .fillColor(red)
@@ -369,7 +233,7 @@ function buildPDF(
     );
 
   // Footer contact information with larger font
-  doc.moveDown(2);
+  doc.moveDown(1);
   doc.fontSize(11).fillColor("black").text("Visit Us: www.mceiindia.in", 50);
 
   doc.text("Help line: 9617767802, 9229967996, 9039442551, 9131990309", 50);
@@ -379,22 +243,15 @@ function buildPDF(
 }
 
 passport.use(new localStrategy(userModel.authenticate()));
-mongoose
-  .connect("mongodb://0.0.0.0/mark")
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    err;
-  });
+
 /* GET home page. */
 async function backfillReceiptNumbers() {
-  const existing = await feesModel.find({}); // sort chronologically if needed
+  const existing = await studentModel.find({ registered: true }); // sort chronologically if needed
   let counter = 3502;
 
   for (const doc of existing) {
-    if (!doc.receiptNumber) {
-      doc.receiptNumber = counter++;
+    if (!doc.r_no) {
+      doc.r_no = counter++;
       await doc.save();
     }
   }
@@ -433,20 +290,20 @@ router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
 });
 router.post("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
   const student = await studentModel.findById({ _id: req.params.id });
-  console.log(req.body);
+  const lastStudent = await studentModel
+    .find({ registered: true })
+    .sort({ _id: -1 });
 
   student.registered = true;
+  student.rejected = false;
+  student.r_no = lastStudent[0] ? lastStudent[0]?.r_no + 1 : 1;
   student.course = req?.body?.course;
   student.session = req?.body?.session;
   student.dueDate = req?.body?.dueDate;
   student.due = req?.body?.due;
   student.university = req?.body?.university;
   await student.save();
-  await feesModel.create({
-    registrationPaymentMode: req.body.registrationPaymentMode,
-    student: student._id,
-    payment: req.body.reg_fee,
-  });
+
   res.redirect("/student");
 });
 router.get("/addFeeStructure", isLoggedIn, (req, res, next) => {
@@ -650,6 +507,7 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
 
     const query = {};
 
+    // Date range filter
     if (prev && nextDate) {
       query.payDate = { $gte: prev, $lte: nextDate };
     } else if (prev && !nextDate) {
@@ -658,31 +516,46 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
       query.payDate = { $lte: nextDate };
     }
 
+    // Payment mode filter
     const paymentMode = req.query.registrationPaymentMode;
-
     if (paymentMode === "cash") {
       query.registrationPaymentMode = "Cash";
     } else if (paymentMode === "upi") {
-      query.registrationPaymentMode = {
-        // not in cash
-        $ne: "Cash",
-      };
+      query.registrationPaymentMode = { $ne: "Cash" };
     }
 
-    const [fees, totalFees] = await Promise.all([
-      feesModel
+    let filteredFees = [];
+    let totalFees = 0;
+
+    // r_no filtering after population
+    if (req.query.r_no) {
+      const allFees = await feesModel
         .find(query)
         .sort({ _id: -1 })
-        .populate("student")
-        .skip(skip)
-        .limit(limit),
-      feesModel.countDocuments(query),
-    ]);
+        .populate("student");
+
+      filteredFees = allFees.filter((fee) =>
+        fee.student?.r_no?.toString().includes(req.query.r_no.toString())
+      );
+
+      totalFees = filteredFees.length;
+      filteredFees = filteredFees.slice(skip, skip + limit);
+    } else {
+      [filteredFees, totalFees] = await Promise.all([
+        feesModel
+          .find(query)
+          .sort({ _id: -1 })
+          .populate("student")
+          .skip(skip)
+          .limit(limit),
+        feesModel.countDocuments(query),
+      ]);
+    }
 
     const totalPages = Math.ceil(totalFees / limit);
 
     res.render("feesManagement", {
-      fees,
+      fees: filteredFees,
       currentPage: page,
       totalPages,
       totalFees,
@@ -694,6 +567,7 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
     next(err);
   }
 });
+
 router.get("/fees", isLoggedIn, async (req, res, next) => {
   const students = await studentModel
     .find({ registered: true, rejected: false })
@@ -726,14 +600,18 @@ router.get("/inquiry", isLoggedIn, async (req, res, next) => {
 router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   // add enquiryBy in student model from req.user
   try {
-    console.log(req.body);
     if (req.user) req.body.enquiryBy = req.user.username;
     await studentModel.create(req.body);
     res.redirect("/allenquiry");
   } catch (err) {
     console.log(err.message);
 
-    res.send("Internal Server Error");
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
   }
 });
 router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
@@ -961,7 +839,6 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
     if (session) {
       query.session = session;
     }
-    console.log(query);
 
     const [std, totalCount, sessions] = await Promise.all([
       studentModel
@@ -969,7 +846,7 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
         .populate("course")
         .skip(skip)
         .limit(limit)
-        .sort({ joiningDate: -1 }),
+        .sort({ r_no: 1 }),
       studentModel.countDocuments(query),
       studentModel.distinct("session"),
     ]);

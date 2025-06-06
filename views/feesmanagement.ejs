@@ -24,38 +24,24 @@
           <h4>Add filter</h4>
           <form action="/feesManagement">
             <div id="toll">
-              <label for="inputZip">Before date</label>
-              <input
+              <div class="col-md-3">
+                <label for="inputZip">Before date</label>
+                <input
                 name="prev"
                 type="date"
-                class="form-control w-25"
+                class="form-control "
                 id="inputZip"
-              />
-              <label for="inputZip">After date</label>
+                />              
+              </div>
+              <div class="col-md-3">
+                <label for="inputZip">After date</label>
               <input
                 name="next"
                 type="date"
-                class="form-control w-25"
+                class="form-control "
                 id="inputZip"
               />
-              <button type="submit" class="btn btn-primary">Submit</button>
-              <a href="/feesManagement">
-                <button type="button" class="btn btn-success">
-                  Recent Transactions
-                </button>
-              </a>
-            </div>
-            <br />
-            <div id="toll">
-              <!-- Transaction Limit in number -->
-              <label for="inputZip">Transaction Limit</label>
-              <input
-                name="limit"
-                type="number"
-                class="form-control w-25"
-                id="inputZip"
-                placeholder="Enter limit"
-              />
+              </div>
               <div class="col-md-3">
                 <label for="registrationPaymentMode" class="form-label"
                   >Payment Mode</label
@@ -69,12 +55,43 @@
                 </select>
               </div>
             </div>
+            <br />
+            <div id="toll">
+              <!-- Transaction Limit in number -->
+               <div class="col-md-3">
+              <label for="inputZip">R. No.</label>
+              <input
+                name="r_no"
+                type="number"
+                class="form-control"
+                id="inputZip"
+                placeholder="Enter R. No."
+              />
+              </div>
+               <div class="col-md-3">
+              <label for="inputZip">Transaction Limit</label>
+              <input
+                name="limit"
+                type="number"
+                class="form-control"
+                id="inputZip"
+                placeholder="Enter limit"
+              />
+              </div>
+              
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <a href="/feesManagement">
+                <button type="button" class="btn btn-success">
+                  Recent Transactions
+                </button>
+              </a>
+            </div>
           </form>
 
           <table>
             <thead>
               <tr>
-                <th>R.No.</th>
+                <th>R. No.</th>
                 <th>Date</th>
                 <th>Sender</th>
                 <th>Payment Mode</th>
@@ -85,7 +102,7 @@
             <tbody>
               <% fees.forEach(elem=>{ %>
               <tr>
-                <td><%= elem?.receiptNumber %></td>
+                <td><%= elem.student.r_no %></td>
                 <td>
                   <%= elem.payDate.toLocaleTimeString() %> - <%=
                   elem.payDate.toLocaleDateString('en-GB') %>
