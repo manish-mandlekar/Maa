@@ -16,7 +16,7 @@
       <div id="right">
         <%- include('./partials/right-header') %>
         <div id="cover">
-          <div class="dropdown">
+          <div class="dropdown flex align-items-end">
             <button
               class="btn btn-secondary dropdown-toggle"
               type="button"
@@ -31,6 +31,22 @@
                 <a class="dropdown-item" href="/rejected">Rejected Inquiry</a>
               </li>
             </ul>
+            <form action="/allenquiry" class="flex align-items-end">
+              <div class="col-md-9">
+                <label for="inputZip">Contact</label>
+                <input
+                  name="contactNumber"
+                  type="number"
+                  class="form-control"
+                  id="inputZip"
+                  placeholder="Enter Contact"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <a href="/allenquiry">
+                <button type="button" class="btn btn-success">Reset</button>
+              </a>
+            </form>
           </div>
           <div id="inq">
             <h4>Inquiry List</h4>
@@ -53,8 +69,8 @@
                     <% std.course.forEach(e=>{ %> <%= e.courseCode %> <% }) %>
                   </td>
                   <td>
-                  <%= std?.enquiryDate?.toLocaleTimeString() %> - <%=
-                  std?.enquiryDate?.toLocaleDateString('en-GB') %>
+                    <%= std?.enquiryDate?.toLocaleTimeString() %> - <%=
+                    std?.enquiryDate?.toLocaleDateString('en-GB') %>
                   </td>
                   <td>
                     <a

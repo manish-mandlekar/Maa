@@ -16,7 +16,7 @@
       <div id="right">
         <%- include('./partials/right-header') %>
         <div id="cover">
-          <div class="dropdown">
+          <div class="dropdown flex align-items-end">
             <button
               class="btn btn-secondary dropdown-toggle"
               type="button"
@@ -31,6 +31,22 @@
               </li>
               <li><a class="dropdown-item" href="/inquiry">Add Inquiry</a></li>
             </ul>
+            <form action="/rejected" class="flex align-items-end">
+              <div class="col-md-9">
+                <label for="inputZip">Contact</label>
+                <input
+                  name="contactNumber"
+                  type="number"
+                  class="form-control"
+                  id="inputZip"
+                  placeholder="Enter Contact"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <a href="/rejected">
+                <button type="button" class="btn btn-success">Reset</button>
+              </a>
+            </form>
           </div>
           <div id="inq">
             <h4>Inquiry List</h4>
@@ -51,13 +67,9 @@
                   <td><%= student?.contactNumber %></td>
                   <td><%= student?.course[0]?.courseCode %></td>
                   <td><%= student?.enquiryDate?.toDateString() %></td>
-                  <td>
-                    <!-- <a href="">
-                      ❌
-                    </a> -->
-                    <a href="/accepted/enquiry/<%= student._id %>">
-                      ✅
-                    </a>
+                  <td class="d-flex gap-3">
+                    <a style="font-size: 25px" href="/delete/enquiry/<%= student._id %>"> ❌ </a>
+                    <a style="font-size: 25px" href="/accepted/enquiry/<%= student._id %>"> ✅ </a>
                   </td>
                 </tr>
                 <% }) %>

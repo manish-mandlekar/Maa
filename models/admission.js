@@ -21,7 +21,6 @@ const admissionSchema = new mongoose.Schema(
     contactNumber: {
       type: Number,
       required: true,
-      unique: true,
     },
     qualification: {
       type: String,

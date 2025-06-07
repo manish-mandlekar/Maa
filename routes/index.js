@@ -13,7 +13,9 @@ const localStrategy = require("passport-local");
 var fs = require("fs");
 const PDFDocument = require("pdfkit");
 const { MessageMedia } = require("whatsapp-web.js");
-const whatsappClient = require("./whatsapp"); // your whatsapp.js file
+const { startWhatsAppClient, getWhatsAppClient } = require("./whatsapp");
+startWhatsAppClient(); // your whatsapp.js file
+
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
   return next();
@@ -282,6 +284,7 @@ router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
   const student = await studentModel.findById({ _id: req.params.id });
   const course = await courseModel.find();
   const universities = await universityModel.find();
+
   res.render("acceptEnquiry", {
     student,
     course,
@@ -297,11 +300,18 @@ router.post("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
   student.registered = true;
   student.rejected = false;
   student.r_no = lastStudent[0] ? lastStudent[0]?.r_no + 1 : 1;
+  student.due = req?.body?.due;
+  student.gender = req?.body?.gender;
   student.course = req?.body?.course;
   student.session = req?.body?.session;
   student.dueDate = req?.body?.dueDate;
-  student.due = req?.body?.due;
+  student.enquiryBy = req?.body?.enquiryBy;
   student.university = req?.body?.university;
+  student.installment = req?.body?.installment;
+  student.joiningDate = req?.body?.joiningDate;
+  student.registrationPayment = req?.body?.registrationPayment;
+  student.registrationPaymentMode = req?.body?.registrationPaymentMode;
+
   await student.save();
 
   res.redirect("/student");
@@ -421,11 +431,24 @@ router.post("/addUniversity", isLoggedIn, async (req, res, next) => {
     });
 });
 router.get("/allenquiry", isLoggedIn, async (req, res, next) => {
-  const students = await studentModel
-    // registered: false and rejected: false
-    .find({ registered: false, rejected: false })
-    .populate("course");
-  res.render("allenquiry", { students });
+  try {
+    const filter = {
+      registered: false,
+      rejected: false,
+    };
+
+    // If contactNumber is present in query, add it to the filter
+    if (req.query.contactNumber) {
+      filter.contactNumber = req.query.contactNumber;
+    }
+
+    const students = await studentModel.find(filter).populate("course");
+
+    res.render("allenquiry", { students });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Internal Server Error");
+  }
 });
 router.get("/allStaff", isLoggedIn, (req, res, next) => {
   staffModel.find().then((staff) => {
@@ -485,6 +508,15 @@ router.get("/delete/transaction/:id", isLoggedIn, async (req, res, next) => {
 router.get("/deletecourse/:id", isLoggedIn, async (req, res, next) => {
   await courseModel.findOneAndDelete({ _id: req.params.id });
   res.redirect("back");
+});
+router.get("/delete/enquiry/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    await studentModel.deleteOne({ _id: req.params.id });
+
+    res.redirect("back");
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 // E
@@ -567,7 +599,6 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
     next(err);
   }
 });
-
 router.get("/fees", isLoggedIn, async (req, res, next) => {
   const students = await studentModel
     .find({ registered: true, rejected: false })
@@ -601,6 +632,35 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   // add enquiryBy in student model from req.user
   try {
     if (req.user) req.body.enquiryBy = req.user.username;
+    let contactNumber = req.body?.contactNumber;
+    if (contactNumber) {
+      const whatsappClient = getWhatsAppClient();
+      contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
+      if (contactNumber.startsWith("91") && contactNumber.length === 12) {
+        contactNumber = contactNumber.slice(2); // remove '91'
+      } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
+        contactNumber = contactNumber.slice(1); // remove '0'
+      }
+      // Final validation
+      if (!/^[6-9]\d{9}$/.test(contactNumber)) {
+        return res.status(400).send(
+          `<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`
+        );
+      }
+      const formattedNumber = "91" + contactNumber + "@c.us"; // WhatsApp format
+
+      const thankYouMessage = `🙏 Thank you for your enquiry, ${
+        req.body.firstName || "Student"
+      }! We’ll reach out to you shortly.`;
+
+      await whatsappClient.sendMessage(formattedNumber, thankYouMessage);
+    }
+    req.body.contactNumber = contactNumber;
     await studentModel.create(req.body);
     res.redirect("/allenquiry");
   } catch (err) {
@@ -708,6 +768,7 @@ router.get("/invoice", async (req, res) => {
           base64,
           "invoice.pdf"
         );
+        const whatsappClient = getWhatsAppClient();
 
         await whatsappClient.sendMessage(chatId, media);
 
@@ -798,13 +859,25 @@ router.post("/register", function (req, res) {
     });
 });
 router.get("/rejected", isLoggedIn, async (req, res, next) => {
-  const students = await studentModel
-    .find({ rejected: true })
-    .populate("course");
-  console.log(students);
+  try {
+    const filter = { rejected: true };
 
-  res.render("rejected", { students });
+    if (req.query.contactNumber) {
+      filter.contactNumber = req.query.contactNumber;
+    }
+
+    const students = await studentModel.find(filter).populate("course");
+
+    res.render("rejected", {
+      students,
+      query: req.query,
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 router.get("/reject/enquiry/:id", isLoggedIn, async (req, res, next) => {
   const student = await studentModel.findById({ _id: req.params.id });
   student.rejected = true;
