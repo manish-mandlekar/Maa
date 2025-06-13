@@ -17,7 +17,7 @@ mongoose
     console.log("Connected to MongoDB");
   })
   .catch((err) => {
-    err;
+    console.log(err);
   });
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

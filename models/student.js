@@ -29,7 +29,7 @@ const studentEnquirySchema = new mongoose.Schema({
     required: true,
   },
   r_no: {
-    type: Number
+    type: Number,
   },
   enquiryDate: {
     type: Date,
@@ -48,14 +48,6 @@ const studentEnquirySchema = new mongoose.Schema({
   university: {
     type: String,
   },
-  enquiryBy: String,
-  joiningDate: Date,
-  reference: String,
-  registrationPaymentMode: String,
-  installment: String,
-  due: Number,
-  registrationPayment: String,
-  dueDate: String,
   session: {
     type: String,
     default: "2023-2024",
@@ -68,9 +60,61 @@ const studentEnquirySchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  enquiryBy: String,
+  joiningDate: Date,
+  reference: String,
+  registrationPaymentMode: String,
+  installment: String,
+  due: Number,
+  registrationPayment: String,
+  dueDate: String,
+  // new fields
+  whatsappNumber: {
+    type: Number,
+  },
+  dateOfBirth: {
+    type: Date,
+  },
+  medium: {
+    type: String,
+    enum: ["hindi", "english"],
+  },
+  category: {
+    type: String,
+  },
+  addharNo: {
+    type: String,
+  },
+  mainSubject: {
+    type: String, // PCM, Commerce, etc
+  },
+
+  // Newly added fields
+  yearOfPassing: {
+    type: Number,
+  },
+  division: {
+    type: Number, // 1, 2, 3, 4
+    enum: [1, 2, 3, 4],
+  },
+  percentageOfMarks: {
+    type: Number,
+  },
+  boardOrUniversity: {
+    type: String,
+  },
+  familyIncome: {
+    type: Number, // Yearly income in rupees
+  },
+  religion: {
+    type: String,
+  },
+  maritalStatus: {
+    type: String,
+    enum: ["single", "married", "divorced", "widowed"],
+  },
 });
 
-// Create a model from the schema
 const StudentEnquiry = mongoose.model("StudentEnquiry", studentEnquirySchema);
 
 module.exports = StudentEnquiry;
