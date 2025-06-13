@@ -89,7 +89,6 @@ const studentEnquirySchema = new mongoose.Schema({
     type: String, // PCM, Commerce, etc
   },
 
-  // Newly added fields
   yearOfPassing: {
     type: Number,
   },
