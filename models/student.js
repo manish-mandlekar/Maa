@@ -81,6 +81,7 @@ const studentEnquirySchema = new mongoose.Schema({
   },
   category: {
     type: String,
+    enum:["SC","ST","OBC","General"]
   },
   addharNo: {
     type: String,
@@ -110,7 +111,7 @@ const studentEnquirySchema = new mongoose.Schema({
   },
   maritalStatus: {
     type: String,
-    enum: ["single", "married", "divorced", "widowed"],
+    enum: ["Single", "Married", "Divorced", "Widowed"],
   },
 });
 
