@@ -29,7 +29,6 @@
                   type="text"
                   placeholder="Enter First Name"
                   name="firstName"
-                  value="<%= student?.firstName %>"
                   class="form-control"
                   id="inputEmail4"
                 />
@@ -42,7 +41,6 @@
                   required
                   type="text"
                   name="lastName"
-                  value="<%= student?.lastName %>"
                   placeholder="Enter Last Name"
                   class="form-control"
                   id="inputPassword4"
@@ -56,7 +54,6 @@
                   required
                   type="email"
                   name="email"
-                  value="<%= student?.email %>"
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Email Address"
@@ -70,21 +67,45 @@
                   required
                   type="text"
                   name="fatherName"
-                  value="<%= student?.fatherName %>"
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Name Of Father / Husband"
                 />
               </div>
               <div class="col-12">
+                <label for="inputAddress" class="form-label"
+                  >Permanent Address</label
+                >
+                <input
+                  required
+                  type="text"
+                  name="address"
+                  class="form-control"
+                  id="inputAddress"
+                  placeholder="Enter Your Permanent Address"
+                />
+              </div>
+              <div class="col-12">
                 <label for="inputAddress2" class="form-label"
-                  >Contact Number/ WhatsAap Number</label
+                  >Contact Number</label
                 >
                 <input
                   required
                   type="number"
                   name="contactNumber"
-                  value="<%= student?.contactNumber %>"
+                  class="form-control"
+                  id="inputAddress2"
+                  placeholder="Enter Contact Number"
+                />
+              </div>
+              <div class="col-12">
+                <label for="inputAddress2" class="form-label"
+                  >WhatsAap Number</label
+                >
+                <input
+                  required
+                  type="whatsaapNumber"
+                  name="whatsappNumber"
                   class="form-control"
                   id="inputAddress2"
                   placeholder="Enter Contact Number"
@@ -95,7 +116,6 @@
                 <input
                   required
                   name="qualification"
-                  value="<%= student?.qualification %>"
                   type="text"
                   class="form-control"
                   placeholder="Enter Qualification"
@@ -103,15 +123,12 @@
                 />
               </div>
               <div class="col-md-2">
-                <label for="inputZip" class="form-label"
-                  >Permanent Address</label
-                >
+                <label for="inputZip" class="form-label">Main Subject</label>
                 <input
-                  name="address"
-                  value="<%= student?.address %>"
+                  name="mainSubject"
                   required
                   type="text"
-                  placeholder="Address"
+                  placeholder="Main Subject"
                   class="form-control"
                   id="inputZip"
                 />
@@ -120,7 +137,16 @@
                 <label for="inputZip" class="form-label">Enquiry Date</label>
                 <input
                   name="enquiryDate"
-                  value="<%= student?.enquiryDate.toISOString().split('T')[0] %>"
+                  required
+                  type="date"
+                  class="form-control"
+                  id="inputZip"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="inputZip" class="form-label">Date Of Birth</label>
+                <input
+                  name="dateOfBirth"
                   required
                   type="date"
                   class="form-control"
@@ -136,17 +162,15 @@
                     id="male"
                     name="gender"
                     value="male"
-                    <%= student.gender === "male" ? "checked" : "" %>
-                    />
-                    
-                    <label for="female">Female</label>
-                    <input
+                  />
+
+                  <label for="female">Female</label>
+                  <input
                     required
                     type="radio"
                     id="female"
                     name="gender"
                     value="female"
-                    <%= student.gender === "female" ? "checked" : "" %>
                   />
                 </div>
 
@@ -158,10 +182,19 @@
                     <select name="course" class="form-select" required>
                       <option selected disabled>Choose a course...</option>
                       <% course.forEach(function(singlecourse) { %>
-                      <option value="<%= singlecourse._id %>" <%= student.course[0].toString() === singlecourse._id.toString() ? "selected" : "" %>>
-                        <%= singlecourse.courseCode %>
+                      <option value="<%= singlecourse._id %>">
+                        <%= singlecourse.courseName %>
                       </option>
                       <% }); %>
+                    </select>
+                  </div>
+                  <div class="col-md-12">
+                    <label for="inputEmail4" class="form-label">Medium</label>
+                    <select name="medium" class="form-select" required>
+                      <option selected disabled>Choose Medium...</option>
+
+                      <option value="english">English Medium</option>
+                      <option value="hindi">Hindi Medium</option>
                     </select>
                   </div>
                   <div class="col-md-12">
@@ -171,7 +204,7 @@
                     <select name="university" class="form-select" required>
                       <option selected disabled>Choose a University...</option>
                       <% universities.forEach(function(university) { %>
-                      <option value="<%= university._id %>" <%= student.university === university._id.toString() ? "selected" : "" %>>
+                      <option value="<%= university.name %>">
                         <%= university.name %> <%=university.location %>
                       </option>
                       <% }); %>
@@ -181,14 +214,152 @@
                     <label for="inputEmail4" class="form-label">Session</label>
                     <select name="session" class="form-select" required>
                       <option selected disabled>Choose a Session...</option>
-                      <option value="2022-2023" <%= student.session === "2022-2023" ? "selected" : "" %>>2022-2023</option>
-                      <option value="2023-2024" <%= student.session === "2023-2024" ? "selected" : "" %>>2023-2024</option>
-                      <option value="2024-2025" <%= student.session === "2024-2025" ? "selected" : "" %>>2024-2025</option>
-                      <option value="2025-2026" <%= student.session === "2025-2026" ? "selected" : "" %>>2025-2026</option>
-                      <option value="2026-2027" <%= student.session === "2026-2027" ? "selected" : "" %>>2026-2027</option>
-                      <option value="2027-2028" <%= student.session === "2027-2028" ? "selected" : "" %>>2027-2028</option>
-                      <option value="2028-2029" <%= student.session === "2028-2029" ? "selected" : "" %>>2028-2029</option>
+                      <option value="2023-2024">2022-2023</option>
+                      <option value="2023-2024">2023-2024</option>
+                      <option value="2024-2025">2024-2025</option>
+                      <option value="2025-2026">2025-2026</option>
+                      <option value="2026-2027">2026-2027</option>
+                      <option value="2027-2028">2027-2028</option>
+                      <option value="2028-2029">2028-2029</option>
                     </select>
+                  </div>
+                  <div class="row mb-3 mt-3">
+                    <div class="col-md-3">
+                      <label for="yearOfPassing" class="form-label"
+                        >Year of Passing</label
+                      >
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="yearOfPassing"
+                        name="yearOfPassing"
+                        placeholder="e.g. 2023"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="division" class="form-label">Division</label>
+                      <select
+                        class="form-select"
+                        id="division"
+                        name="division"
+                        required
+                      >
+                        <option value="">Select</option>
+                        <option value="1">1st Division</option>
+                        <option value="2">2nd Division</option>
+                        <option value="3">3rd Division</option>
+                        <option value="4">Pass</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label for="marksPercentage" class="form-label"
+                        >% of Marks</label
+                      >
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        id="marksPercentage"
+                        name="percentageOfMarks"
+                        placeholder="e.g. 75.50"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="boardUniversity" class="form-label"
+                        >Board/University</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="boardUniversity"
+                        name="boardOrUniversity"
+                        placeholder="e.g. CBSE, RGPV"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <label for="inputEmail4" class="form-label"
+                      >Category (Caste)</label
+                    >
+                    <select name="category" class="form-select" required>
+                      <option selected disabled>Choose Caste...</option>
+
+                      <option value="SC">Scheduled Castes (SC)</option>
+                      <option value="ST">Scheduled Tribes (ST)</option>
+                      <option value="OBC">Other Backward Classes (OBC)</option>
+                      <option value="General">General</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="inputAddress2" class="form-label"
+                      >UID Number</label
+                    >
+                    <input
+                      required
+                      type="number"
+                      name="addharNo"
+                      class="form-control"
+                      id="inputAddress2"
+                      placeholder="Enter UID Number"
+                    />
+                  </div>
+                  <div class="row mb-3 mt-3">
+                    <!-- Family Income -->
+                    <div class="col-md-4">
+                      <label for="familyIncome" class="form-label"
+                        >Family Income (Yearly)</label
+                      >
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="familyIncome"
+                        name="familyIncome"
+                        placeholder="e.g. 500000"
+                        required
+                      />
+                    </div>
+
+                    <!-- Religion -->
+                    <div class="col-md-4">
+                      <label for="religion" class="form-label">Religion</label>
+                      <select
+                        class="form-select"
+                        id="religion"
+                        name="religion"
+                        required
+                      >
+                        <option value="">Select Religion</option>
+                        <option value="Hindu">Hindu</option>
+                        <option value="Muslim">Muslim</option>
+                        <option value="Christian">Christian</option>
+                        <option value="Sikh">Sikh</option>
+                        <option value="Buddhist">Buddhist</option>
+                        <option value="Jain">Jain</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <!-- Marital Status -->
+                    <div class="col-md-4">
+                      <label for="maritalStatus" class="form-label"
+                        >Marital Status</label
+                      >
+                      <select
+                        class="form-select"
+                        id="maritalStatus"
+                        name="maritalStatus"
+                        required
+                      >
+                        <option value="">Select Status</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Widowed">Widowed</option>
+                        <option value="Divorced">Divorced</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div class="col-6">
@@ -199,7 +370,6 @@
                       required
                       type="text"
                       name="enquiryBy"
-                      value="<%= student?.enquiryBy %>"
                       class="form-control"
                       id="inputAddress"
                       placeholder="Enter Name"
@@ -213,7 +383,6 @@
                       required
                       type="date"
                       name="joiningDate"
-                      value="<%= student?.joiningDate?.toISOString()?.split('T')[0] %>"
                       class="form-control"
                       id="inputAddress2"
                     />
@@ -246,14 +415,14 @@
                       id="inputState"
                       class="form-select"
                     >
-                      <option value="Cash" selected>Cash</option>
-                      <option value="Phone pe">Phone pe</option>
-                      <option value="Google pay">Google pay</option>
-                      <option value="Paytm">Paytm</option>
-                      <option value="Cheque">Cheque</option>
+                      <option selected>Cash</option>
+                      <option>Phone pe</option>
+                      <option>Google pay</option>
+                      <option>Cheque</option>
                     </select>
                   </div>
                 </div>
+
                 <div class="row g-3" style="margin-top: 1vmax">
                   <div class="col-md-6">
                     <label for="inputEmail4" class="form-label"
@@ -263,7 +432,6 @@
                       required
                       type="number"
                       name="installment"
-                      value="<%= student?.installment %>"
                       class="form-control"
                       id="inputEmail4"
                       placeholder="Enter Installment Amount"
@@ -275,7 +443,6 @@
                       required
                       type="number"
                       name="due"
-                      value="<%= student?.due %>"
                       class="form-control"
                       id="inputPassword4"
                       placeholder="Enter Due Amount"
@@ -291,8 +458,8 @@
                     id="inputState"
                     class="form-select"
                   >
-                    <option value="Done" selected>Done</option>
-                    <option value="Not Done">Not Done</option>
+                    <option selected>Done</option>
+                    <option>Not Done</option>
                   </select>
                 </div>
                 <div class="col-md-6" style="margin-top: 1vmax">
@@ -303,7 +470,6 @@
                     required
                     type="date"
                     name="dueDate"
-                    value="<%= student?.dueDate %>"
                     class="form-control"
                     id="inputPassword4"
                     placeholder="Enter Due Amount date"
@@ -311,7 +477,7 @@
                 </div>
 
                 <div class="col-12" style="margin-top: 1vmax">
-                  <button type="submit" class="btn btn-primary">Update</button>
+                  <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </div>
             </form>
