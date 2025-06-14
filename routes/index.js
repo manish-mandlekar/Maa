@@ -586,7 +586,7 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
 
     const totalPages = Math.ceil(totalFees / limit);
 
-    res.render("feesManagement", {
+    res.render("feesmanagement", {
       fees: filteredFees,
       currentPage: page,
       totalPages,
