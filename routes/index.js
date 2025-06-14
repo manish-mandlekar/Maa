@@ -633,7 +633,7 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   try {
     if (req.user) req.body.enquiryBy = req.user.username;
     let contactNumber = req.body?.contactNumber;
-    if (contactNumber) {
+    if (false) {
       const whatsappClient = getWhatsAppClient();
       contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
       if (contactNumber.startsWith("91") && contactNumber.length === 12) {
