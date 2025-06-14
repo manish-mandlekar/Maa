@@ -12,9 +12,9 @@ const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
 const PDFDocument = require("pdfkit");
-const { MessageMedia } = require("whatsapp-web.js");
-const { startWhatsAppClient, getWhatsAppClient } = require("./whatsapp");
-startWhatsAppClient(); // your whatsapp.js file
+// const { MessageMedia } = require("whatsapp-web.js");
+// const { startWhatsAppClient, getWhatsAppClient } = require("./whatsapp");
+// startWhatsAppClient(); // your whatsapp.js file
 
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
