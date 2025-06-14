@@ -102,22 +102,22 @@
             <tbody>
               <% fees.forEach(elem=>{ %>
               <tr>
-                <td><%= elem.student.r_no %></td>
+                <td><%= elem?.student?.r_no %></td>
                 <td>
-                  <%= elem.payDate.toLocaleTimeString() %> - <%=
-                  elem.payDate.toLocaleDateString('en-GB') %>
+                  <%= elem?.payDate?.toLocaleTimeString() %> - <%=
+                  elem?.payDate?.toLocaleDateString('en-GB') %>
                 </td>
                 <td>
-                  <%= elem.student.firstName %> <%= elem.student.lastName %>
+                  <%= elem?.student?.firstName %> <%= elem?.student?.lastName %>
                 </td>
-                <td><%= elem.registrationPaymentMode %></td>
+                <td><%= elem?.registrationPaymentMode %></td>
                 <!-- <td><i class="ri-arrow-right-down-line"></i> Credited</td> -->
-                <td>₹<%= elem.payment %>.00</td>
+                <td>₹<%= elem?.payment %>.00</td>
                 <td>
                   <!-- <a href="/delete/transaction/<%= elem._id %>">delete</a> -->
-                  <a href="/invoice/download?id=<%= elem._id %>">download</a>
+                  <a href="/invoice/download?id=<%= elem?._id %>">download</a>
                   <br />
-                  <a href="/invoice?id=<%= elem._id %>">send</a>
+                  <a href="/invoice?id=<%= elem?._id %>">send</a>
                 </td>
               </tr>
               <% }) %>
