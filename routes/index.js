@@ -285,7 +285,7 @@ router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
   const course = await courseModel.find();
   const universities = await universityModel.find();
 
-  res.render("acceptEnquiry", {
+  res.render("acceptenquiry", {
     student,
     course,
     universities,
