@@ -31,6 +31,7 @@
                   name="firstName"
                   class="form-control"
                   id="inputEmail4"
+                  value="<%= student.firstName || '' %>"
                 />
               </div>
               <div class="col-md-6">
@@ -44,6 +45,7 @@
                   placeholder="Enter Last Name"
                   class="form-control"
                   id="inputPassword4"
+                  value="<%= student.lastName || '' %>"
                 />
               </div>
               <div class="col-12">
@@ -57,6 +59,7 @@
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Email Address"
+                  value="<%= student.email || '' %>"
                 />
               </div>
               <div class="col-12">
@@ -70,6 +73,7 @@
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Name Of Father / Husband"
+                  value="<%= student.fatherName || '' %>"
                 />
               </div>
               <div class="col-12">
@@ -83,6 +87,7 @@
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Your Permanent Address"
+                  value="<%= student.address || '' %>"
                 />
               </div>
               <div class="col-12">
@@ -96,19 +101,21 @@
                   class="form-control"
                   id="inputAddress2"
                   placeholder="Enter Contact Number"
+                  value="<%= student.contactNumber || '' %>"
                 />
               </div>
               <div class="col-12">
                 <label for="inputAddress2" class="form-label"
-                  >WhatsAap Number</label
+                  >WhatsApp Number</label
                 >
                 <input
                   required
-                  type="whatsaapNumber"
+                  type="number"
                   name="whatsappNumber"
                   class="form-control"
                   id="inputAddress2"
-                  placeholder="Enter Contact Number"
+                  placeholder="Enter WhatsApp Number"
+                  value="<%= student.whatsappNumber || '' %>"
                 />
               </div>
               <div class="col-md-6">
@@ -120,6 +127,7 @@
                   class="form-control"
                   placeholder="Enter Qualification"
                   id="inputCity"
+                  value="<%= student.qualification || '' %>"
                 />
               </div>
               <div class="col-md-2">
@@ -131,6 +139,7 @@
                   placeholder="Main Subject"
                   class="form-control"
                   id="inputZip"
+                  value="<%= student.mainSubject || '' %>"
                 />
               </div>
               <div class="col-md-2">
@@ -141,6 +150,7 @@
                   type="date"
                   class="form-control"
                   id="inputZip"
+                  value="<%= student.enquiryDate ? new Date(student.enquiryDate).toISOString().split('T')[0] : '' %>"
                 />
               </div>
               <div class="col-md-2">
@@ -151,6 +161,7 @@
                   type="date"
                   class="form-control"
                   id="inputZip"
+                  value="<%= student.dateOfBirth ? new Date(student.dateOfBirth).toISOString().split('T')[0] : '' %>"
                 />
               </div>
               <div class="inq">
@@ -162,6 +173,7 @@
                     id="male"
                     name="gender"
                     value="male"
+                    <%= student.gender === 'male' ? 'checked' : '' %>
                   />
 
                   <label for="female">Female</label>
@@ -171,6 +183,7 @@
                     id="female"
                     name="gender"
                     value="female"
+                    <%= student.gender === 'female' ? 'checked' : '' %>
                   />
                 </div>
 
@@ -180,9 +193,9 @@
                       >Select Course</label
                     >
                     <select name="course" class="form-select" required>
-                      <option selected disabled>Choose a course...</option>
+                      <option disabled <%= !student.course ? 'selected' : '' %>>Choose a course...</option>
                       <% course.forEach(function(singlecourse) { %>
-                      <option value="<%= singlecourse._id %>">
+                      <option value="<%= singlecourse._id %>" <%= student.course && student.course.toString() === singlecourse._id.toString() ? 'selected' : '' %>>
                         <%= singlecourse.courseName %>
                       </option>
                       <% }); %>
@@ -191,10 +204,9 @@
                   <div class="col-md-12">
                     <label for="inputEmail4" class="form-label">Medium</label>
                     <select name="medium" class="form-select" required>
-                      <option selected disabled>Choose Medium...</option>
-
-                      <option value="english">English Medium</option>
-                      <option value="hindi">Hindi Medium</option>
+                      <option disabled <%= !student.medium ? 'selected' : '' %>>Choose Medium...</option>
+                      <option value="english" <%= student.medium === 'english' ? 'selected' : '' %>>English Medium</option>
+                      <option value="hindi" <%= student.medium === 'hindi' ? 'selected' : '' %>>Hindi Medium</option>
                     </select>
                   </div>
                   <div class="col-md-12">
@@ -202,9 +214,9 @@
                       >Select University</label
                     >
                     <select name="university" class="form-select" required>
-                      <option selected disabled>Choose a University...</option>
+                      <option disabled <%= !student.university ? 'selected' : '' %>>Choose a University...</option>
                       <% universities.forEach(function(university) { %>
-                      <option value="<%= university.name %>">
+                      <option value="<%= university.name %>" <%= student.university === university.name ? 'selected' : '' %>>
                         <%= university.name %> <%=university.location %>
                       </option>
                       <% }); %>
@@ -213,14 +225,14 @@
                   <div class="col-md-12">
                     <label for="inputEmail4" class="form-label">Session</label>
                     <select name="session" class="form-select" required>
-                      <option selected disabled>Choose a Session...</option>
-                      <option value="2023-2024">2022-2023</option>
-                      <option value="2023-2024">2023-2024</option>
-                      <option value="2024-2025">2024-2025</option>
-                      <option value="2025-2026">2025-2026</option>
-                      <option value="2026-2027">2026-2027</option>
-                      <option value="2027-2028">2027-2028</option>
-                      <option value="2028-2029">2028-2029</option>
+                      <option disabled <%= !student.session ? 'selected' : '' %>>Choose a Session...</option>
+                      <option value="2022-2023" <%= student.session === '2022-2023' ? 'selected' : '' %>>2022-2023</option>
+                      <option value="2023-2024" <%= student.session === '2023-2024' ? 'selected' : '' %>>2023-2024</option>
+                      <option value="2024-2025" <%= student.session === '2024-2025' ? 'selected' : '' %>>2024-2025</option>
+                      <option value="2025-2026" <%= student.session === '2025-2026' ? 'selected' : '' %>>2025-2026</option>
+                      <option value="2026-2027" <%= student.session === '2026-2027' ? 'selected' : '' %>>2026-2027</option>
+                      <option value="2027-2028" <%= student.session === '2027-2028' ? 'selected' : '' %>>2027-2028</option>
+                      <option value="2028-2029" <%= student.session === '2028-2029' ? 'selected' : '' %>>2028-2029</option>
                     </select>
                   </div>
                   <div class="row mb-3 mt-3">
@@ -235,6 +247,7 @@
                         name="yearOfPassing"
                         placeholder="e.g. 2023"
                         required
+                        value="<%= student.yearOfPassing || '' %>"
                       />
                     </div>
                     <div class="col-md-3">
@@ -245,11 +258,11 @@
                         name="division"
                         required
                       >
-                        <option value="">Select</option>
-                        <option value="1">1st Division</option>
-                        <option value="2">2nd Division</option>
-                        <option value="3">3rd Division</option>
-                        <option value="4">Pass</option>
+                        <option value="" <%= !student.division ? 'selected' : '' %>>Select</option>
+                        <option value="1" <%= student.division === '1' ? 'selected' : '' %>>1st Division</option>
+                        <option value="2" <%= student.division === '2' ? 'selected' : '' %>>2nd Division</option>
+                        <option value="3" <%= student.division === '3' ? 'selected' : '' %>>3rd Division</option>
+                        <option value="4" <%= student.division === '4' ? 'selected' : '' %>>Pass</option>
                       </select>
                     </div>
                     <div class="col-md-3">
@@ -264,6 +277,7 @@
                         name="percentageOfMarks"
                         placeholder="e.g. 75.50"
                         required
+                        value="<%= student.percentageOfMarks || '' %>"
                       />
                     </div>
                     <div class="col-md-3">
@@ -277,6 +291,7 @@
                         name="boardOrUniversity"
                         placeholder="e.g. CBSE, RGPV"
                         required
+                        value="<%= student.boardOrUniversity || '' %>"
                       />
                     </div>
                   </div>
@@ -285,12 +300,11 @@
                       >Category (Caste)</label
                     >
                     <select name="category" class="form-select" required>
-                      <option selected disabled>Choose Caste...</option>
-
-                      <option value="SC">Scheduled Castes (SC)</option>
-                      <option value="ST">Scheduled Tribes (ST)</option>
-                      <option value="OBC">Other Backward Classes (OBC)</option>
-                      <option value="General">General</option>
+                      <option disabled <%= !student.category ? 'selected' : '' %>>Choose Caste...</option>
+                      <option value="SC" <%= student.category === 'SC' ? 'selected' : '' %>>Scheduled Castes (SC)</option>
+                      <option value="ST" <%= student.category === 'ST' ? 'selected' : '' %>>Scheduled Tribes (ST)</option>
+                      <option value="OBC" <%= student.category === 'OBC' ? 'selected' : '' %>>Other Backward Classes (OBC)</option>
+                      <option value="General" <%= student.category === 'General' ? 'selected' : '' %>>General</option>
                     </select>
                   </div>
                   <div class="col-12">
@@ -304,6 +318,7 @@
                       class="form-control"
                       id="inputAddress2"
                       placeholder="Enter UID Number"
+                      value="<%= student.addharNo || '' %>"
                     />
                   </div>
                   <div class="row mb-3 mt-3">
@@ -319,6 +334,7 @@
                         name="familyIncome"
                         placeholder="e.g. 500000"
                         required
+                        value="<%= student.familyIncome || '' %>"
                       />
                     </div>
 
@@ -331,14 +347,14 @@
                         name="religion"
                         required
                       >
-                        <option value="">Select Religion</option>
-                        <option value="Hindu">Hindu</option>
-                        <option value="Muslim">Muslim</option>
-                        <option value="Christian">Christian</option>
-                        <option value="Sikh">Sikh</option>
-                        <option value="Buddhist">Buddhist</option>
-                        <option value="Jain">Jain</option>
-                        <option value="Other">Other</option>
+                        <option value="" <%= !student.religion ? 'selected' : '' %>>Select Religion</option>
+                        <option value="Hindu" <%= student.religion === 'Hindu' ? 'selected' : '' %>>Hindu</option>
+                        <option value="Muslim" <%= student.religion === 'Muslim' ? 'selected' : '' %>>Muslim</option>
+                        <option value="Christian" <%= student.religion === 'Christian' ? 'selected' : '' %>>Christian</option>
+                        <option value="Sikh" <%= student.religion === 'Sikh' ? 'selected' : '' %>>Sikh</option>
+                        <option value="Buddhist" <%= student.religion === 'Buddhist' ? 'selected' : '' %>>Buddhist</option>
+                        <option value="Jain" <%= student.religion === 'Jain' ? 'selected' : '' %>>Jain</option>
+                        <option value="Other" <%= student.religion === 'Other' ? 'selected' : '' %>>Other</option>
                       </select>
                     </div>
 
@@ -353,11 +369,11 @@
                         name="maritalStatus"
                         required
                       >
-                        <option value="">Select Status</option>
-                        <option value="Single">Single</option>
-                        <option value="Married">Married</option>
-                        <option value="Widowed">Widowed</option>
-                        <option value="Divorced">Divorced</option>
+                        <option value="" <%= !student.maritalStatus ? 'selected' : '' %>>Select Status</option>
+                        <option value="Single" <%= student.maritalStatus === 'Single' ? 'selected' : '' %>>Single</option>
+                        <option value="Married" <%= student.maritalStatus === 'Married' ? 'selected' : '' %>>Married</option>
+                        <option value="Widowed" <%= student.maritalStatus === 'Widowed' ? 'selected' : '' %>>Widowed</option>
+                        <option value="Divorced" <%= student.maritalStatus === 'Divorced' ? 'selected' : '' %>>Divorced</option>
                       </select>
                     </div>
                   </div>
@@ -373,6 +389,7 @@
                       class="form-control"
                       id="inputAddress"
                       placeholder="Enter Name"
+                      value="<%= student.enquiryBy || '' %>"
                     />
                   </div>
                   <div class="col-6">
@@ -385,6 +402,7 @@
                       name="joiningDate"
                       class="form-control"
                       id="inputAddress2"
+                      value="<%= student.joiningDate ? new Date(student.joiningDate).toISOString().split('T')[0] : '' %>"
                     />
                   </div>
                   <div class="col-md-4">
@@ -396,14 +414,14 @@
                       name="reference"
                       class="form-select"
                     >
-                      <option selected>Choose...</option>
-                      <option>Sign Board</option>
-                      <option>Advertisement Papers</option>
-                      <option>Google Search</option>
-                      <option>Instagram</option>
-                      <option>Facebook</option>
-                      <option>Personal Reference</option>
-                      <option>Other</option>
+                      <option <%= !student.reference ? 'selected' : '' %>>Choose...</option>
+                      <option <%= student.reference === 'Sign Board' ? 'selected' : '' %>>Sign Board</option>
+                      <option <%= student.reference === 'Advertisement Papers' ? 'selected' : '' %>>Advertisement Papers</option>
+                      <option <%= student.reference === 'Google Search' ? 'selected' : '' %>>Google Search</option>
+                      <option <%= student.reference === 'Instagram' ? 'selected' : '' %>>Instagram</option>
+                      <option <%= student.reference === 'Facebook' ? 'selected' : '' %>>Facebook</option>
+                      <option <%= student.reference === 'Personal Reference' ? 'selected' : '' %>>Personal Reference</option>
+                      <option <%= student.reference === 'Other' ? 'selected' : '' %>>Other</option>
                     </select>
                   </div>
                   <div class="col-md-4">
@@ -415,10 +433,10 @@
                       id="inputState"
                       class="form-select"
                     >
-                      <option selected>Cash</option>
-                      <option>Phone pe</option>
-                      <option>Google pay</option>
-                      <option>Cheque</option>
+                      <option <%= student.registrationPaymentMode === 'Cash' || !student.registrationPaymentMode ? 'selected' : '' %>>Cash</option>
+                      <option <%= student.registrationPaymentMode === 'Phone pe' ? 'selected' : '' %>>Phone pe</option>
+                      <option <%= student.registrationPaymentMode === 'Google pay' ? 'selected' : '' %>>Google pay</option>
+                      <option <%= student.registrationPaymentMode === 'Cheque' ? 'selected' : '' %>>Cheque</option>
                     </select>
                   </div>
                 </div>
@@ -435,6 +453,7 @@
                       class="form-control"
                       id="inputEmail4"
                       placeholder="Enter Installment Amount"
+                      value="<%= student.installment || '' %>"
                     />
                   </div>
                   <div class="col-md-6" style="margin-top: 1vmax">
@@ -446,6 +465,7 @@
                       class="form-control"
                       id="inputPassword4"
                       placeholder="Enter Due Amount"
+                      value="<%= student.due || '' %>"
                     />
                   </div>
                 </div>
@@ -458,8 +478,8 @@
                     id="inputState"
                     class="form-select"
                   >
-                    <option selected>Done</option>
-                    <option>Not Done</option>
+                    <option <%= student.registrationPayment === 'Done' || !student.registrationPayment ? 'selected' : '' %>>Done</option>
+                    <option <%= student.registrationPayment === 'Not Done' ? 'selected' : '' %>>Not Done</option>
                   </select>
                 </div>
                 <div class="col-md-6" style="margin-top: 1vmax">
@@ -473,11 +493,12 @@
                     class="form-control"
                     id="inputPassword4"
                     placeholder="Enter Due Amount date"
+                    value="<%= student.dueDate ? new Date(student.dueDate).toISOString().split('T')[0] : '' %>"
                   />
                 </div>
 
                 <div class="col-12" style="margin-top: 1vmax">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" class="btn btn-primary">Update Student</button>
                 </div>
               </div>
             </form>
