@@ -12,9 +12,9 @@ const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
 const PDFDocument = require("pdfkit");
-// const { MessageMedia } = require("whatsapp-web.js");
-// const { startWhatsAppClient, getWhatsAppClient } = require("./whatsapp");
-// startWhatsAppClient(); // your whatsapp.js file
+const { MessageMedia } = require("whatsapp-web.js");
+const { startWhatsAppClient, getWhatsAppClient } = require("./whatsapp");
+startWhatsAppClient(); // your whatsapp.js file
 
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
@@ -509,6 +509,10 @@ router.get("/deletecourse/:id", isLoggedIn, async (req, res, next) => {
   await courseModel.findOneAndDelete({ _id: req.params.id });
   res.redirect("back");
 });
+router.get("/delete/shortcourse/:id", isLoggedIn, async (req, res, next) => {
+  await shortCourseModel.findOneAndDelete({ _id: req.params.id });
+  res.redirect("back");
+});
 router.get("/delete/enquiry/:id", isLoggedIn, async (req, res, next) => {
   try {
     await studentModel.deleteOne({ _id: req.params.id });
@@ -633,14 +637,14 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   try {
     if (req.user) req.body.enquiryBy = req.user.username;
     let contactNumber = req.body?.contactNumber;
-    if (false) {
+    contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
+    if (contactNumber.startsWith("91") && contactNumber.length === 12) {
+      contactNumber = contactNumber.slice(2); // remove '91'
+    } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
+      contactNumber = contactNumber.slice(1); // remove '0'
+    }
+    if (contactNumber && false) {
       const whatsappClient = getWhatsAppClient();
-      contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
-      if (contactNumber.startsWith("91") && contactNumber.length === 12) {
-        contactNumber = contactNumber.slice(2); // remove '91'
-      } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
-        contactNumber = contactNumber.slice(1); // remove '0'
-      }
       // Final validation
       if (!/^[6-9]\d{9}$/.test(contactNumber)) {
         return res.status(400).send(
@@ -742,8 +746,8 @@ router.get("/invoice", async (req, res) => {
       .send("❌ Invalid Indian phone number (10 digits required)");
   }
 
-  // const chatId = `91${contactNumber}@c.us`;
-  const chatId = `917089369114@c.us`;
+  const chatId = `91${contactNumber}@c.us`;
+  // const chatId = `917089369114@c.us`;
 
   const bufferStream = new WritableStreamBuffer();
 
@@ -839,7 +843,13 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
 router.get("/register", async function (req, res, next) {
   const course = await courseModel.find();
   const universities = await universityModel.find();
-  res.render("register", { course, universities });
+  const lastStudent = await studentModel
+    .find({ registered: true })
+    .sort({ r_no: -1 });
+
+  const r_no = lastStudent[0].r_no + 1;
+
+  res.render("register", { course, universities, r_no });
 });
 router.post("/register", function (req, res) {
   var newUser = new userModel({

@@ -38,7 +38,7 @@
               </li>
               <li>
                 <a class="dropdown-item" href="/shortTermCourse"
-                  >Short-Term Course</a
+                  >Admission Course</a
                 >
               </li>
             </ul>
@@ -52,6 +52,7 @@
                     >Enter Course Name</label
                   >
                   <input
+                  required
                     name="courseName"
                     type="text"
                     class="form-control"
@@ -64,6 +65,7 @@
                     >Enter Course Code</label
                   >
                   <input
+                  required
                     name="courseCode"
                     type="text"
                     class="form-control"
@@ -76,7 +78,7 @@
                   >
                   <input
                     name="courseDuration"
-                    type="text"
+                    type="number"
                     class="form-control"
                     id="exampleInputPassword1"
                   />
@@ -92,10 +94,10 @@
               <table class="table">
                 <thead>
                   <tr class="table-info">
-                    <th scope="col">Sr. No.</th>
-                    <th scope="col">Course Name</th>
-                    <th scope="col">Course Code</th>
-                    <th scope="col">Course Duration</th>
+                    <th scope="col">No.</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Duration</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -104,11 +106,29 @@
                   <form action="/update-course/<%= course._id %>" method="post">
                     <tr>
                       <th scope="row"><%= i+1 %></th>
-                      <td><%=course.courseName %></td>
-                      <td><%=course.courseCode %></td>
                       <td>
                         <input
                           type="text"
+                          class="form-control"
+                          name="courseName"
+                          value="<%=course.courseName%>"
+                          style="width: 150px"
+                          id=""
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="courseCode"
+                          value="<%=course.courseCode%>"
+                          style="width: 120px"
+                          id=""
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="Number"
                           class="form-control"
                           name="courseDuration"
                           value="<%=course.courseDuration%>"
@@ -117,7 +137,7 @@
                         />
                         Months
                       </td>
-                      <td class="flex">
+                      <td class="flex"  style="padding-bottom: 32px;">
                         <button class="btn btn-success">update</button>
                         <a href="/deletecourse/<%= course._id %>">
                           <button type="button" class="btn btn-danger">delete</button>

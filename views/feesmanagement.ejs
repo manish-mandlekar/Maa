@@ -94,6 +94,7 @@
                 <th>R. No.</th>
                 <th>Date</th>
                 <th>Sender</th>
+                <th>Session</th>
                 <th>Payment Mode</th>
                 <th>Amount</th>
                 <th>Action</th>
@@ -110,6 +111,7 @@
                 <td>
                   <%= elem?.student?.firstName %> <%= elem?.student?.lastName %>
                 </td>
+                <td><%= elem?.student?.session %></td>
                 <td><%= elem?.registrationPaymentMode %></td>
                 <!-- <td><i class="ri-arrow-right-down-line"></i> Credited</td> -->
                 <td>₹<%= elem?.payment %>.00</td>
