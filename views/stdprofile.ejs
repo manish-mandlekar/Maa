@@ -180,9 +180,15 @@
               ><%= founduser.registrationPayment %></span
             >
           </div>
-          <div class="form-group">
+           <div class="form-group col-md-3">
             <label>Due Amount Date:</label>
-            <span class="readonly-text"><%= founduser.dueDate %></span>
+             <input
+              type="date"
+              name="due"
+              class="form-control "
+              value="<%= founduser.dueDate %>"
+            />
+            <!-- <span class="readonly-text"><%= founduser.dueDate %></span> -->
           </div>
           <button class="btn btn-primary mt-3 mx-2">Update</button>
         </form>

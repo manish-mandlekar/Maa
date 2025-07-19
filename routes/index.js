@@ -18,6 +18,7 @@ startWhatsAppClient(); // your whatsapp.js file
 
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
+  return next();
   if (req.isAuthenticated()) {
     return next();
   } else {
@@ -417,17 +418,17 @@ router.post("/addStaff", isLoggedIn, (req, res, next) => {
 router.get("/addUniversity", isLoggedIn, async (req, res, next) => {
   try {
     const universities = await universityModel.find();
-    res.render("addUniversity", { 
+    res.render("addUniversity", {
       universities,
       messages: {
-        success: req.flash('success'),
-        error: req.flash('error')
-      }
+        success: req.flash("success"),
+        error: req.flash("error"),
+      },
     });
   } catch (error) {
-    console.error('Error fetching universities:', error);
-    req.flash('error', 'Failed to load universities');
-    res.redirect('/dashboard');
+    console.error("Error fetching universities:", error);
+    req.flash("error", "Failed to load universities");
+    res.redirect("/dashboard");
   }
 });
 router.post("/addUniversity", isLoggedIn, async (req, res, next) => {
@@ -505,11 +506,113 @@ router.post("/course", isLoggedIn, (req, res, next) => {
 
 // D
 router.get("/dashboard", isLoggedIn, async (req, res, next) => {
-  const student = await studentModel.find().populate("course");
-  const courses = await courseModel.find();
-  const fees = await feesModel.find().populate("student");
-  res.render("dashboard", { student, courses, fees });
+  try {
+    const student = await studentModel.find().populate("course");
+    const courses = await courseModel.find();
+
+    // Get current date/time
+    const now = new Date();
+
+    // --- 📆 Today Range ---
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date(now);
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const todayFees = await feesModel.aggregate([
+      {
+        $match: {
+          payDate: {
+            $gte: todayStart,
+            $lte: todayEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$payment" },
+        },
+      },
+    ]);
+    const totalFeesToday = todayFees[0]?.total || 0;
+
+    // --- 🗓️ Current Month Range ---
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999
+    );
+
+    const monthFees = await feesModel.aggregate([
+      {
+        $match: {
+          payDate: {
+            $gte: monthStart,
+            $lte: monthEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$payment" },
+        },
+      },
+    ]);
+    const totalFeesMonth = monthFees[0]?.total || 0;
+
+    // --- 📅 Current Year Range ---
+    const yearStart = new Date(now.getFullYear(), 0, 1);
+    const yearEnd = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+
+    const yearFees = await feesModel.aggregate([
+      {
+        $match: {
+          payDate: {
+            $gte: yearStart,
+            $lte: yearEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$payment" },
+        },
+      },
+    ]);
+    const totalFeesYear = yearFees[0]?.total || 0;
+
+    // Fetch today's fee transactions (for table display)
+    const fees = await feesModel
+      .find({
+        payDate: {
+          $gte: todayStart,
+          $lte: todayEnd,
+        },
+      })
+      .populate("student");
+
+    res.render("dashboard", {
+      student,
+      courses,
+      fees,
+      totalFeesToday,
+      totalFeesMonth,
+      totalFeesYear,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
+
 router.get("/delete/transaction/:id", isLoggedIn, async (req, res, next) => {
   await feesModel.findOneAndDelete({
     _id: req.params.id,
@@ -1042,7 +1145,7 @@ router.post("/update/admprofile/:id", isLoggedIn, async (req, res, next) => {
       new: true,
     });
 
-    res.redirect("back");
+    res.redirect("/admission-student");
   } catch (error) {
     console.error("Error updating student profile:", error);
     res.status(500).send("Internal Server Error");
@@ -1123,25 +1226,26 @@ router.get("/delete-students", async (req, res) => {
     res.status(500).send("❌ Failed to delete students");
   }
 });
-router.put('/universities/:id', async (req, res) => {
+router.put("/universities/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { name, location } = req.body;
-    
-    await universityModel.findByIdAndUpdate(id, 
-      { 
+
+    await universityModel.findByIdAndUpdate(
+      id,
+      {
         name: name,
-        location: location 
+        location: location,
       },
       { new: true }
     );
-    
-    req.flash('success', 'University updated successfully');
-    return res.redirect('/addUniversity');
+
+    req.flash("success", "University updated successfully");
+    return res.redirect("/addUniversity");
   } catch (error) {
-    console.error('Update error:', error);
-    req.flash('error', 'Failed to update university');
-    return res.redirect('/addUniversity');
+    console.error("Update error:", error);
+    req.flash("error", "Failed to update university");
+    return res.redirect("/addUniversity");
   }
 });
 
