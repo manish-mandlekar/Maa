@@ -414,10 +414,21 @@ router.post("/addStaff", isLoggedIn, (req, res, next) => {
       res.redirect("/allStaff");
     });
 });
-router.get("/addUniversity", isLoggedIn, (req, res, next) => {
-  universityModel.find().then((universities) => {
-    res.render("addUniversity", { universities });
-  });
+router.get("/addUniversity", isLoggedIn, async (req, res, next) => {
+  try {
+    const universities = await universityModel.find();
+    res.render("addUniversity", { 
+      universities,
+      messages: {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching universities:', error);
+    req.flash('error', 'Failed to load universities');
+    res.redirect('/dashboard');
+  }
 });
 router.post("/addUniversity", isLoggedIn, async (req, res, next) => {
   universityModel
@@ -1110,6 +1121,27 @@ router.get("/delete-students", async (req, res) => {
   } catch (error) {
     console.error("❌ Error deleting students:", error.message);
     res.status(500).send("❌ Failed to delete students");
+  }
+});
+router.put('/universities/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, location } = req.body;
+    
+    await universityModel.findByIdAndUpdate(id, 
+      { 
+        name: name,
+        location: location 
+      },
+      { new: true }
+    );
+    
+    req.flash('success', 'University updated successfully');
+    return res.redirect('/addUniversity');
+  } catch (error) {
+    console.error('Update error:', error);
+    req.flash('error', 'Failed to update university');
+    return res.redirect('/addUniversity');
   }
 });
 
