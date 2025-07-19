@@ -496,6 +496,9 @@ router.post("/course", isLoggedIn, (req, res, next) => {
 router.get("/dashboard", isLoggedIn, async (req, res, next) => {
   const student = await studentModel.find().populate("course");
   const courses = await courseModel.find();
+  const fees = await feesModel.find().populate("course");
+  console.log(fees);
+  
   res.render("dashboard", { student, courses });
 });
 router.get("/delete/transaction/:id", isLoggedIn, async (req, res, next) => {

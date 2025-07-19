@@ -52,4 +52,5 @@ const admissionSchema = new mongoose.Schema(
 
 // Create a model from the schema
 
-module.exports = mongoose.model("admission", admissionSchema);
+const Admission = mongoose.model("admission", admissionSchema);
+module.exports = Admission
