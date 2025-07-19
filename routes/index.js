@@ -18,7 +18,6 @@ startWhatsAppClient(); // your whatsapp.js file
 
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
-  return next();
   if (req.isAuthenticated()) {
     return next();
   } else {
@@ -643,7 +642,7 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
     } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
       contactNumber = contactNumber.slice(1); // remove '0'
     }
-    if (contactNumber && false) {
+    if (contactNumber) {
       const whatsappClient = getWhatsAppClient();
       // Final validation
       if (!/^[6-9]\d{9}$/.test(contactNumber)) {

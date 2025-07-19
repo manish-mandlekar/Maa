@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require("dotenv").config();
+// require("dotenv").config();
 
 const createError = require("http-errors");
 const express = require("express");
@@ -18,7 +18,7 @@ const app = express();
 
 /* ---------------------- DB Connection ---------------------- */
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect("mongodb+srv://yash:yash@cluster0.8f4wpmt.mongodb.net")
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
@@ -65,7 +65,8 @@ app.use((err, req, res, next) => {
 });
 
 /* ---------------------- Server Startup ---------------------- */
-const port = normalizePort(process.env.PORT || "3000");
+const port = normalizePort(process.env.PORT || "1080");
+// const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 const server = http.createServer(app);
 
