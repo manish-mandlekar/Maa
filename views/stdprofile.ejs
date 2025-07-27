@@ -52,6 +52,7 @@
         <%- include('./partials/right-header') %>
         <form action="/update/profile/<%= founduser._id %>" method="post">
           <h1>Student Profile</h1>
+
           <div class="form-group">
             <label>First Name:</label>
             <input
@@ -61,6 +62,7 @@
               value="<%= founduser.firstName %>"
             />
           </div>
+
           <div class="form-group">
             <label>Last Name:</label>
             <input
@@ -70,6 +72,7 @@
               value="<%= founduser.lastName %>"
             />
           </div>
+
           <div class="form-group">
             <label>Father's Name:</label>
             <input
@@ -79,6 +82,7 @@
               value="<%= founduser.fatherName %>"
             />
           </div>
+
           <div class="form-group">
             <label>Email:</label>
             <input
@@ -88,15 +92,7 @@
               value="<%= founduser.email %>"
             />
           </div>
-          <div class="form-group">
-            <label>Gender:</label>
-            <input
-              type="text"
-              name="gender"
-              class="form-control"
-              value="<%= founduser.gender %>"
-            />
-          </div>
+
           <div class="form-group">
             <label>Contact Number:</label>
             <input
@@ -106,18 +102,178 @@
               value="<%= founduser.contactNumber %>"
             />
           </div>
+
+          <div class="form-group">
+            <label>WhatsApp Number:</label>
+            <input
+              type="text"
+              name="whatsappNumber"
+              class="form-control"
+              value="<%= founduser.whatsappNumber %>"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Date of Birth:</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              class="form-control"
+              value="<%= founduser.dateOfBirth?.toISOString().slice(0,10) %>"
+            />
+          </div>
+          <div class="form-group">
+            <label>Marital Status:</label>
+            <select name="maritalStatus" class="form-select">
+              <option value="Single" <%= founduser.maritalStatus === 'Single' ? 'selected' : '' %>>Single</option>
+              <option value="Married" <%= founduser.maritalStatus === 'Married' ? 'selected' : '' %>>Married</option>
+              <option value="Divorced" <%= founduser.maritalStatus === 'Divorced' ? 'selected' : '' %>>Divorced</option>
+              <option value="Widowed" <%= founduser.maritalStatus === 'Widowed' ? 'selected' : '' %>>Widowed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Gender:</label>
+            <select name="gender" class="form-select">
+              <option value="male" <%= founduser.gender === 'male' ? 'selected' : '' %>>Male</option>
+              <option value="female" <%= founduser.gender === 'female' ? 'selected' : '' %>>Female</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Aadhaar Number:</label>
+            <input
+              type="text"
+              name="addharNo"
+              class="form-control"
+              value="<%= founduser.addharNo %>"
+            />
+          </div>
+          <div class="form-group">
+            <label>Category:</label>
+            <select name="category" class="form-select">
+              <option value="SC" <%= founduser.category === 'SC' ? 'selected' : '' %>>SC</option>
+              <option value="ST" <%= founduser.category === 'ST' ? 'selected' : '' %>>ST</option>
+              <option value="OBC" <%= founduser.category === 'OBC' ? 'selected' : '' %>>OBC</option>
+              <option value="General" <%= founduser.category === 'General' ? 'selected' : '' %>>General</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Main Subject:</label>
+            <input
+              type="text"
+              name="mainSubject"
+              class="form-control"
+              value="<%= founduser.mainSubject %>"
+            />
+          </div>
+          <div class="form-group">
+            <label>Medium:</label>
+            <select name="medium" class="form-select">
+              <option value="hindi" <%= founduser.medium === 'hindi' ? 'selected' : '' %>>Hindi</option>
+              <option value="english" <%= founduser.medium === 'english' ? 'selected' : '' %>>English</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Year of Passing:</label>
+            <input
+              type="number"
+              name="yearOfPassing"
+              class="form-control"
+              value="<%= founduser.yearOfPassing %>"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Percentage of Marks:</label>
+            <input
+              type="number"
+              step="0.01"
+              name="percentageOfMarks"
+              class="form-control"
+              value="<%= founduser.percentageOfMarks %>"
+            />
+          </div>
+          <div class="form-group">
+            <label>Division:</label>
+            <select name="division" class="form-select">
+              <option value="1" <%= founduser.division == 1 ? 'selected' : '' %>>1st</option>
+              <option value="2" <%= founduser.division == 2 ? 'selected' : '' %>>2nd</option>
+              <option value="3" <%= founduser.division == 3 ? 'selected' : '' %>>3rd</option>
+              <option value="4" <%= founduser.division == 4 ? 'selected' : '' %>>4th</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Board/University:</label>
+            <input
+              type="text"
+              name="boardOrUniversity"
+              class="form-control"
+              value="<%= founduser.boardOrUniversity %>"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Family Income:</label>
+            <input
+              type="number"
+              name="familyIncome"
+              class="form-control"
+              value="<%= founduser.familyIncome %>"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Religion:</label>
+            <input
+              type="text"
+              name="religion"
+              class="form-control"
+              value="<%= founduser.religion %>"
+            />
+          </div>
           <div class="form-group">
             <label>Course:</label>
-            <div class="col-md-12">
-              <select class="form-select" name="course">
-                <option value="">All Courses</option>
-                <% courses.forEach(course => { const isSelected = founduser.course.some(c => c._id.toString() === course._id.toString()); %>
-                <option value="<%= course._id %>" <%= isSelected ? 'selected' : '' %>>
-                <%= course.courseName %>
-                </option>
-                <% }) %>
-              </select>
-            </div>
+            <select class="form-select" name="course">
+              <% courses.forEach(course => {
+                const isSelected = founduser.course?.some(c => c._id.toString() === course._id.toString());
+              %>
+              <option value="<%= course._id %>" <%= isSelected ? 'selected' : '' %>><%= course.courseName %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Session:</label>
+            <select name="session" class="form-select" required>
+              <option selected disabled>Choose a Session...</option>
+              <option value="2022-2023" <%= founduser.session == '2022-2023' ? 'selected' : '' %>>2022-2023</option>
+              <option value="2023-2024" <%= founduser.session == '2023-2024' ? 'selected' : '' %>>2023-2024</option>
+              <option value="2024-2025" <%= founduser.session == '2024-2025' ? 'selected' : '' %>>2024-2025</option>
+              <option value="2025-2026" <%= founduser.session == '2025-2026' ? 'selected' : '' %>>2025-2026</option>
+              <option value="2026-2027" <%= founduser.session == '2026-2027' ? 'selected' : '' %>>2026-2027</option>
+              <option value="2027-2028" <%= founduser.session == '2027-2028' ? 'selected' : '' %>>2027-2028</option>
+              <option value="2028-2029" <%= founduser.session == '2028-2029' ? 'selected' : '' %>>2028-2029</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Session Month:</label>
+            <select name="sessionMonth" class="form-select" required>
+              <option selected disabled>Choose a Session...</option>
+              <option value="January" <%= founduser.sessionMonth == 'January' ? 'selected' : '' %>>January</option>
+              <option value="February" <%= founduser.sessionMonth == 'February' ? 'selected' : '' %>>February</option>
+              <option value="March" <%= founduser.sessionMonth == 'March' ? 'selected' : '' %>>March</option>
+              <option value="April" <%= founduser.sessionMonth == 'April' ? 'selected' : '' %>>April</option>
+              <option value="May" <%= founduser.sessionMonth == 'May' ? 'selected' : '' %>>May</option>
+              <option value="June" <%= founduser.sessionMonth == 'June' ? 'selected' : '' %>>June</option>
+              <option value="July" <%= founduser.sessionMonth == 'July' ? 'selected' : '' %>>July</option>
+              <option value="August" <%= founduser.sessionMonth == 'August' ? 'selected' : '' %>>August</option>
+              <option value="September" <%= founduser.sessionMonth == 'September' ? 'selected' : '' %>>September</option>
+              <option value="October" <%= founduser.sessionMonth == 'October' ? 'selected' : '' %>>October</option>
+              <option value="November" <%= founduser.sessionMonth == 'November' ? 'selected' : '' %>>November</option>
+              <option value="December" <%= founduser.sessionMonth == 'December' ? 'selected' : '' %>>December</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -129,6 +285,7 @@
               value="<%= founduser.qualification %>"
             />
           </div>
+
           <div class="form-group">
             <label>Address:</label>
             <input
@@ -138,20 +295,26 @@
               value="<%= founduser.address %>"
             />
           </div>
+
           <div class="form-group">
             <label>Enquiry Date:</label>
             <span class="readonly-text"
-              ><%= founduser.enquiryDate.toDateString() %></span
+              ><%= founduser.enquiryDate?.toDateString() %></span
             >
           </div>
+
           <div class="form-group">
             <label>Joining Date:</label>
-            <span class="readonly-text"
-              ><%= founduser?.joiningDate?.toDateString() %></span
-            >
+            <input
+              type="date"
+              name="joiningDate"
+              class="form-control"
+              value="<%= founduser.joiningDate?.toISOString().slice(0,10) %>"
+            />
           </div>
+
           <div class="form-group">
-            <label>Installment Amount:</label>
+            <label>Installment:</label>
             <input
               type="text"
               name="installment"
@@ -159,38 +322,48 @@
               value="<%= founduser.installment %>"
             />
           </div>
+
           <div class="form-group">
             <label>Due Amount:</label>
             <input
-              type="text"
+              type="number"
               name="due"
               class="form-control"
               value="<%= founduser.due %>"
             />
           </div>
+
           <div class="form-group">
-            <label>Registration Payment Method:</label>
-            <span class="readonly-text"
-              ><%= founduser.registrationPaymentMode %></span
-            >
-          </div>
-          <div class="form-group">
-            <label>Registration Payment Status:</label>
-            <span class="readonly-text"
-              ><%= founduser.registrationPayment %></span
-            >
-          </div>
-           <div class="form-group col-md-3">
-            <label>Due Amount Date:</label>
-             <input
+            <label>Due Date:</label>
+            <input
               type="date"
-              name="due"
-              class="form-control "
+              name="dueDate"
+              class="form-control"
               value="<%= founduser.dueDate %>"
             />
-            <!-- <span class="readonly-text"><%= founduser.dueDate %></span> -->
           </div>
-          <button class="btn btn-primary mt-3 mx-2">Update</button>
+
+          <div class="form-group">
+            <label>Registration Payment Mode:</label>
+            <input
+              type="text"
+              name="registrationPaymentMode"
+              class="form-control"
+              value="<%= founduser.registrationPaymentMode %>"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Registration Payment Status:</label>
+            <input
+              type="text"
+              name="registrationPayment"
+              class="form-control"
+              value="<%= founduser.registrationPayment %>"
+            />
+          </div>
+
+          <button class="btn btn-primary mt-3">Update</button>
         </form>
       </div>
     </div>

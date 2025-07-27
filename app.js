@@ -20,6 +20,7 @@ const app = express();
 /* ---------------------- DB Connection ---------------------- */
 mongoose
   .connect("mongodb+srv://yash:yash@cluster0.8f4wpmt.mongodb.net")
+  // .connect("mongodb://localhost/maa")
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 

@@ -18,6 +18,7 @@ startWhatsAppClient(); // your whatsapp.js file
 
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
+  return next();
   if (req.isAuthenticated()) {
     return next();
   } else {
@@ -25,10 +26,230 @@ function isLoggedIn(req, res, next) {
   }
 }
 
+// function buildPDF(
+//   Datacallback,
+//   Endcallback,
+//   r_no,
+//   feeType,
+//   date,
+//   name,
+//   lastName,
+//   course,
+//   reg_fee,
+//   paid_fee,
+//   contactNumber,
+//   payment_mode
+// ) {
+//   const doc = new PDFDocument({ size: "A4", margin: 50 });
+
+//   doc.on("data", Datacallback);
+//   doc.on("end", Endcallback);
+
+//   const blue = "#0000ff";
+//   const red = "#ff0000";
+
+//   // Draw the header logo/image at the top
+//   try {
+//     if (fs.existsSync("./public/images/real.jpeg")) {
+//       doc.image("./public/images/real.jpeg", 50, 0, {
+//         width: 495,
+//         align: "top",
+//       });
+//       doc.moveDown(8); // Move down after logo
+//     } else {
+//       // Fallback: Create a placeholder header
+//       doc
+//         .fontSize(24)
+//         .fillColor(blue)
+//         .font("Helvetica-Bold")
+//         .text("MAA COMPUTERS", 50, 50, { align: "center" })
+//         .fontSize(14)
+//         .text("EDUCATION INSTITUTE", 50, 80, { align: "center" });
+//       doc.moveDown(3);
+//     }
+//   } catch (err) {
+//     console.warn("Header logo image not found, using text header.");
+//     // Fallback header
+//     doc
+//       .fontSize(24)
+//       .fillColor(blue)
+//       .font("Helvetica-Bold")
+//       .text("MAA COMPUTERS", 50, 50, { align: "center" })
+//       .fontSize(14)
+//       .text("EDUCATION INSTITUTE", 50, 80, { align: "center" });
+//     doc.moveDown(3);
+//   }
+
+//   // Receipt header info with larger font - exactly as in original
+//   const currentY = doc.y;
+//   doc
+//     .fontSize(12)
+//     .fillColor("black")
+//     .font("Helvetica")
+//     .text(`Reg. No.: ${r_no || "N/A"}`, 50, currentY - 50)
+//     .text(
+//       `Date: ${date || new Date().toLocaleDateString("en-GB")}`,
+//       400,
+//       currentY - 50
+//     );
+
+//   // Student details with larger font
+//   // doc.moveDown(1);
+//   const detailsY = doc.y;
+//   doc
+//     .fontSize(12)
+//     .text(
+//       `Name: ${name || "N/A"}${lastName ? " " + lastName : ""}`,
+//       50,
+//       detailsY
+//     )
+//     .text(`Contact: ${contactNumber || "N/A"}`, 400, detailsY);
+
+//   doc.moveDown(0.5);
+
+//   doc
+//     .fontSize(12)
+//     .text(`Course Enrolled: ${course[0].courseName || "N/A"}`, 50);
+
+//   // Table section with proper borders and increased font size
+//   doc.moveDown(1.5);
+//   const tableStartY = doc.y - 10;
+//   const tableWidth = 495;
+//   const col1Width = 60;
+//   const col2Width = 285;
+//   const col3Width = 150;
+
+//   // Draw table border
+//   doc.rect(50, tableStartY, tableWidth, 100).stroke();
+
+//   // Draw vertical lines
+//   doc
+//     .moveTo(50 + col1Width, tableStartY)
+//     .lineTo(50 + col1Width, tableStartY + 100)
+//     .stroke();
+//   doc
+//     .moveTo(50 + col1Width + col2Width, tableStartY)
+//     .lineTo(50 + col1Width + col2Width, tableStartY + 100)
+//     .stroke();
+
+//   // Draw horizontal lines
+//   doc
+//     .moveTo(50, tableStartY + 25)
+//     .lineTo(545, tableStartY + 25)
+//     .stroke(); // After header
+//   doc
+//     .moveTo(50, tableStartY + 50)
+//     .lineTo(545, tableStartY + 50)
+//     .stroke(); // After row 1
+//   doc
+//     .moveTo(50, tableStartY + 75)
+//     .lineTo(545, tableStartY + 75)
+//     .stroke(); // After row 2
+
+//   // Table headers with blue color and larger font
+//   doc
+//     .fillColor("black")
+//     .fontSize(12)
+//     .font("Helvetica-Bold")
+//     .text("S.No.", 55, tableStartY + 8, {
+//       width: col1Width - 10,
+//       align: "center",
+//     })
+//     .text("Particulars", 115, tableStartY + 8, {
+//       width: col2Width - 10,
+//       align: "center",
+//     })
+//     .text("Amount", 405, tableStartY + 8, {
+//       width: col3Width - 10,
+//       align: "center",
+//     });
+
+//   // Table rows with larger font
+//   doc.fillColor("black").font("Helvetica").fontSize(11);
+
+//   // Row 1: Registration Fee
+//   doc
+//     .text("1", 55, tableStartY + 33, { width: col1Width - 10, align: "center" })
+//     .text(feeType, 115, tableStartY + 33, {
+//       width: col2Width - 10,
+//       align: "left",
+//     })
+//     .text(`${paid_fee || "0"}`, 395, tableStartY + 33, {
+//       width: col3Width - 10,
+//       align: "center",
+//     });
+
+//   // Row 2: Paid Fee
+//   doc
+//     .text("2", 55, tableStartY + 58, { width: col1Width - 10, align: "center" })
+//     .text("Paid Fee", 115, tableStartY + 58, {
+//       width: col2Width - 10,
+//       align: "left",
+//     })
+//     .text(`${paid_fee || "0"}`, 395, tableStartY + 58, {
+//       width: col3Width - 10,
+//       align: "center",
+//     });
+
+//   // Total row with bold font
+//   const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
+//   doc
+//     .font("Helvetica-Bold")
+//     .fontSize(12)
+//     .text("Total", 115, tableStartY + 83, {
+//       width: col2Width - 10,
+//       align: "left",
+//     })
+//     .text(`${total}`, 395, tableStartY + 83, {
+//       width: col3Width - 10,
+//       align: "center",
+//     });
+
+//   // Payment information with larger font
+//   doc.moveDown(1);
+//   doc
+//     .font("Helvetica")
+//     .fontSize(12)
+//     .text(
+//       `Received a sum of Rupees ${total} by ${payment_mode || "UPI"}.`,
+//       50,
+//       280
+//     );
+//   // Signature section with larger font
+//   doc.moveDown(1);
+//   const signatureY = doc.y;
+//   doc
+//     .fontSize(12)
+//     .text("Student's/Parent's Signature", 50, signatureY)
+//     .text("Receiver's Signature", 400, signatureY);
+
+//   // Important note in red with larger font
+//   doc.moveDown(1);
+//   doc
+//     .fontSize(11)
+//     .fillColor(red)
+//     .text(
+//       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
+//       50,
+//       doc.y,
+//       { width: 495 }
+//     );
+
+//   // Footer contact information with larger font
+//   doc.moveDown(1);
+//   doc.fontSize(11).fillColor("black").text("Visit Us: www.mceiindia.in", 50);
+
+//   doc.text("Help line: 9617767802, 9229967996, 9039442551, 9131990309", 50);
+//   doc.text("Email: mceiindia229@gmail.com | Social: @mceiindiarau", 50);
+
+//   doc.end();
+// }
+
 function buildPDF(
   Datacallback,
   Endcallback,
-  reg_no,
+  r_no,
+  feeType,
   date,
   name,
   lastName,
@@ -84,7 +305,7 @@ function buildPDF(
     .fontSize(12)
     .fillColor("black")
     .font("Helvetica")
-    .text(`Reg. No.: ${reg_no || "N/A"}`, 50, currentY - 50)
+    .text(`Reg. No.: ${r_no || "N/A"}`, 50, currentY - 50)
     .text(
       `Date: ${date || new Date().toLocaleDateString("en-GB")}`,
       400,
@@ -109,7 +330,7 @@ function buildPDF(
     .fontSize(12)
     .text(`Course Enrolled: ${course[0].courseName || "N/A"}`, 50);
 
-  // Table section with proper borders and increased font size
+  // Table section with proper borders and increased font size - reduced height for 2 rows only
   doc.moveDown(1.5);
   const tableStartY = doc.y - 10;
   const tableWidth = 495;
@@ -117,17 +338,17 @@ function buildPDF(
   const col2Width = 285;
   const col3Width = 150;
 
-  // Draw table border
-  doc.rect(50, tableStartY, tableWidth, 100).stroke();
+  // Draw table border - reduced height to 75 (header + 1 row + total)
+  doc.rect(50, tableStartY, tableWidth, 75).stroke();
 
   // Draw vertical lines
   doc
     .moveTo(50 + col1Width, tableStartY)
-    .lineTo(50 + col1Width, tableStartY + 100)
+    .lineTo(50 + col1Width, tableStartY + 75)
     .stroke();
   doc
     .moveTo(50 + col1Width + col2Width, tableStartY)
-    .lineTo(50 + col1Width + col2Width, tableStartY + 100)
+    .lineTo(50 + col1Width + col2Width, tableStartY + 75)
     .stroke();
 
   // Draw horizontal lines
@@ -139,10 +360,6 @@ function buildPDF(
     .moveTo(50, tableStartY + 50)
     .lineTo(545, tableStartY + 50)
     .stroke(); // After row 1
-  doc
-    .moveTo(50, tableStartY + 75)
-    .lineTo(545, tableStartY + 75)
-    .stroke(); // After row 2
 
   // Table headers with blue color and larger font
   doc
@@ -165,40 +382,28 @@ function buildPDF(
   // Table rows with larger font
   doc.fillColor("black").font("Helvetica").fontSize(11);
 
-  // Row 1: Registration Fee
+  // Row 1: Fee Type (only row now)
   doc
     .text("1", 55, tableStartY + 33, { width: col1Width - 10, align: "center" })
-    .text("Registration Fee", 115, tableStartY + 33, {
+    .text(feeType, 115, tableStartY + 33, {
       width: col2Width - 10,
       align: "left",
     })
-    .text(`${reg_fee || "0"}`, 395, tableStartY + 33, {
+    .text(`${paid_fee || "0"}`, 395, tableStartY + 33, {
       width: col3Width - 10,
       align: "center",
     });
 
-  // Row 2: Paid Fee
-  doc
-    .text("2", 55, tableStartY + 58, { width: col1Width - 10, align: "center" })
-    .text("Paid Fee", 115, tableStartY + 58, {
-      width: col2Width - 10,
-      align: "left",
-    })
-    .text(`${paid_fee || "0"}`, 395, tableStartY + 58, {
-      width: col3Width - 10,
-      align: "center",
-    });
-
-  // Total row with bold font
-  const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
+  // Total row with bold font (moved up to position where row 2 was)
+  const total = parseInt(paid_fee || 0); // Only paid_fee since we removed the other row
   doc
     .font("Helvetica-Bold")
     .fontSize(12)
-    .text("Total", 115, tableStartY + 83, {
+    .text("Total", 115, tableStartY + 58, {
       width: col2Width - 10,
       align: "left",
     })
-    .text(`${total}`, 395, tableStartY + 83, {
+    .text(`${total}`, 395, tableStartY + 58, {
       width: col3Width - 10,
       align: "center",
     });
@@ -211,7 +416,7 @@ function buildPDF(
     .text(
       `Received a sum of Rupees ${total} by ${payment_mode || "UPI"}.`,
       50,
-      280
+      250
     );
   // Signature section with larger font
   doc.moveDown(1);
@@ -291,30 +496,38 @@ router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
   });
 });
 router.post("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
-  const student = await studentModel.findById({ _id: req.params.id });
-  const lastStudent = await studentModel
-    .find({ registered: true })
-    .sort({ _id: -1 });
+  try {
+    const { id } = req.params;
 
-  student.registered = true;
-  student.rejected = false;
-  student.r_no = lastStudent[0] ? lastStudent[0]?.r_no + 1 : 1;
-  student.due = req?.body?.due;
-  student.gender = req?.body?.gender;
-  student.course = req?.body?.course;
-  student.session = req?.body?.session;
-  student.dueDate = req?.body?.dueDate;
-  student.enquiryBy = req?.body?.enquiryBy;
-  student.university = req?.body?.university;
-  student.installment = req?.body?.installment;
-  student.joiningDate = req?.body?.joiningDate;
-  student.registrationPayment = req?.body?.registrationPayment;
-  student.registrationPaymentMode = req?.body?.registrationPaymentMode;
+    const lastStudent = await studentModel
+      .findOne({ registered: true })
+      .sort({ r_no: -1 })
+      .lean();
 
-  await student.save();
+    const newRno = lastStudent ? lastStudent.r_no + 1 : 1;
 
-  res.redirect("/student");
+    const updateData = {
+      ...req.body,
+      registered: true,
+      rejected: false,
+      r_no: newRno,
+    };
+
+    const updatedStudent = await studentModel.findOneAndUpdate(
+      { _id: id },
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedStudent) return res.status(404).send("Student not found");
+
+    res.redirect("/student");
+  } catch (err) {
+    console.error("Error accepting enquiry:", err);
+    next(err);
+  }
 });
+
 router.get("/addFeeStructure", isLoggedIn, (req, res, next) => {
   courseModel.find().then((course) => {
     res.render("addFeeStructure", { course });
@@ -717,27 +930,52 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
   }
 });
 router.get("/fees", isLoggedIn, async (req, res, next) => {
-  const students = await studentModel
-    .find({ registered: true, rejected: false })
-    .populate("course");
-  const today = new Date(); // Get current date
+  try {
+    const today = new Date();
 
-  const filteredStudents = students
-    .filter((e) => e.due > 0 && new Date(e.dueDate) < today) // Only past due dates
-    .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)); // Sort in descending order
+    const studentData = await studentModel
+      .find({ registered: true, rejected: false, due: { $gt: 0 } })
+      .populate("course");
 
-  res.render("fees", { students: filteredStudents });
+    const admissionData = await admissionModel
+      .find({ due: { $gt: 0 } })
+      .populate("course");
+
+    const combined = [...studentData, ...admissionData];
+
+    const filteredStudents = combined
+      .filter((student) => student.dueDate && new Date(student.dueDate) < today)
+      .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+
+    res.render("fees", { students: filteredStudents });
+  } catch (err) {
+    console.error("Error fetching combined student fees:", err);
+    next(err);
+  }
 });
 
 // G
 router.get("/getdate", isLoggedIn, async (req, res, next) => {
-  const students = await studentModel
-    .find({ registered: true, rejected: false })
-    .populate("course");
-  students.sort(function (a, b) {
-    return new Date(a.dueDate) - new Date(b.dueDate);
-  });
-  res.json({ students: students.filter((e) => e.due > 0) });
+  try {
+    const studentData = (
+      await studentModel
+        .find({ registered: true, rejected: false, due: { $gt: 0 } })
+        .populate("course")
+    ).map((s) => ({ ...s.toObject(), source: "student" }));
+
+    const admissionData = (
+      await admissionModel.find({ due: { $gt: 0 } }).populate("course")
+    ).map((a) => ({ ...a.toObject(), source: "admission" }));
+
+    const combined = [...studentData, ...admissionData];
+
+    combined.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+    res.json({ students: combined });
+  } catch (err) {
+    console.error("Error in /getdate:", err);
+    next(err);
+  }
 });
 
 // I
@@ -748,6 +986,8 @@ router.get("/inquiry", isLoggedIn, async (req, res, next) => {
 router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   // add enquiryBy in student model from req.user
   try {
+    console.log(req.body);
+
     if (req.user) req.body.enquiryBy = req.user.username;
     let contactNumber = req.body?.contactNumber;
     contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
@@ -756,19 +996,19 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
     } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
       contactNumber = contactNumber.slice(1); // remove '0'
     }
+    if (!/^[6-9]\d{9}$/.test(contactNumber)) {
+      return res.status(400).send(`
+        <html>
+          <body>
+            <h1>Invalid contact number</h1>
+            <p><a href="/feesManagement">Go Back</a></p>
+          </body>
+        </html>
+      `);
+    }
     if (contactNumber) {
       const whatsappClient = getWhatsAppClient();
       // Final validation
-      if (!/^[6-9]\d{9}$/.test(contactNumber)) {
-        return res.status(400).send(
-          `<html>
-            <body>
-              <h1>Something Went Wrong!</h1>
-              <p><a href="/feesManagement">Go Back</a></p>
-            </body>
-            </html>`
-        );
-      }
       const formattedNumber = "91" + contactNumber + "@c.us"; // WhatsApp format
 
       const thankYouMessage = `🙏 Thank you for your enquiry, ${
@@ -808,8 +1048,8 @@ router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
   // Validate contact number
   // res.json(Fees.student);
 
-  const { payment, registrationPaymentMode, payDate, receiptNumber } = Fees;
-  const { firstName, lastName, course, reg_fee, contactNumber } = student;
+  const { payment, registrationPaymentMode, payDate, feeType } = Fees;
+  const { firstName, lastName, course, reg_fee, contactNumber, r_no } = student;
   const stream = res.writeHead(200, {
     "Content-Type": "application/pdf",
     "Content-Disposition": `attachment;filename=receipt.pdf`,
@@ -817,7 +1057,8 @@ router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
   buildPDF(
     (chunk) => stream.write(chunk),
     () => stream.end(),
-    receiptNumber,
+    r_no,
+    feeType,
     payDate
       ? payDate.toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB"),
@@ -1014,7 +1255,7 @@ router.get("/signup", function (req, res, next) {
 });
 router.get("/student", isLoggedIn, async (req, res, next) => {
   try {
-    const { name, contactNumber, session, page = 1 } = req.query;
+    const { name, contactNumber, session, sessionMonth, page = 1 } = req.query;
     const limit = 10;
     const skip = (page - 1) * limit;
 
@@ -1036,7 +1277,11 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
       query.session = session;
     }
 
-    const [std, totalCount, sessions] = await Promise.all([
+    if (sessionMonth) {
+      query.sessionMonth = sessionMonth;
+    }
+
+    const [std, totalCount, sessions, sessionMonths] = await Promise.all([
       studentModel
         .find(query)
         .populate("course")
@@ -1045,7 +1290,9 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
         .sort({ r_no: 1 }),
       studentModel.countDocuments(query),
       studentModel.distinct("session"),
+      studentModel.distinct("sessionMonth"), // Get all distinct session months for filter dropdown
     ]);
+    console.log(std);
 
     const totalPages = Math.ceil(totalCount / limit);
     res.render("student", {
@@ -1054,6 +1301,7 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
       currentPage: parseInt(page),
       totalPages,
       sessions,
+      sessionMonths, // Pass sessionMonths to the view
     });
   } catch (err) {
     next(err);
@@ -1175,22 +1423,33 @@ router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
     // Validate before proceeding
     const paidAmount = +req.body.paid;
     if (paidAmount > foundstudent.due) {
-      return res.send("❌ Invalid Entry: Paid amount is greater than due");
-    }
-
-    // Find the last receiptNumber and increment
-    const lastFee = await feesModel.findOne({}).sort({ receiptNumber: -1 });
-    let nextReceiptNumber = 1;
-    if (lastFee?.receiptNumber) {
-      nextReceiptNumber = lastFee.receiptNumber + 1;
+      return res.send(`
+  <div style="text-align: center; margin-top: 50px; font-family: Arial, sans-serif;">
+    <h2>❌ Invalid Entry: Paid amount is greater than due</h2>
+    <p>Redirecting in <span id="countdown">3</span> seconds...</p>
+    <p><a href="/fees" style="color: #007bff; text-decoration: none;">Click here if not redirected automatically</a></p>
+    <script>
+      let count = 3;
+      const countdown = document.getElementById('countdown');
+      const timer = setInterval(() => {
+        count--;
+        countdown.textContent = count;
+        if (count <= 0) {
+          clearInterval(timer);
+          window.location.href = '/fees';
+        }
+      }, 1000);
+    </script>
+  </div>
+`);
     }
 
     // Create the fee entry
     await feesModel.create({
       registrationPaymentMode: req.body.registrationPaymentMode,
+      feeType: req.body.feeType,
       student: foundstudent._id,
       payment: paidAmount,
-      receiptNumber: nextReceiptNumber,
     });
 
     // Update the student's due

@@ -36,11 +36,18 @@
                   value="<%= query.contactNumber || '' %>"
                 />
               </div>
+              
               <div class="col-md-3">
                 <select class="form-select" name="session">
                   <option value="">All Sessions</option>
                   <% sessions.forEach(session => { %>
                   <option value="<%= session %>"  <%= query.session === session ? 'selected' : '' %>><%= session %></option>
+                  <% }) %>
+                </select>
+                <select class="form-select mt-2" name="sessionMonth">
+                  <option value="">Session Month</option>
+                  <% sessionMonths.forEach(month => { %>
+                  <option value="<%= month %>"  <%= query.sessionMonth === month ? 'selected' : '' %>><%= month %></option>
                   <% }) %>
                 </select>
               </div>
@@ -80,7 +87,7 @@
                     <td><%= std?.course[0]?.courseCode %></td>
 
                     <td><%=std?.joiningDate?.toDateString() %></td>
-                    <td><%=std.session %></td>
+                    <td><%=std.session %>(<%=std.sessionMonth %>)</td>
                   </tr>
                   <% }) %>
                   <!-- Add more rows for additional students -->

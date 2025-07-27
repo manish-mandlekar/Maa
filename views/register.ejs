@@ -221,17 +221,30 @@
                       <% }); %>
                     </select>
                   </div>
-                  <div class="col-md-12">
+                  <div class="col-md-6">
                     <label for="inputEmail4" class="form-label">Session</label>
                     <select name="session" class="form-select" required>
                       <option selected disabled>Choose a Session...</option>
-                      <option value="2023-2024">2022-2023</option>
-                      <option value="2023-2024">2023-2024</option>
-                      <option value="2024-2025">2024-2025</option>
-                      <option value="2025-2026">2025-2026</option>
-                      <option value="2026-2027">2026-2027</option>
-                      <option value="2027-2028">2027-2028</option>
-                      <option value="2028-2029">2028-2029</option>
+                      <% [ "2022-2023", "2023-2024", "2024-2025", "2025-2026",
+                      "2026-2027", "2027-2028", "2028-2029","2029-2030"
+                      ].forEach(function(session) { %>
+                      <option value="<%= session %>"><%= session %></option>
+                      <% }); %>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="inputEmail4" class="form-label"
+                      >Session Month</label
+                    >
+                    <select name="sessionMonth" class="form-select" required>
+                      <option selected disabled>
+                        Choose a Session Month...
+                      </option>
+                      <% ["January", "February", "March", "April", "May",
+                      "June", "July", "August", "September", "October",
+                      "November", "December" ].forEach(function(month) { %>
+                      <option value="<%= month %>"><%= month %></option>
+                      <% }); %>
                     </select>
                   </div>
                   <div class="row mb-3 mt-3">

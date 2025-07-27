@@ -62,8 +62,20 @@
                     <option>Cheque</option>
                   </select>
                 </div>
+                <div class="col-md-12">
+                  <label for="inputState" class="form-label mt-2"
+                    >Fee Type:</label
+                  >
+                  <select name="feeType" id="inputState" class="form-select">
+                    <option selected>Regular Fee</option>
+                    <option>Monthly Fee</option>
+                    <option>Late Fee</option>
+                    <option>Exam Fee</option>
+                    <option>Other</option>
+                  </select>
+                </div>
 
-                <label for="paid">Amount Paid:</label>
+                <label for="paid" class="mt-2">Amount Paid:</label>
                 <input type="number" id="paid" name="paid" required />
 
                 <button type="submit">Update</button>

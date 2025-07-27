@@ -52,6 +52,10 @@ const studentEnquirySchema = new mongoose.Schema({
     type: String,
     default: "2023-2024",
   },
+  sessionMonth: {
+    type: String,
+    default: "January",
+  },
   rejected: {
     type: Boolean,
     default: false,
@@ -81,7 +85,7 @@ const studentEnquirySchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum:["SC","ST","OBC","General"]
+    enum: ["SC", "ST", "OBC", "General"],
   },
   addharNo: {
     type: String,

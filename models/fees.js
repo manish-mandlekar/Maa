@@ -14,10 +14,11 @@ const feesSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  receiptNumber: {
-    type: Number,
+  feeType: {
+    type: String,
+    default: "Regular Fee",
   },
 });
 const Fees = mongoose.model("feesSchema", feesSchema);
 
-module.exports = Fees
+module.exports = Fees;
