@@ -3,7 +3,12 @@ const mongoose = require("mongoose");
 const feesSchema = new mongoose.Schema({
   student: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "StudentEnquiry",
+    refPath: "studentModelType",
+  },
+  studentModelType: {
+    type: String,
+    enum: ["StudentEnquiry", "admission"],
+    required: true,
   },
   registrationPaymentMode: String,
   payment: {

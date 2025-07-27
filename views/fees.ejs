@@ -47,7 +47,31 @@
                 <td><%= e.contactNumber %></td>
                 <td><%= e.due %></td>
                 <td>
-                  <a href="/edit/<%=e._id %>"
+                  <a href="/edit/student/<%=e._id %>"
+                    ><button type="button" class="btn btn-primary">
+                      Pay
+                    </button></a
+                  >
+                  <!-- <button type="button" class="btn btn-danger">Delete</button> -->
+                </td>
+              </tr>
+              <% }) %> <% admissions.reverse().forEach(e=>{ %>
+              <tr>
+                <td>
+                  <a href="/admprofile/<%=e._id %>"
+                    ><%= e.firstName %> <%= e.lastName %></a
+                  >
+                </td>
+                <td><%= e.fatherName %></td>
+                <td>
+                  <% e.course.forEach(c=>{ %> <%= c.courseName %> <% }) %>
+                </td>
+                <!-- <td><%= e.session %></td> -->
+                <td><%= e.dueDate %></td>
+                <td><%= e.contactNumber %></td>
+                <td><%= e.due %></td>
+                <td>
+                  <a href="/edit/admission/<%=e._id %>"
                     ><button type="button" class="btn btn-primary">
                       Pay
                     </button></a

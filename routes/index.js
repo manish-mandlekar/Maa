@@ -17,6 +17,7 @@ const { startWhatsAppClient, getWhatsAppClient } = require("./whatsapp");
 startWhatsAppClient(); // your whatsapp.js file
 
 const { WritableStreamBuffer } = require("stream-buffers");
+
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -849,11 +850,29 @@ router.get("/delete/enquiry/:id", isLoggedIn, async (req, res, next) => {
 });
 
 // E
-router.get("/edit/:id", isLoggedIn, async (req, res, next) => {
-  const founduser = await studentModel.findOne({
-    _id: req.params.id,
-  });
-  res.render("edit", { founduser });
+router.get("/edit/:type/:id", isLoggedIn, async (req, res, next) => {
+  const { type, id } = req.params;
+
+  try {
+    let founduser;
+
+    if (type === "student") {
+      founduser = await studentModel.findById(id).populate("course");
+    } else if (type === "admission") {
+      founduser = await admissionModel.findById(id).populate("course");
+    } else {
+      return res.status(400).send("Invalid type");
+    }
+
+    if (!founduser) {
+      return res.status(404).send("User not found");
+    }
+
+    res.render("edit", { founduser, type }); // Optional: pass type to edit view if needed
+  } catch (err) {
+    console.error("Error in edit route:", err);
+    next(err);
+  }
 });
 
 // F
@@ -940,15 +959,21 @@ router.get("/fees", isLoggedIn, async (req, res, next) => {
       .find({ due: { $gt: 0 } })
       .populate("course");
 
-    const combined = [...studentData, ...admissionData];
+    // Common filter condition
+    const filterDue = (data) =>
+      data
+        .filter((item) => item.dueDate && new Date(item.dueDate) < today)
+        .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
 
-    const filteredStudents = combined
-      .filter((student) => student.dueDate && new Date(student.dueDate) < today)
-      .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+    const filteredStudentData = filterDue(studentData);
+    const filteredAdmissionData = filterDue(admissionData);
 
-    res.render("fees", { students: filteredStudents });
+    res.render("fees", {
+      students: filteredStudentData,
+      admissions: filteredAdmissionData,
+    });
   } catch (err) {
-    console.error("Error fetching combined student fees:", err);
+    console.error("Error fetching student and admission fees:", err);
     next(err);
   }
 });
@@ -1415,9 +1440,19 @@ router.post("/update-short-course/:id", isLoggedIn, async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });
-router.post("/update/due/:id", isLoggedIn, async (req, res, next) => {
+router.post("/update/due/:type/:id", isLoggedIn, async (req, res, next) => {
   try {
-    const foundstudent = await studentModel.findById(req.params.id);
+    const { type, id } = req.params;
+
+    let foundstudent;
+
+    if (type === "student") {
+      foundstudent = await studentModel.findById(id).populate("course");
+    } else if (type === "admission") {
+      foundstudent = await admissionModel.findById(id).populate("course");
+    } else {
+      return res.status(400).send("Invalid type");
+    }
 
     // Validate before proceeding
     const paidAmount = +req.body.paid;

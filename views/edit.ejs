@@ -18,7 +18,10 @@
         <div class="pop">
           <div class="dbai">
             <div id="popupForm" class="popup-container">
-              <form action="/update/due/<%= founduser._id %>" method="POST">
+              <form
+                action="/update/due/<%= type %>/<%= founduser._id %>"
+                method="POST"
+              >
                 <h2>Due Amount Fees</h2>
                 <label for="name">Name:</label>
                 <input

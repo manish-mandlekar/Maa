@@ -103,7 +103,7 @@
             <tbody>
               <% fees.forEach(elem=>{ %>
               <tr>
-                <td><%= elem?.student?.r_no %></td>
+                <td><%= elem?.student?.r_no ? elem?.student?.r_no : "ADM" %></td>
                 <td>
                   <%= elem?.payDate?.toLocaleTimeString() %> - <%=
                   elem?.payDate?.toLocaleDateString('en-GB') %>
@@ -111,7 +111,7 @@
                 <td>
                   <%= elem?.student?.firstName %> <%= elem?.student?.lastName %>
                 </td>
-                <td><%= elem?.student?.session %></td>
+                <td><%= elem?.student.session ? elem?.student?.session : "ADM" %></td>
                 <td><%= elem?.registrationPaymentMode %></td>
                 <!-- <td><i class="ri-arrow-right-down-line"></i> Credited</td> -->
                 <td>₹<%= elem?.payment %>.00</td>
