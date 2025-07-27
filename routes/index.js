@@ -18,7 +18,6 @@ startWhatsAppClient(); // your whatsapp.js file
 
 const { WritableStreamBuffer } = require("stream-buffers");
 function isLoggedIn(req, res, next) {
-  return next();
   if (req.isAuthenticated()) {
     return next();
   } else {
