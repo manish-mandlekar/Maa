@@ -52,7 +52,7 @@
                     >Enter Course Name</label
                   >
                   <input
-                  required
+                    required
                     name="courseName"
                     type="text"
                     class="form-control"
@@ -65,7 +65,7 @@
                     >Enter Course Code</label
                   >
                   <input
-                  required
+                    required
                     name="courseCode"
                     type="text"
                     class="form-control"
@@ -80,7 +80,6 @@
                     name="courseDuration"
                     type="number"
                     class="form-control"
-                    id="exampleInputPassword1"
                   />
                   <div id="emailHelp" class="form-text">
                     Note: Duration must be in Months ex. 12 or 5.
@@ -113,7 +112,6 @@
                           name="courseName"
                           value="<%=course.courseName%>"
                           style="width: 150px"
-                          id=""
                         />
                       </td>
                       <td>
@@ -123,7 +121,6 @@
                           name="courseCode"
                           value="<%=course.courseCode%>"
                           style="width: 120px"
-                          id=""
                         />
                       </td>
                       <td>
@@ -133,14 +130,15 @@
                           name="courseDuration"
                           value="<%=course.courseDuration%>"
                           style="width: 100px"
-                          id=""
                         />
                         Months
                       </td>
-                      <td class="flex"  style="padding-bottom: 32px;">
+                      <td class="flex" style="padding-bottom: 32px">
                         <button class="btn btn-success">update</button>
                         <a href="/deletecourse/<%= course._id %>">
-                          <button type="button" class="btn btn-danger">delete</button>
+                          <button type="button" class="btn btn-danger">
+                            delete
+                          </button>
                         </a>
                       </td>
                     </tr>

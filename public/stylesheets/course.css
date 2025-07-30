@@ -1,118 +1,389 @@
-*{
-margin: 0%;
-padding: 0%;
-box-sizing: border-box;
-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
+* {
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 html,
-body{
-height: 100%;
-width: 100%;
-}
-#main{
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#left{
-    width: 18%;
+body {
     height: 100%;
+    width: 100%;
+}
+
+#main {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: stretch;
+}
+
+#left {
+    width: 280px;
+    min-height: 100vh;
     padding: 12px;
     border-right: 1px solid #dadada;
-background-color: white;
+    background-color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease;
 }
-.cnt{
+
+.cnt {
     width: 100%;
-    height: 3vmax;
-    padding: 2px;
-    padding-left: 2vmax;
+    height: 50px;
+    padding: 8px 16px;
     display: flex;
     align-items: center;
-    margin-top: 1vmax;
-    gap: 1vmax;
+    margin-top: 8px;
+    gap: 12px;
+    cursor: pointer;
+    border-radius: 6px;
 }
-.cnt>ion-icon{
-    font-size: 1.4vmax;
-    color: black;
 
+.cnt > ion-icon {
+    font-size: 20px;
+    color: black;
+    flex-shrink: 0;
 }
-.cnt>h3{
+
+.cnt > h3 {
     font-weight: 400;
     color: #315a51;
     text-transform: uppercase;
-    font-size: 1.2vmax;
+    font-size: 14px;
+    white-space: nowrap;
 }
-.cnt:hover{
+
+.cnt:hover {
     background-color: #f1f5fa;
 }
-#nav-logo{
+
+#nav-logo {
     width: 100%;
-    height: 7.4vmax;
+    height: 80px;
+    margin-bottom: 20px;
 }
-#nav-logo img{
+
+#nav-logo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.container{
-    width: 100%;
-    height: 8rem;
-    display: flex;
 
+.container {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    background-color: white;
+    border-bottom: 1px solid #dadada;
+    position: sticky;
+    top: 0;
+    z-index: 999;
 }
-.lo{
-    width: 70%;
-    height: 100%;
-display: flex;
-align-items: center;
-justify-content: flex-end;
-font-size: 2vmax;
-padding-right: 6vmax;
-}
-.ro{
-    width: 30%;
+
+.lo {
+    flex: 1;
     height: 100%;
     display: flex;
-    gap: 3.5vmax;
-    padding-left: 2vmax;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 18px;
+    padding-right: 20px;
+}
+
+.ro {
+    width: auto;
+    height: 100%;
+    display: flex;
+    gap: 20px;
+    padding: 0 20px;
     align-items: center;
     justify-content: center;
 }
-.ro>ion-icon{
-    font-size: 1.5vmax;
+
+.ro > ion-icon {
+    font-size: 20px;
+    cursor: pointer;
 }
-#right{
-    width: 82%;
-    height: 100%;
+
+#right {
+    flex: 1;
+    min-height: 100vh;
     overflow-y: auto;
-    
 }
-.contain{
+
+.contain {
     width: 100%;
-    height: calc(100vh - 8rem);
+    min-height: calc(100vh - 80px);
     background-color: #f1f5fa;
-    
-    padding: 2vmax;
+    padding: 20px;
 }
-.packet{
+
+.packet {
     display: flex;
-    align-items: center;
-    justify-content:center ;
-    gap: 2vmax;
+    gap: 20px;
     width: 100%;
-    height:100%;
+    min-height: calc(100vh - 120px);
 }
-#course{
-    width: 40%;
-    height: 100%;
+
+#course {
+    flex: 0 0 400px;
+    min-height: 100%;
     background-color: white;
-    padding: 1vmax;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-#course-list{
-    width: 60%;
-    height: 100%;
+
+#course-list {
+    flex: 1;
+    min-height: 100%;
     background-color: white;
-    padding: 1vmax;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+/* Mobile menu toggle button */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: #315a51;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Responsive breakpoints */
+
+/* Large tablets and small desktops */
+@media (max-width: 1200px) {
+    #left {
+        width: 250px;
+    }
+    
+    #right {
+    }
+    
+    #course {
+        flex: 0 0 350px;
+    }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+    #left {
+        width: 220px;
+    }
+    
+    #right {
+    }
+    
+    .packet {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    #course,
+    #course-list {
+        flex: none;
+        width: 100%;
+    }
+    
+    .lo {
+        font-size: 16px;
+        padding-right: 15px;
+    }
+    
+    .ro {
+        gap: 15px;
+        padding: 0 15px;
+    }
+}
+
+/* Small tablets and large phones */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    #left {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    #left.show {
+        transform: translateX(0);
+    }
+    
+    #right {
+        margin-left: 0;
+    }
+    
+    .contain {
+        padding: 15px;
+        padding-top: 70px; /* Account for mobile menu button */
+    }
+    
+    .container {
+        padding-left: 60px; /* Account for mobile menu button */
+    }
+    
+    .lo {
+        font-size: 14px;
+        padding-right: 10px;
+    }
+    
+    .ro {
+        gap: 10px;
+        padding: 0 10px;
+    }
+    
+    .ro > ion-icon {
+        font-size: 18px;
+    }
+    
+    /* Table responsive */
+    #course-list table {
+        font-size: 14px;
+    }
+    
+    #course-list input.form-control {
+        width: 100px !important;
+        font-size: 12px;
+    }
+    
+    #course-list .btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 576px) {
+    .contain {
+        padding: 10px;
+        padding-top: 70px;
+    }
+    
+    .packet {
+        gap: 15px;
+    }
+    
+    #course,
+    #course-list {
+        padding: 15px;
+    }
+    
+    .container {
+        height: 60px;
+    }
+    
+    .lo {
+        font-size: 12px;
+        padding-right: 8px;
+    }
+    
+    .ro {
+        gap: 8px;
+        padding: 0 8px;
+    }
+    
+    .ro > ion-icon {
+        font-size: 16px;
+    }
+    
+    /* Make table scroll horizontally on very small screens */
+    #course-list {
+        overflow-x: auto;
+    }
+    
+    #course-list table {
+        min-width: 500px;
+        font-size: 12px;
+    }
+    
+    #course-list input.form-control {
+        width: 80px !important;
+        font-size: 11px;
+        padding: 2px 4px;
+    }
+    
+    #course-list .btn {
+        padding: 2px 6px;
+        font-size: 10px;
+    }
+    
+    /* Form improvements for mobile */
+    #course .form-control {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    #course h4 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    
+    #course-list h4 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 375px) {
+    .contain {
+        padding: 8px;
+        padding-top: 70px;
+    }
+    
+    #course,
+    #course-list {
+        padding: 12px;
+    }
+    
+    .mobile-menu-toggle {
+        top: 15px;
+        left: 15px;
+        padding: 8px;
+    }
+    
+    #course-list table {
+        min-width: 450px;
+    }
+    
+    #course-list input.form-control {
+        width: 70px !important;
+    }
+}
+
+/* Overlay for mobile menu */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.mobile-overlay.show {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .mobile-overlay.show {
+        display: block;
+    }
 }

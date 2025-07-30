@@ -19,7 +19,7 @@ body {
 }
 .nav-item {
   width: 100%;
-  height: 4vw;
+  /* height: 4vw; */
   padding: 0 1vmax;
   display: flex;
   align-items: center;
