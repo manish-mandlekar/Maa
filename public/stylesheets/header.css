@@ -1,53 +1,223 @@
-* {
-  margin: 0%;
-  padding: 0%;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-}
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
-#left {
-  width: 20%;
-  height: 100%;
-  padding: 12px;
-  border-right: 1px solid #dadada;
-  background-color: white;
-}
-.nav-item {
-  width: 100%;
-  /* height: 4vw; */
-  padding: 0 1vmax;
-  display: flex;
-  align-items: center;
-  gap: 1vmax;
-}
-.nav-item > ion-icon {
-  font-size: 1.5vw;
-  color: black;
-}
-.nav-item > h3 {
-  font-weight: 400;
-  color: #315a51;
-  text-transform: uppercase;
-  font-size: 1.3vw;
-  margin-top: .5vw;
-}
-.nav-item:hover {
-  background-color: #f1f5fa;
-}
-.flex{
+ #left2 {
+    width: 260px;
+  }
+  #left {
+    width: 260px;
+    min-height: 100vh;
+    background: #fff;
+    border-right: 1px solid #e1e5e9;
+    padding: 20px 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+  }
+
+  #nav-logo {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 20px;
+  }
+
+  #nav-logo img {
+    max-width: 100%;
+    height: auto;
+    max-height: 100px;
+  }
+
+  .nav-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
 
-.noti-dot{
-    padding: 5px;
-    background-color: red;
+  .nav-item:hover {
+    background-color: #f4f5f7;
+  }
+
+  .nav-item.active {
+    background-color: #e8f4fd;
+    border-radius: 8px;
+    color: #172b4d;
+  }
+
+  .nav-item svg {
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .nav-item h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #172b4d;
+    white-space: nowrap;
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .noti-dot {
+    background: #ff5630;
     color: white;
-    border-radius: 100px;
-}
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 20px;
+  }
+
+  /* Mobile menu toggle button */
+  .mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: #172b4d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Overlay for mobile */
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  /* Main content area adjustment */
+  .main-content {
+    margin-left: 260px;
+    min-height: 100vh;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+  }
+
+  /* Tablet styles */
+  @media (max-width: 1024px) {
+    #left2 {
+      width: 230px;
+    }
+    #left {
+      width: 220px;
+    }
+
+    .main-content {
+      margin-left: 220px;
+    }
+
+    .nav-item {
+      padding: 10px 16px;
+    }
+
+    .nav-item h3 {
+      font-size: 13px;
+    }
+
+    .nav-item svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  /* Mobile styles */
+  @media (max-width: 768px) {
+    #left2 {
+      display: none;
+    }
+    .mobile-menu-toggle {
+      display: block;
+    }
+
+    #left {
+      transform: translateX(-100%);
+      width: 280px;
+    }
+
+    #left.mobile-open {
+      transform: translateX(0);
+    }
+
+    .mobile-overlay.active {
+      display: block;
+    }
+
+    .main-content {
+      margin-left: 0;
+      padding: 80px 20px 20px;
+    }
+
+    .nav-item {
+      padding: 14px 20px;
+    }
+
+    .nav-item h3 {
+      font-size: 15px;
+    }
+  }
+
+  /* Small mobile styles */
+  @media (max-width: 480px) {
+    #left {
+      /* width: 100vw; */
+    }
+
+    .nav-item {
+      padding: 16px 20px;
+    }
+
+    .nav-item h3 {
+      font-size: 16px;
+    }
+
+    .nav-item svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 16px;
+    }
+  }
+
+  /* Large screen styles */
+  @media (min-width: 1400px) {
+
+    #left2 {
+      width: 310px;
+    }
+    #left {
+      width: 300px;
+    }
+
+    .main-content {
+      margin-left: 300px;
+    }
+
+    .nav-item {
+      padding: 14px 24px;
+    }
+
+    .nav-item h3 {
+      font-size: 15px;
+    }
+  }

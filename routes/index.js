@@ -1010,40 +1010,40 @@ router.get("/inquiry", isLoggedIn, async (req, res, next) => {
 router.post("/inquiry", isLoggedIn, async (req, res, next) => {
   // add enquiryBy in student model from req.user
   try {
-    console.log(req.body);
+    res.json(req.body);
 
-    if (req.user) req.body.enquiryBy = req.user.username;
-    let contactNumber = req.body?.contactNumber;
-    contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
-    if (contactNumber.startsWith("91") && contactNumber.length === 12) {
-      contactNumber = contactNumber.slice(2); // remove '91'
-    } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
-      contactNumber = contactNumber.slice(1); // remove '0'
-    }
-    if (!/^[6-9]\d{9}$/.test(contactNumber)) {
-      return res.status(400).send(`
-        <html>
-          <body>
-            <h1>Invalid contact number</h1>
-            <p><a href="/feesManagement">Go Back</a></p>
-          </body>
-        </html>
-      `);
-    }
-    if (contactNumber) {
-      const whatsappClient = getWhatsAppClient();
-      // Final validation
-      const formattedNumber = "91" + contactNumber + "@c.us"; // WhatsApp format
+    // if (req.user) req.body.enquiryBy = req.user.username;
+    // let contactNumber = req.body?.contactNumber;
+    // contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
+    // if (contactNumber.startsWith("91") && contactNumber.length === 12) {
+    //   contactNumber = contactNumber.slice(2); // remove '91'
+    // } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
+    //   contactNumber = contactNumber.slice(1); // remove '0'
+    // }
+    // if (!/^[6-9]\d{9}$/.test(contactNumber)) {
+    //   return res.status(400).send(`
+    //     <html>
+    //       <body>
+    //         <h1>Invalid contact number</h1>
+    //         <p><a href="/feesManagement">Go Back</a></p>
+    //       </body>
+    //     </html>
+    //   `);
+    // }
+    // if (contactNumber) {
+    //   const whatsappClient = getWhatsAppClient();
+    //   // Final validation
+    //   const formattedNumber = "91" + contactNumber + "@c.us"; // WhatsApp format
 
-      const thankYouMessage = `🙏 Thank you for your enquiry, ${
-        req.body.firstName || "Student"
-      }! We’ll reach out to you shortly.`;
+    //   const thankYouMessage = `🙏 Thank you for your enquiry, ${
+    //     req.body.firstName || "Student"
+    //   }! We’ll reach out to you shortly.`;
 
-      await whatsappClient.sendMessage(formattedNumber, thankYouMessage);
-    }
-    req.body.contactNumber = contactNumber;
-    await studentModel.create(req.body);
-    res.redirect("/allenquiry");
+    //   await whatsappClient.sendMessage(formattedNumber, thankYouMessage);
+    // }
+    // req.body.contactNumber = contactNumber;
+    // await studentModel.create(req.body);
+    // res.redirect("/allenquiry");
   } catch (err) {
     console.log(err.message);
 
