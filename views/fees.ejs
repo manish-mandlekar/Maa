@@ -11,81 +11,463 @@
     <link rel="stylesheet" href="/stylesheets/fees.css" />
   </head>
   <body>
-    <div id="main">
-      <%- include('./partials/header') %>
-      <div id="right">
-        <%- include('./partials/right-header') %>
-        <div class="popa">
-          <h2>Students' Fees Due</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Student's Name</th>
-                <th>Father's Name</th>
-                <th>Course</th>
-                <!-- <th>Session</th> -->
-                <th>Due Date</th>
-                <th>Mobile Number</th>
-                <th>Due Amount</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% students.reverse().forEach(e=>{ %>
-              <tr>
-                <td>
-                  <a href="/stdprofile/<%=e._id %>"
-                    ><%= e.firstName %> <%= e.lastName %></a
-                  >
-                </td>
-                <td><%= e.fatherName %></td>
-                <td>
-                  <% e.course.forEach(c=>{ %> <%= c.courseName %> <% }) %>
-                </td>
-                <!-- <td><%= e.session %></td> -->
-                <td><%= e.dueDate %></td>
-                <td><%= e.contactNumber %></td>
-                <td><%= e.due %></td>
-                <td>
-                  <a href="/edit/student/<%=e._id %>"
-                    ><button type="button" class="btn btn-primary">
-                      Pay
-                    </button></a
-                  >
-                  <!-- <button type="button" class="btn btn-danger">Delete</button> -->
-                </td>
-              </tr>
-              <% }) %> <% admissions.reverse().forEach(e=>{ %>
-              <tr>
-                <td>
-                  <a href="/admprofile/<%=e._id %>"
-                    ><%= e.firstName %> <%= e.lastName %></a
-                  >
-                </td>
-                <td><%= e.fatherName %></td>
-                <td>
-                  <% e.course.forEach(c=>{ %> <%= c.courseName %> <% }) %>
-                </td>
-                <!-- <td><%= e.session %></td> -->
-                <td><%= e.dueDate %></td>
-                <td><%= e.contactNumber %></td>
-                <td><%= e.due %></td>
-                <td>
-                  <a href="/edit/admission/<%=e._id %>"
-                    ><button type="button" class="btn btn-primary">
-                      Pay
-                    </button></a
-                  >
-                  <!-- <button type="button" class="btn btn-danger">Delete</button> -->
-                </td>
-              </tr>
-              <% }) %>
-              <!-- Add more rows as needed -->
-            </tbody>
-          </table>
+<div id="main">
+  <%- include('./partials/header') %>
+  <div id="right">
+    <%- include('./partials/right-header') %>
+    <div class="popa">
+      <!-- Header with Dropdown -->
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3 mb-3 mb-md-0">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Students' Fees Due
+            </button>
+            <ul class="dropdown-menu" style="z-index: 9999;">
+              <li><a class="dropdown-item" href="/allStudentFees">All Student Fees</a></li>
+              
+            </ul>
+          </div>
+          <!-- <h2 class="mb-0 text-primary fw-bold">Students' Fees Due</h2> -->
+        </div>
+        
+        <!-- Summary Cards -->
+        <div class="d-flex flex-wrap gap-2">
+          <div class="badge bg-danger fs-6 px-3 py-2">
+            <i class="fas fa-exclamation-circle me-1"></i>
+            <span id="total-due-count"><%= (students.length + admissions.length) %></span> Due
+          </div>
+          <div class="badge bg-warning text-dark fs-6 px-3 py-2">
+            <i class="fas fa-rupee-sign me-1"></i>
+            Total: ₹<span id="total-amount">0</span>
+          </div>
         </div>
       </div>
+
+      <!-- Responsive Table Container -->
+      <div class="table-responsive shadow-sm rounded overflow-hidden">
+        <table class="table table-hover table-striped mb-0" id="feesTable">
+          <thead class="table-dark">
+            <tr>
+              <th class="py-3 px-4">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-user me-2"></i>Student Details
+                </div>
+              </th>
+              <th class="py-3 px-4 d-none d-md-table-cell">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-male me-2"></i>Father's Name
+                </div>
+              </th>
+              <th class="py-3 px-4">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-book me-2"></i>Course
+                </div>
+              </th>
+              <th class="py-3 px-4">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-calendar-alt me-2"></i>Due Date
+                </div>
+              </th>
+              <th class="py-3 px-4 d-none d-lg-table-cell">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-phone me-2"></i>Mobile
+                </div>
+              </th>
+              <th class="py-3 px-4">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-rupee-sign me-2"></i>Amount
+                </div>
+              </th>
+              <th class="py-3 px-4 text-center">
+                <div class="d-flex align-items-center justify-content-center">
+                  <i class="fas fa-cog me-2"></i>Action
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% students.reverse().forEach((e, index) => { %>
+            <tr class="student-row" data-student-type="student" data-amount="<%= e.due %>" data-due-date="<%= e.dueDate %>">
+              <td class="py-3 px-4">
+                <div class="d-flex flex-column">
+                  <a href="/stdprofile/<%=e._id %>" class="text-decoration-none fw-semibold text-primary mb-1">
+                    <%= e.firstName %> <%= e.lastName %>
+                  </a>
+                  <small class="text-muted d-md-none">
+                    <i class="fas fa-male me-1"></i><%= e.fatherName %>
+                  </small>
+                  <small class="text-muted d-lg-none">
+                    <i class="fas fa-phone me-1"></i><%= e.contactNumber %>
+                  </small>
+                </div>
+              </td>
+              <td class="py-3 px-4 d-none d-md-table-cell">
+                <span class="text-secondary"><%= e.fatherName %></span>
+              </td>
+              <td class="py-3 px-4">
+                <div class="d-flex flex-wrap gap-1">
+                  <% e.course.forEach(c => { %>
+                  <span class="badge bg-info text-dark rounded-pill px-2 py-1">
+                    <%= c.courseName %>
+                  </span>
+                  <% }) %>
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <% 
+                  const dueDate = new Date(e.dueDate);
+                  const today = new Date();
+                  const isOverdue = dueDate < today;
+                  const daysDiff = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                %>
+                <div class="d-flex flex-column">
+                  <span class="<%= isOverdue ? 'text-danger fw-bold' : (daysDiff <= 7 ? 'text-warning fw-semibold' : 'text-success') %>">
+                    <%= e.dueDate %>
+                  </span>
+                  <small class="text-muted">
+                    <%= isOverdue ? 'Overdue' : (daysDiff <= 7 ? 'Due Soon' : daysDiff + ' days left') %>
+                  </small>
+                </div>
+              </td>
+              <td class="py-3 px-4 d-none d-lg-table-cell">
+                <a href="tel:<%= e.contactNumber %>" class="text-decoration-none">
+                  <i class="fas fa-phone-alt me-1 text-success"></i>
+                  <%= e.contactNumber %>
+                </a>
+              </td>
+              <td class="py-3 px-4">
+                <div class="d-flex flex-column">
+                  <span class="fw-bold text-danger fs-5">₹<%= e.due %></span>
+                  <small class="text-muted">Pending</small>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">
+                <div class="btn-group" role="group">
+                  <a href="/edit/student/<%=e._id %>" class="btn btn-success btn-sm">
+                    <i class="fas fa-credit-card me-1"></i>
+                    <span class="d-none d-sm-inline">Pay</span>
+                  </a>
+                  <button type="button" class="btn btn-outline-primary btn-sm" 
+                          data-bs-toggle="modal" data-bs-target="#studentModal<%=index%>">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+
+            <% admissions.reverse().forEach((e, index) => { %>
+            <tr class="student-row" data-student-type="admission" data-amount="<%= e.due %>" data-due-date="<%= e.dueDate %>">
+              <td class="py-3 px-4">
+                <div class="d-flex flex-column">
+                  <a href="/admprofile/<%=e._id %>" class="text-decoration-none fw-semibold text-primary mb-1">
+                    <%= e.firstName %> <%= e.lastName %>
+                    <span class="badge bg-warning text-dark ms-1">Admission</span>
+                  </a>
+                  <small class="text-muted d-md-none">
+                    <i class="fas fa-male me-1"></i><%= e.fatherName %>
+                  </small>
+                  <small class="text-muted d-lg-none">
+                    <i class="fas fa-phone me-1"></i><%= e.contactNumber %>
+                  </small>
+                </div>
+              </td>
+              <td class="py-3 px-4 d-none d-md-table-cell">
+                <span class="text-secondary"><%= e.fatherName %></span>
+              </td>
+              <td class="py-3 px-4">
+                <div class="d-flex flex-wrap gap-1">
+                  <% e.course.forEach(c => { %>
+                  <span class="badge bg-info text-dark rounded-pill px-2 py-1">
+                    <%= c.courseName %>
+                  </span>
+                  <% }) %>
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <% 
+                  const dueDate = new Date(e.dueDate);
+                  const today = new Date();
+                  const isOverdue = dueDate < today;
+                  const daysDiff = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                %>
+                <div class="d-flex flex-column">
+                  <span class="<%= isOverdue ? 'text-danger fw-bold' : (daysDiff <= 7 ? 'text-warning fw-semibold' : 'text-success') %>">
+                    <%= e.dueDate %>
+                  </span>
+                  <small class="text-muted">
+                    <%= isOverdue ? 'Overdue' : (daysDiff <= 7 ? 'Due Soon' : daysDiff + ' days left') %>
+                  </small>
+                </div>
+              </td>
+              <td class="py-3 px-4 d-none d-lg-table-cell">
+                <a href="tel:<%= e.contactNumber %>" class="text-decoration-none">
+                  <i class="fas fa-phone-alt me-1 text-success"></i>
+                  <%= e.contactNumber %>
+                </a>
+              </td>
+              <td class="py-3 px-4">
+                <div class="d-flex flex-column">
+                  <span class="fw-bold text-danger fs-5">₹<%= e.due %></span>
+                  <small class="text-muted">Pending</small>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">
+                <div class="btn-group" role="group">
+                  <a href="/edit/admission/<%=e._id %>" class="btn btn-success btn-sm">
+                    <i class="fas fa-credit-card me-1"></i>
+                    <span class="d-none d-sm-inline">Pay</span>
+                  </a>
+                  <button type="button" class="btn btn-outline-primary btn-sm" 
+                          data-bs-toggle="modal" data-bs-target="#admissionModal<%=index%>">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Results Message -->
+      <div id="noResults" class="text-center py-5 d-none">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">No students found</h4>
+        <p class="text-muted">Try adjusting your search criteria</p>
+      </div>
+
+      <!-- Pagination -->
+      <nav aria-label="Student pagination" class="mt-4">
+        <ul class="pagination justify-content-center" id="pagination">
+          <!-- Pagination will be generated by JavaScript -->
+        </ul>
+      </nav>
     </div>
+  </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+  .popa {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin: 1rem;
+    position: relative;
+  }
+
+  .table-responsive {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    position: relative;
+    z-index: 1;
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+
+  .table thead th {
+    background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #e9ecef;
+    position: relative;
+    z-index: 1;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  .input-group-text {
+    border-radius: 8px 0 0 8px;
+  }
+
+  .dropdown-toggle::after {
+    margin-left: 0.5rem;
+  }
+
+  /* Fix dropdown z-index issues */
+  .dropdown {
+    position: relative;
+    z-index: 1050;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    z-index: 9999 !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border: none;
+    border-radius: 8px;
+  }
+
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+  }
+
+  @media (max-width: 768px) {
+    .popa {
+      margin: 0.5rem;
+      padding: 1rem;
+    }
+    
+    .table-responsive {
+      border-radius: 8px;
+    }
+    
+    .btn-group {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .btn-group .btn {
+      border-radius: 6px !important;
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .table thead th {
+      font-size: 0.75rem;
+      padding: 0.75rem 0.5rem;
+    }
+    
+    .table tbody td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+
+  /* Animation for rows */
+  .student-row {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Loading state */
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Highlight overdue */
+  .text-danger.fw-bold {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  /* Ensure dropdown appears above everything */
+  .dropdown-menu.show {
+    z-index: 9999 !important;
+    transform: translate3d(0, 0, 0);
+  }
+</style>
+
+<!-- JavaScript for Enhanced Functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Calculate total amount
+  let totalAmount = 0;
+  document.querySelectorAll('[data-amount]').forEach(row => {
+    totalAmount += parseFloat(row.dataset.amount) || 0;
+  });
+  document.getElementById('total-amount').textContent = totalAmount.toLocaleString('en-IN');
+
+  // Add loading states for buttons
+  document.querySelectorAll('.btn-success').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+      this.disabled = true;
+    });
+  });
+
+  // Fix dropdown z-index issues
+  document.querySelectorAll('.dropdown-toggle').forEach(function(dropdown) {
+    dropdown.addEventListener('click', function(e) {
+      // Ensure dropdown menu has proper z-index
+      const dropdownMenu = this.nextElementSibling;
+      if (dropdownMenu) {
+        dropdownMenu.style.zIndex = '9999';
+      }
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('show');
+      });
+    }
+  });
+});
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

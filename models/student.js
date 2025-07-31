@@ -119,6 +119,6 @@ const studentEnquirySchema = new mongoose.Schema({
   },
 });
 
-const StudentEnquiry = mongoose.model("StudentEnquiry", studentEnquirySchema);
+const StudentEnquiry = mongoose.model("student", studentEnquirySchema);
 
 module.exports = StudentEnquiry;

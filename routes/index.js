@@ -978,6 +978,76 @@ router.get("/fees", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get('/allStudentFees', isLoggedIn, async (req, res, next) => {
+  try {
+    const { name, contactNumber, page = 1 } = req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    let query = { registered: true, rejected: false };
+    
+    if (name) {
+      query.$or = [
+        { firstName: new RegExp(name, 'i') },
+        { lastName: new RegExp(name, 'i') }
+      ];
+    }
+
+    if (contactNumber) {
+      query.contactNumber = contactNumber;
+    }
+
+    const [students, totalCount] = await Promise.all([
+      studentModel.find(query)
+        .populate('course')
+        .skip(skip)
+        .limit(limit)
+        .sort({ r_no: 1 }),
+      studentModel.countDocuments(query)
+    ]);
+
+    // Get detailed fees information for each student
+    const studentsWithFees = await Promise.all(students.map(async (student) => {
+      const fees = await feesModel.find({ student: student._id })
+        .sort({ payDate: -1 }); // Sort by payment date, newest first
+      
+      const totalPaid = fees.reduce((sum, fee) => sum + fee.payment, 0);
+      const totalFee = student.course[0]?.totalFee || 0;
+      
+      return {
+        ...student.toObject(),
+        totalPaid,
+        totalFee,
+        balance: totalFee - totalPaid,
+        feeHistory: fees.map(fee => ({
+          amount: fee.payment,
+          date: fee.payDate,
+          paymentMode: fee.registrationPaymentMode,
+          feeType: fee.feeType,
+          receiptId: fee._id
+        }))
+      };
+    }));
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.render('allStudentsFees', {
+      students: studentsWithFees,
+      currentPage: parseInt(page),
+      totalPages,
+      query: req.query,
+      helpers: {
+        formatDate: (date) => date ? new Date(date).toLocaleDateString() : 'N/A',
+        formatCurrency: (amount) => `₹${amount.toLocaleString('en-IN')}`
+      }
+    });
+
+  } catch (err) {
+    console.error('Error fetching student fees:', err);
+    next(err);
+  }
+});
+
 // G
 router.get("/getdate", isLoggedIn, async (req, res, next) => {
   try {
@@ -1484,6 +1554,7 @@ router.post("/update/due/:type/:id", isLoggedIn, async (req, res, next) => {
       feeType: req.body.feeType,
       student: foundstudent._id,
       payment: paidAmount,
+      studentModelType:type
     });
 
     // Update the student's due

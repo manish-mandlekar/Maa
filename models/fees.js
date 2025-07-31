@@ -7,7 +7,7 @@ const feesSchema = new mongoose.Schema({
   },
   studentModelType: {
     type: String,
-    enum: ["StudentEnquiry", "admission"],
+    enum: ["student", "admission"],
     required: true,
   },
   registrationPaymentMode: String,
@@ -24,6 +24,6 @@ const feesSchema = new mongoose.Schema({
     default: "Regular Fee",
   },
 });
-const Fees = mongoose.model("feesSchema", feesSchema);
+const Fees = mongoose.model("fees", feesSchema);
 
 module.exports = Fees;

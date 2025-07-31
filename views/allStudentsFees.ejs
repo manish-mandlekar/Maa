@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/fees.css" />
+  </head>
+  <body>
+<div id="main">
+  <%- include('./partials/header') %>
+  <div id="right">
+    <%- include('./partials/right-header') %>
+    <div class="popa">
+      <!-- Header with Dropdown -->
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3 mb-3 mb-md-0">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+             All Student Fees
+            </button>
+            <ul class="dropdown-menu" style="z-index: 9999;">
+              <li><a class="dropdown-item" href="/fees"> Students' Fees Due </a></li>
+              
+            </ul>
+          </div>
+          <!-- <h2 class="mb-0 text-primary fw-bold">Students' Fees Due</h2> -->
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+    <form class="d-flex gap-2">
+      <input type="text" name="name" class="form-control" placeholder="Search by name..." value="<%= query.name || '' %>">
+      <input type="text" name="contactNumber" class="form-control" placeholder="Contact number..." value="<%= query.contactNumber || '' %>">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/allStudentFees" class="btn btn-secondary">Reset</a>
+    </form>
+  </div>
+        
+        <!-- Summary Cards -->
+        <div class="d-flex flex-wrap gap-2">
+          <!-- <div class="badge bg-danger fs-6 px-3 py-2">
+            <i class="fas fa-exclamation-circle me-1"></i>
+            <span id="total-due-count"><%=students.length %></span> Due
+          </div>
+          <div class="badge bg-warning text-dark fs-6 px-3 py-2">
+            <i class="fas fa-rupee-sign me-1"></i>
+            Total: ₹<span id="total-amount">0</span>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Responsive Table Container -->
+      <div class="table-responsive shadow-sm rounded">
+    <table class="table table-hover mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>Reg. No</th>
+          <th>Student Name</th>
+          <th>Course</th>
+          <th>Total Fee</th>
+          <th>Paid Amount</th>
+          <th>Balance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%=students %>
+        <% students.forEach((student, index) => { %>
+          <tr>
+            <td><%= student.r_no %></td>
+            <td>
+              <%= student.firstName %> <%= student.lastName %>
+              <br>
+              <small class="text-muted"><%= student.contactNumber %></small>
+            </td>
+            <td>
+              <% student.course.forEach(c => { %>
+                <span class="badge bg-info text-dark"><%= c.courseName %></span>
+              <% }) %>
+            </td>
+            <td><%= helpers.formatCurrency(student.totalFee) %></td>
+            <td><%= helpers.formatCurrency(student.totalPaid) %></td>
+            <td class="<%= student.balance > 0 ? 'text-danger' : 'text-success' %>">
+              <%= helpers.formatCurrency(student.balance) %>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-primary" type="button" 
+                      data-bs-toggle="collapse" 
+                      data-bs-target="#feeHistory<%= index %>" 
+                      aria-expanded="false">
+                <i class="fas fa-history"></i> History
+              </button>
+            </td>
+          </tr>
+          <!-- Fee History Collapse -->
+          <tr>
+            <td colspan="7" class="p-0">
+              <div class="collapse" id="feeHistory<%= index %>">
+                <div class="p-3 bg-light">
+                  <h6 class="mb-3">Payment History</h6>
+                  <% if (student.feeHistory && student.feeHistory.length > 0) { %>
+                    <div class="table-responsive">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Mode</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% student.feeHistory.forEach(fee => { %>
+                            <tr>
+                              <td><%= helpers.formatDate(fee.date) %></td>
+                              <td><%= helpers.formatCurrency(fee.amount) %></td>
+                              <td><%= fee.feeType %></td>
+                              <td><%= fee.paymentMode %></td>
+                              <td>
+                                <a href="/invoice/download?id=<%= fee.receiptId %>" 
+                                   class="btn btn-sm btn-outline-primary">
+                                  <i class="fas fa-download"></i>
+                                </a>
+                              </td>
+                            </tr>
+                          <% }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  <% } else { %>
+                    <p class="text-muted mb-0">No payment history available</p>
+                  <% } %>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        <% if (currentPage > 1) { %>
+          <li class="page-item">
+            <a class="page-link" href="/allStudentFees?page=<%= currentPage - 1 %>&name=<%= query.name || '' %>&contactNumber=<%= query.contactNumber || '' %>">Previous</a>
+          </li>
+        <% } %>
+        
+        <% for(let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+            <a class="page-link" href="/allStudentFees?page=<%= i %>&name=<%= query.name || '' %>&contactNumber=<%= query.contactNumber || '' %>"><%= i %></a>
+          </li>
+        <% } %>
+        
+        <% if (currentPage < totalPages) { %>
+          <li class="page-item">
+            <a class="page-link" href="/allStudentFees?page=<%= currentPage + 1 %>&name=<%= query.name || '' %>&contactNumber=<%= query.contactNumber || '' %>">Next</a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  <% } %>
+</div>
+
+<style>
+  .table td { vertical-align: middle; }
+  .collapse.show { transition: all 0.2s ease; }
+  .badge { font-weight: 500; }
+  .btn-sm { padding: 0.25rem 0.5rem; }
+</style>
+<!-- Custom Styles -->
+<style>
+  .popa {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin: 1rem;
+    position: relative;
+  }
+
+  .table-responsive {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    position: relative;
+    z-index: 1;
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+
+  .table thead th {
+    background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #e9ecef;
+    position: relative;
+    z-index: 1;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  .input-group-text {
+    border-radius: 8px 0 0 8px;
+  }
+
+  .dropdown-toggle::after {
+    margin-left: 0.5rem;
+  }
+
+  /* Fix dropdown z-index issues */
+  .dropdown {
+    position: relative;
+    z-index: 1050;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    z-index: 9999 !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border: none;
+    border-radius: 8px;
+  }
+
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+  }
+
+  @media (max-width: 768px) {
+    .popa {
+      margin: 0.5rem;
+      padding: 1rem;
+    }
+    
+    .table-responsive {
+      border-radius: 8px;
+    }
+    
+    .btn-group {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .btn-group .btn {
+      border-radius: 6px !important;
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .table thead th {
+      font-size: 0.75rem;
+      padding: 0.75rem 0.5rem;
+    }
+    
+    .table tbody td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+
+  /* Animation for rows */
+  .student-row {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Loading state */
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Highlight overdue */
+  .text-danger.fw-bold {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  /* Ensure dropdown appears above everything */
+  .dropdown-menu.show {
+    z-index: 9999 !important;
+    transform: translate3d(0, 0, 0);
+  }
+</style>
+
+<!-- JavaScript for Enhanced Functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Calculate total amount
+  let totalAmount = 0;
+  document.querySelectorAll('[data-amount]').forEach(row => {
+    totalAmount += parseFloat(row.dataset.amount) || 0;
+  });
+  document.getElementById('total-amount').textContent = totalAmount.toLocaleString('en-IN');
+
+  // Add loading states for buttons
+  document.querySelectorAll('.btn-success').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+      this.disabled = true;
+    });
+  });
+
+  // Fix dropdown z-index issues
+  document.querySelectorAll('.dropdown-toggle').forEach(function(dropdown) {
+    dropdown.addEventListener('click', function(e) {
+      // Ensure dropdown menu has proper z-index
+      const dropdownMenu = this.nextElementSibling;
+      if (dropdownMenu) {
+        dropdownMenu.style.zIndex = '9999';
+      }
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('show');
+      });
+    }
+  });
+});
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
