@@ -31,12 +31,10 @@ const admissionSchema = new mongoose.Schema(
       type: String,
       enum: ["male", "female"],
     },
-    course: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "shortCourse",
-      },
-    ],
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "shortCourse",
+    },
     address: {
       type: String,
       required: true,
@@ -53,4 +51,4 @@ const admissionSchema = new mongoose.Schema(
 // Create a model from the schema
 
 const Admission = mongoose.model("admission", admissionSchema);
-module.exports = Admission
+module.exports = Admission;

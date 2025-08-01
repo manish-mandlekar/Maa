@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Registered Students</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link rel="stylesheet" href="./stylesheets/student.css" />
   </head>
@@ -15,105 +19,513 @@
       <%- include('./partials/header') %>
       <div id="right">
         <%- include('./partials/right-header') %>
+        
         <div class="inq">
           <div class="cola">
-            <form class="row g-3 mb-4" method="GET" action="/student">
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  name="name"
-                  placeholder="Search by name"
-                  value="<%= query.name || '' %>"
-                />
+            <!-- Mobile-First Filter Section -->
+            <div class="card shadow-sm mb-4">
+              <div class="card-body">
+                <h5 class="card-title mb-3">
+                  <i class="fas fa-filter me-2"></i>Filter Students
+                </h5>
+                
+                <form method="GET" action="/student">
+                  <!-- Search Inputs Row -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-6">
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="fas fa-user"></i>
+                        </span>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="name"
+                          placeholder="Search by name"
+                          value="<%= query.name || '' %>"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6">
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="fas fa-phone"></i>
+                        </span>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="contactNumber"
+                          placeholder="Mobile Number"
+                          value="<%= query.contactNumber || '' %>"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Session Filters Row -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-6">
+                      <select class="form-select" name="session">
+                        <option value="">All Sessions</option>
+                        <% sessions.forEach(session => { %>
+                        <option value="<%= session %>" <%= query.session === session ? 'selected' : '' %>>
+                          <%= session %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
+                    
+                    <div class="col-12 col-md-6">
+                      <select class="form-select" name="sessionMonth">
+                        <option value="">Session Month</option>
+                        <% sessionMonths.forEach(month => { %>
+                        <option value="<%= month %>" <%= query.sessionMonth === month ? 'selected' : '' %>>
+                          <%= month %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <!-- Action Buttons -->
+                  <div class="row g-2">
+                    <div class="col-12 col-sm-6">
+                      <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                      </button>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <a href="/student" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-times me-2"></i>Clear Filters
+                      </a>
+                    </div>
+                  </div>
+                </form>
               </div>
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  name="contactNumber"
-                  placeholder="Mobile Number"
-                  value="<%= query.contactNumber || '' %>"
-                />
-              </div>
-              
-              <div class="col-md-3">
-                <select class="form-select" name="session">
-                  <option value="">All Sessions</option>
-                  <% sessions.forEach(session => { %>
-                  <option value="<%= session %>"  <%= query.session === session ? 'selected' : '' %>><%= session %></option>
-                  <% }) %>
-                </select>
-                <select class="form-select mt-2" name="sessionMonth">
-                  <option value="">Session Month</option>
-                  <% sessionMonths.forEach(month => { %>
-                  <option value="<%= month %>"  <%= query.sessionMonth === month ? 'selected' : '' %>><%= month %></option>
-                  <% }) %>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <button type="submit" class="btn btn-primary w-100">
-                  Filter
-                </button>
-                <!-- clear filter btn -->
-                <a href="/student" class="btn btn-secondary w-100 mt-2">
-                  Clear Filter
-                </a>
-              </div>
-            </form>
-            <h2>Registered Student Details</h2>
-            <div class="mt-5">
-              <table class="table">
-                <thead>
-                  <tr class="table-info">
-                    <th>R No.</th>
-                    <th>Name</th>
-                    <th>Mobile No.</th>
-                    <th>Course</th>
-                    <th>Admission Date</th>
-                    <th>Session</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% std.forEach((std,i) => {%>
-                  <tr>
-                    <td><%= std.r_no %></td>
-                    <td>
-                      <a href="/stdprofile/<%=std._id %>"
-                        ><%=std.firstName %> <%=std.lastName %></a
-                      >
-                    </td>
-                    <td><%=std.contactNumber %></td>
-                    <td><%= std?.course[0]?.courseCode %></td>
-
-                    <td><%=std?.joiningDate?.toDateString() %></td>
-                    <td><%=std.session %>(<%=std.sessionMonth %>)</td>
-                  </tr>
-                  <% }) %>
-                  <!-- Add more rows for additional students -->
-                </tbody>
-              </table>
-              <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-end">
-                  <% Array.from({ length: totalPages }, (_, i) => i +
-                  1).forEach(p => { %>
-                  <li
-                    class="page-item <%= p === currentPage ? 'active' : '' %>"
-                  >
-                    <a
-                      class="page-link"
-                      href="?<%= new URLSearchParams({ ...query, page: p }).toString() %>"
-                      ><%= p %></a
-                    >
-                  </li>
-                  <% }) %>
-                </ul>
-              </nav>
             </div>
+
+            <!-- Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="mb-0">
+                <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                Registered Students
+              </h2>
+              <span class="badge bg-info fs-6 px-3 py-2">
+                <i class="fas fa-users me-1"></i>Total: <%= std.length %>
+              </span>
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="d-none d-lg-block">
+              <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                  <thead class="table-dark">
+                    <tr>
+                      <th><i class="fas fa-hashtag me-1"></i>R No.</th>
+                      <th><i class="fas fa-user me-1"></i>Name</th>
+                      <th><i class="fas fa-phone me-1"></i>Mobile No.</th>
+                      <th><i class="fas fa-book me-1"></i>Course</th>
+                      <th><i class="fas fa-calendar me-1"></i>Admission Date</th>
+                      <th><i class="fas fa-clock me-1"></i>Session</th>
+                      <th class="text-center"><i class="fas fa-cogs me-1"></i>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% std.forEach((student, i) => { %>
+                    <tr>
+                      <td class="fw-semibold"><%= student.r_no %></td>
+                      <td>
+                        <a href="/stdprofile/<%= student._id %>" class="text-decoration-none fw-semibold text-primary">
+                          <%= student.firstName %> <%= student.lastName %>
+                        </a>
+                      </td>
+                      <td>
+                        <% if (student.contactNumber) { %>
+                          <a href="tel:<%= student.contactNumber %>" class="text-decoration-none">
+                            <i class="fas fa-phone-alt me-1 text-success"></i>
+                            <%= student.contactNumber %>
+                          </a>
+                        <% } else { %>
+                          <span class="text-muted">N/A</span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <span class="badge bg-info text-dark">
+                          <%= student?.course?.courseCode || 'N/A' %>
+                        </span>
+                      </td>
+                      <td class="text-muted">
+                        <%= student?.joiningDate?.toDateString() || 'N/A' %>
+                      </td>
+                      <td>
+                        <div class="small">
+                          <strong><%= student.session || 'N/A' %></strong>
+                          <br>
+                          <span class="text-muted">(<%= student.sessionMonth || 'N/A' %>)</span>
+                        </div>
+                      </td>
+                      <td class="text-center">
+                        <a href="/edit/student/<%= student._id %>" class="btn btn-success btn-sm">
+                          <i class="fas fa-credit-card me-1"></i>Pay
+                        </a>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="d-lg-none">
+              <% std.forEach((student, i) => { %>
+              <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                  <div class="row">
+                    <!-- Student Info Column -->
+                    <div class="col-8">
+                      <h6 class="card-title mb-2">
+                        <a href="/stdprofile/<%= student._id %>" class="text-decoration-none fw-bold text-primary">
+                          <%= student.firstName %> <%= student.lastName %>
+                        </a>
+                        <span class="badge bg-secondary ms-2">#<%= student.r_no %></span>
+                      </h6>
+                      
+                      <div class="small text-muted mb-2">
+                        <div class="mb-1">
+                          <i class="fas fa-phone me-2 text-success"></i>
+                          <% if (student.contactNumber) { %>
+                            <a href="tel:<%= student.contactNumber %>" class="text-decoration-none">
+                              <%= student.contactNumber %>
+                            </a>
+                          <% } else { %>
+                            N/A
+                          <% } %>
+                        </div>
+                        
+                        <div class="mb-1">
+                          <i class="fas fa-book me-2 text-info"></i>
+                          <%= student?.course?.courseCode || 'N/A' %>
+                        </div>
+                        
+                        <div class="mb-1">
+                          <i class="fas fa-calendar me-2 text-warning"></i>
+                          <%= student?.joiningDate?.toDateString() || 'N/A' %>
+                        </div>
+                        
+                        <div>
+                          <i class="fas fa-clock me-2 text-primary"></i>
+                          <%= student.session || 'N/A' %> (<%= student.sessionMonth || 'N/A' %>)
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Action Column -->
+                    <div class="col-4 d-flex align-items-center justify-content-end">
+                      <a href="/edit/student/<%= student._id %>" class="btn btn-success btn-sm w-100">
+                        <i class="fas fa-credit-card d-block mb-1"></i>
+                        <small>Pay</small>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+
+            <!-- No Results Message -->
+            <% if (std.length === 0) { %>
+            <div class="text-center py-5">
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                  <h4 class="text-muted">No students found</h4>
+                  <p class="text-muted">
+                    <% if (query.name || query.contactNumber || query.session || query.sessionMonth) { %>
+                      No students match your search criteria. Try adjusting your filters.
+                    <% } else { %>
+                      No students are currently registered in the system.
+                    <% } %>
+                  </p>
+                  <a href="/student" class="btn btn-primary">
+                    <i class="fas fa-refresh me-1"></i>Reset Filters
+                  </a>
+                </div>
+              </div>
+            </div>
+            <% } %>
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+            <nav aria-label="Student pagination" class="mt-4">
+              <ul class="pagination justify-content-center flex-wrap">
+                <% 
+                  // Calculate pagination range
+                  let startPage = Math.max(1, currentPage - 2);
+                  let endPage = Math.min(totalPages, currentPage + 2);
+                  
+                  // Build query string for pagination
+                  const queryParams = new URLSearchParams(query);
+                %>
+                
+                <!-- Previous Button -->
+                <% if (currentPage > 1) { %>
+                <li class="page-item">
+                  <a class="page-link" href="?<%= queryParams.toString() %>&page=<%= currentPage - 1 %>">
+                    <i class="fas fa-chevron-left d-none d-sm-inline"></i>
+                    <span class="d-sm-none">‹</span>
+                    <span class="d-none d-md-inline ms-1">Previous</span>
+                  </a>
+                </li>
+                <% } %>
+                
+                <!-- First page if not in range -->
+                <% if (startPage > 1) { %>
+                <li class="page-item">
+                  <a class="page-link" href="?<%= queryParams.toString() %>&page=1">1</a>
+                </li>
+                <% if (startPage > 2) { %>
+                <li class="page-item disabled">
+                  <span class="page-link">...</span>
+                </li>
+                <% } %>
+                <% } %>
+                
+                <!-- Page numbers -->
+                <% for (let p = startPage; p <= endPage; p++) { %>
+                <li class="page-item <%= p === currentPage ? 'active' : '' %>">
+                  <a class="page-link" href="?<%= queryParams.toString() %>&page=<%= p %>">
+                    <%= p %>
+                  </a>
+                </li>
+                <% } %>
+                
+                <!-- Last page if not in range -->
+                <% if (endPage < totalPages) { %>
+                <% if (endPage < totalPages - 1) { %>
+                <li class="page-item disabled">
+                  <span class="page-link">...</span>
+                </li>
+                <% } %>
+                <li class="page-item">
+                  <a class="page-link" href="?<%= queryParams.toString() %>&page=<%= totalPages %>">
+                    <%= totalPages %>
+                  </a>
+                </li>
+                <% } %>
+                
+                <!-- Next Button -->
+                <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                  <a class="page-link" href="?<%= queryParams.toString() %>&page=<%= currentPage + 1 %>">
+                    <span class="d-none d-md-inline me-1">Next</span>
+                    <i class="fas fa-chevron-right d-none d-sm-inline"></i>
+                    <span class="d-sm-none">›</span>
+                  </a>
+                </li>
+                <% } %>
+              </ul>
+            </nav>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Enhanced Styles -->
+    <style>
+      /* Card enhancements */
+      .card {
+        border: none;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+      }
+      
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+      }
+      
+      /* Table improvements */
+      .table {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      
+      .table thead th {
+        border: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.875rem;
+        padding: 1rem 0.75rem;
+      }
+      
+      .table tbody tr {
+        border-bottom: 1px solid #f8f9fa;
+        transition: all 0.2s ease;
+      }
+      
+      .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+      }
+      
+      .table tbody td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+      }
+      
+      /* Button enhancements */
+      .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      
+      /* Form improvements */
+      .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+      }
+      
+      .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+      }
+      
+      .input-group-text {
+        border-radius: 8px 0 0 8px;
+        border: 1px solid #e2e8f0;
+        background-color: #f8f9fa;
+      }
+      
+      /* Badge improvements */
+      .badge {
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+      }
+      
+      /* Mobile optimizations */
+      @media (max-width: 768px) {
+        .card-body {
+          padding: 1rem;
+        }
+        
+        .pagination {
+          font-size: 0.875rem;
+        }
+        
+        .pagination .page-link {
+          padding: 0.5rem 0.75rem;
+        }
+        
+        .btn {
+          font-size: 0.875rem;
+        }
+        
+        h2 {
+          font-size: 1.5rem;
+        }
+        
+        .inq {
+          padding: 0.5rem;
+        }
+        
+        .cola {
+          padding: 0.75rem;
+        }
+      }
+      
+      @media (max-width: 576px) {
+        .card-title {
+          font-size: 1rem;
+        }
+        
+        .badge {
+          font-size: 0.7rem;
+          padding: 0.25rem 0.5rem;
+        }
+        
+        .btn-sm {
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
+        }
+        
+        .pagination .page-link {
+          padding: 0.375rem 0.5rem;
+        }
+      }
+      
+      /* Animation for loading states */
+      .btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      
+      /* Smooth transitions */
+      * {
+        transition: all 0.2s ease;
+      }
+      
+      /* Custom scrollbar for webkit browsers */
+      #right::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      #right::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      
+      #right::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+      
+      #right::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add loading states to buttons
+        document.querySelectorAll('.btn-success').forEach(btn => {
+          btn.addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+            this.disabled = true;
+          });
+        });
+
+        // Add loading state to filter form
+        const filterForm = document.querySelector('form');
+        if (filterForm) {
+          filterForm.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Filtering...';
+            submitBtn.disabled = true;
+          });
+        }
+
+        // Smooth scroll for pagination
+        document.querySelectorAll('.pagination .page-link').forEach(link => {
+          link.addEventListener('click', function() {
+            document.querySelector('.cola').scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
+            });
+          });
+        });
+      });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -72,11 +72,11 @@
                   <th scope="row"><%=std.firstName %> <%=std.lastName %></th>
                   <td><%=std.contactNumber %></td>
                   <td>
-                    <% std.course.forEach(e=>{ %> <%= e.courseCode %> <% }) %>
+                    <%= std.course.courseName %>
                   </td>
                   <td>
-                    <%= std?.enquiryDate?.toLocaleTimeString() %> - <%=
-                    std?.enquiryDate?.toLocaleDateString('en-GB') %>
+                    <%= std?.createdAt?.toLocaleTimeString() %> - <%=
+                    std?.createdAt?.toLocaleDateString('en-GB') %>
                   </td>
                   <td>
                     <a

@@ -39,12 +39,10 @@ const studentEnquirySchema = new mongoose.Schema({
     type: String,
     enum: ["male", "female"],
   },
-  course: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-    },
-  ],
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course",
+  },
   university: {
     type: String,
   },
@@ -56,14 +54,6 @@ const studentEnquirySchema = new mongoose.Schema({
     type: String,
     default: "January",
   },
-  rejected: {
-    type: Boolean,
-    default: false,
-  },
-  registered: {
-    type: Boolean,
-    default: false,
-  },
   enquiryBy: String,
   joiningDate: Date,
   reference: String,
@@ -72,7 +62,6 @@ const studentEnquirySchema = new mongoose.Schema({
   due: Number,
   registrationPayment: String,
   dueDate: String,
-  // new fields
   whatsappNumber: {
     type: Number,
   },

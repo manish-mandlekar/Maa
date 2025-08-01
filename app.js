@@ -2,12 +2,13 @@
 // require("dotenv").config();
 
 const createError = require("http-errors");
+const MongoStore = require("connect-mongo");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const methodOverride = require("method-override");
-const flash = require('connect-flash');
+const flash = require("connect-flash");
 const passport = require("passport");
 const expressSession = require("express-session");
 const mongoose = require("mongoose");
@@ -16,10 +17,10 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./models/Usermodel"); // This is likely NOT a router, rename it if needed
 
 const app = express();
-
+const MongoURI = "mongodb+srv://yash:yash@cluster0.8f4wpmt.mongodb.net";
 /* ---------------------- DB Connection ---------------------- */
 mongoose
-  .connect("mongodb+srv://yash:yash@cluster0.8f4wpmt.mongodb.net")
+  .connect(MongoURI)
   // .connect("mongodb://localhost/maa")
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
@@ -29,11 +30,18 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 /* ---------------------- Middleware ---------------------- */
-app.use(
+app.use( 
   expressSession({
+    secret: process.env.SESSION_SECRET || "saenrsn",
     resave: false,
     saveUninitialized: false,
-    secret: process.env.SESSION_SECRET || "saenrsn",
+    store: MongoStore.create({
+      mongoUrl: MongoURI,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+    },
   })
 );
 app.use(passport.initialize());

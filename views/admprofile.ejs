@@ -100,12 +100,14 @@
           <div class="form-group">
             <label>Course:</label>
             <div class="col-md-12">
-              <select class="form-select" name="course">
+             <select class="form-select" name="course">
                 <option value="">All Courses</option>
-                <% courses.forEach(course => { const isSelected = founduser.course.some(c => c._id.toString() === course._id.toString()); %>
-                <option value="<%= course._id %>" <%= isSelected ? 'selected' : '' %>>
-                <%= course.courseName %>
-                </option>
+                <% courses.forEach(course => { 
+                  const isSelected = founduser.course && founduser.course._id.toString() === course._id.toString(); 
+                %>
+                  <option value="<%= course._id %>" <%= isSelected ? 'selected' : '' %>>
+                    <%= course.courseName %>
+                  </option>
                 <% }) %>
               </select>
             </div>

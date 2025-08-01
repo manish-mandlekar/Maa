@@ -3,6 +3,9 @@ const os = require("os");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 
 let whatsappClient;
+let isInitializing = false;
+let retryCount = 0;
+const MAX_RETRIES = 3;
 
 // Determine system Chrome path manually (cross-platform)
 function getChromePath() {
@@ -20,46 +23,118 @@ function getChromePath() {
   }
 }
 
-function startWhatsAppClient() {
-  const chromePath = getChromePath();
+async function initializeWhatsAppClient() {
+  if (isInitializing) return;
+  isInitializing = true;
 
-  whatsappClient = new Client({
-    authStrategy: new LocalAuth({
-  dataPath: './session_data'  // <-- this will work outside the .pkg snapshot
-}),
-    puppeteer: {
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath: chromePath,
-       dumpio: true,
-    },
-  });
+  try {
+    const chromePath = getChromePath();
 
-  whatsappClient.on("qr", (qr) => {
-    console.log("📱 Scan this QR code to authenticate:");
-    qrcode.generate(qr, { small: true });
-  });
+    whatsappClient = new Client({
+      authStrategy: new LocalAuth({
+        dataPath: "./session_data",
+        clientId: "maa_computers_client",
+      }),
+      puppeteer: {
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--disable-gpu",
+        ],
+        executablePath: chromePath,
+        defaultViewport: null,
+        timeout: 60000,
+      },
+      qrMaxRetries: 3,
+      restartOnAuthFail: true,
+    });
 
-  whatsappClient.on("authenticated", () => {
-    console.log("🔐 Authenticated successfully");
-  });
+    whatsappClient.on("qr", (qr) => {
+      console.log("📱 Scan this QR code to authenticate:");
+      qrcode.generate(qr, { small: true });
+    });
 
-  whatsappClient.on("ready", () => {
-    console.log("✅ WhatsApp client is ready");
-  });
+    whatsappClient.on("authenticated", () => {
+      console.log("🔐 WhatsApp authentication successful");
+      retryCount = 0;
+    });
 
-  whatsappClient.on("auth_failure", (msg) => {
-    console.error("❌ Authentication failure:", msg);
-  });
+    whatsappClient.on("ready", () => {
+      console.log("✅ WhatsApp client is ready");
+      isInitializing = false;
+    });
 
-  whatsappClient.on("disconnected", (reason) => {
-    console.log("🚫 Disconnected from WhatsApp:", reason);
-  });
+    whatsappClient.on("auth_failure", async (msg) => {
+      console.error("❌ WhatsApp authentication failed:", msg);
+      if (retryCount < MAX_RETRIES) {
+        retryCount++;
+        console.log(
+          `🔄 Retrying authentication (${retryCount}/${MAX_RETRIES})...`
+        );
+        await restartWhatsAppClient();
+      } else {
+        console.error(
+          "❌ Max retries reached. Please check your WhatsApp connection."
+        );
+      }
+    });
 
-  whatsappClient.initialize();
+    whatsappClient.on("disconnected", async (reason) => {
+      console.log("🚫 WhatsApp disconnected:", reason);
+      isInitializing = false;
+      if (retryCount < MAX_RETRIES) {
+        retryCount++;
+        console.log(
+          `🔄 Attempting to reconnect (${retryCount}/${MAX_RETRIES})...`
+        );
+        await restartWhatsAppClient();
+      }
+    });
+
+    await whatsappClient.initialize();
+  } catch (error) {
+    console.error("❌ Error initializing WhatsApp client:", error);
+    isInitializing = false;
+    if (retryCount < MAX_RETRIES) {
+      retryCount++;
+      console.log(
+        `🔄 Retrying initialization (${retryCount}/${MAX_RETRIES})...`
+      );
+      setTimeout(initializeWhatsAppClient, 5000);
+    }
+  }
 }
 
+async function restartWhatsAppClient() {
+  try {
+    if (whatsappClient) {
+      await whatsappClient.destroy();
+    }
+    await initializeWhatsAppClient();
+  } catch (error) {
+    console.error("❌ Error restarting WhatsApp client:", error);
+  }
+}
+
+function getWhatsAppClient() {
+  if (!whatsappClient || !whatsappClient.pupPage) {
+    console.log("⚠️ WhatsApp client not ready, initializing...");
+    initializeWhatsAppClient();
+    throw new Error(
+      "WhatsApp client is initializing. Please try again in a few moments."
+    );
+  }
+  return whatsappClient;
+}
+
+// Export the functions
 module.exports = {
-  startWhatsAppClient,
-  getWhatsAppClient: () => whatsappClient,
+  startWhatsAppClient: initializeWhatsAppClient,
+  getWhatsAppClient,
+  restartWhatsAppClient,
 };

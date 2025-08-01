@@ -65,8 +65,8 @@
                 <tr>
                   <th scope="row"><%= student.firstName %></th>
                   <td><%= student?.contactNumber %></td>
-                  <td><%= student?.course[0]?.courseCode %></td>
-                  <td><%= student?.enquiryDate?.toDateString() %></td>
+                  <td><%= student?.course?.courseName %></td>
+                  <td><%= student?.createdAt?.toDateString() %></td>
                   <td class="d-flex gap-3">
                     <a style="font-size: 25px" href="/delete/enquiry/<%= student._id %>"> ❌ </a>
                     <a style="font-size: 25px" href="/accepted/enquiry/<%= student._id %>"> ✅ </a>

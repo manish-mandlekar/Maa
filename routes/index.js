@@ -8,6 +8,7 @@ const courseModel = require("../models/course");
 const shortCourseModel = require("../models/shortCourse");
 const feesModel = require("../models/fees");
 const universityModel = require("../models/university");
+const inquiryModel = require("../models/inquiry");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 var fs = require("fs");
@@ -19,231 +20,20 @@ startWhatsAppClient(); // your whatsapp.js file
 const { WritableStreamBuffer } = require("stream-buffers");
 
 function isLoggedIn(req, res, next) {
+  return next();
   if (req.isAuthenticated()) {
     return next();
   } else {
     res.redirect("/");
   }
 }
-
-// function buildPDF(
-//   Datacallback,
-//   Endcallback,
-//   r_no,
-//   feeType,
-//   date,
-//   name,
-//   lastName,
-//   course,
-//   reg_fee,
-//   paid_fee,
-//   contactNumber,
-//   payment_mode
-// ) {
-//   const doc = new PDFDocument({ size: "A4", margin: 50 });
-
-//   doc.on("data", Datacallback);
-//   doc.on("end", Endcallback);
-
-//   const blue = "#0000ff";
-//   const red = "#ff0000";
-
-//   // Draw the header logo/image at the top
-//   try {
-//     if (fs.existsSync("./public/images/real.jpeg")) {
-//       doc.image("./public/images/real.jpeg", 50, 0, {
-//         width: 495,
-//         align: "top",
-//       });
-//       doc.moveDown(8); // Move down after logo
-//     } else {
-//       // Fallback: Create a placeholder header
-//       doc
-//         .fontSize(24)
-//         .fillColor(blue)
-//         .font("Helvetica-Bold")
-//         .text("MAA COMPUTERS", 50, 50, { align: "center" })
-//         .fontSize(14)
-//         .text("EDUCATION INSTITUTE", 50, 80, { align: "center" });
-//       doc.moveDown(3);
-//     }
-//   } catch (err) {
-//     console.warn("Header logo image not found, using text header.");
-//     // Fallback header
-//     doc
-//       .fontSize(24)
-//       .fillColor(blue)
-//       .font("Helvetica-Bold")
-//       .text("MAA COMPUTERS", 50, 50, { align: "center" })
-//       .fontSize(14)
-//       .text("EDUCATION INSTITUTE", 50, 80, { align: "center" });
-//     doc.moveDown(3);
-//   }
-
-//   // Receipt header info with larger font - exactly as in original
-//   const currentY = doc.y;
-//   doc
-//     .fontSize(12)
-//     .fillColor("black")
-//     .font("Helvetica")
-//     .text(`Reg. No.: ${r_no || "N/A"}`, 50, currentY - 50)
-//     .text(
-//       `Date: ${date || new Date().toLocaleDateString("en-GB")}`,
-//       400,
-//       currentY - 50
-//     );
-
-//   // Student details with larger font
-//   // doc.moveDown(1);
-//   const detailsY = doc.y;
-//   doc
-//     .fontSize(12)
-//     .text(
-//       `Name: ${name || "N/A"}${lastName ? " " + lastName : ""}`,
-//       50,
-//       detailsY
-//     )
-//     .text(`Contact: ${contactNumber || "N/A"}`, 400, detailsY);
-
-//   doc.moveDown(0.5);
-
-//   doc
-//     .fontSize(12)
-//     .text(`Course Enrolled: ${course[0].courseName || "N/A"}`, 50);
-
-//   // Table section with proper borders and increased font size
-//   doc.moveDown(1.5);
-//   const tableStartY = doc.y - 10;
-//   const tableWidth = 495;
-//   const col1Width = 60;
-//   const col2Width = 285;
-//   const col3Width = 150;
-
-//   // Draw table border
-//   doc.rect(50, tableStartY, tableWidth, 100).stroke();
-
-//   // Draw vertical lines
-//   doc
-//     .moveTo(50 + col1Width, tableStartY)
-//     .lineTo(50 + col1Width, tableStartY + 100)
-//     .stroke();
-//   doc
-//     .moveTo(50 + col1Width + col2Width, tableStartY)
-//     .lineTo(50 + col1Width + col2Width, tableStartY + 100)
-//     .stroke();
-
-//   // Draw horizontal lines
-//   doc
-//     .moveTo(50, tableStartY + 25)
-//     .lineTo(545, tableStartY + 25)
-//     .stroke(); // After header
-//   doc
-//     .moveTo(50, tableStartY + 50)
-//     .lineTo(545, tableStartY + 50)
-//     .stroke(); // After row 1
-//   doc
-//     .moveTo(50, tableStartY + 75)
-//     .lineTo(545, tableStartY + 75)
-//     .stroke(); // After row 2
-
-//   // Table headers with blue color and larger font
-//   doc
-//     .fillColor("black")
-//     .fontSize(12)
-//     .font("Helvetica-Bold")
-//     .text("S.No.", 55, tableStartY + 8, {
-//       width: col1Width - 10,
-//       align: "center",
-//     })
-//     .text("Particulars", 115, tableStartY + 8, {
-//       width: col2Width - 10,
-//       align: "center",
-//     })
-//     .text("Amount", 405, tableStartY + 8, {
-//       width: col3Width - 10,
-//       align: "center",
-//     });
-
-//   // Table rows with larger font
-//   doc.fillColor("black").font("Helvetica").fontSize(11);
-
-//   // Row 1: Registration Fee
-//   doc
-//     .text("1", 55, tableStartY + 33, { width: col1Width - 10, align: "center" })
-//     .text(feeType, 115, tableStartY + 33, {
-//       width: col2Width - 10,
-//       align: "left",
-//     })
-//     .text(`${paid_fee || "0"}`, 395, tableStartY + 33, {
-//       width: col3Width - 10,
-//       align: "center",
-//     });
-
-//   // Row 2: Paid Fee
-//   doc
-//     .text("2", 55, tableStartY + 58, { width: col1Width - 10, align: "center" })
-//     .text("Paid Fee", 115, tableStartY + 58, {
-//       width: col2Width - 10,
-//       align: "left",
-//     })
-//     .text(`${paid_fee || "0"}`, 395, tableStartY + 58, {
-//       width: col3Width - 10,
-//       align: "center",
-//     });
-
-//   // Total row with bold font
-//   const total = parseInt(reg_fee || 0) + parseInt(paid_fee || 0);
-//   doc
-//     .font("Helvetica-Bold")
-//     .fontSize(12)
-//     .text("Total", 115, tableStartY + 83, {
-//       width: col2Width - 10,
-//       align: "left",
-//     })
-//     .text(`${total}`, 395, tableStartY + 83, {
-//       width: col3Width - 10,
-//       align: "center",
-//     });
-
-//   // Payment information with larger font
-//   doc.moveDown(1);
-//   doc
-//     .font("Helvetica")
-//     .fontSize(12)
-//     .text(
-//       `Received a sum of Rupees ${total} by ${payment_mode || "UPI"}.`,
-//       50,
-//       280
-//     );
-//   // Signature section with larger font
-//   doc.moveDown(1);
-//   const signatureY = doc.y;
-//   doc
-//     .fontSize(12)
-//     .text("Student's/Parent's Signature", 50, signatureY)
-//     .text("Receiver's Signature", 400, signatureY);
-
-//   // Important note in red with larger font
-//   doc.moveDown(1);
-//   doc
-//     .fontSize(11)
-//     .fillColor(red)
-//     .text(
-//       "Note: Fee is not refundable or transferable in any condition. Late fee is applicable after due date.",
-//       50,
-//       doc.y,
-//       { width: 495 }
-//     );
-
-//   // Footer contact information with larger font
-//   doc.moveDown(1);
-//   doc.fontSize(11).fillColor("black").text("Visit Us: www.mceiindia.in", 50);
-
-//   doc.text("Help line: 9617767802, 9229967996, 9039442551, 9131990309", 50);
-//   doc.text("Email: mceiindia229@gmail.com | Social: @mceiindiarau", 50);
-
-//   doc.end();
-// }
+function checkLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    res.redirect("/dashboard");
+  } else {
+    return next();
+  }
+}
 
 function buildPDF(
   Datacallback,
@@ -447,69 +237,46 @@ function buildPDF(
 
   doc.end();
 }
-
 passport.use(new localStrategy(userModel.authenticate()));
 
-/* GET home page. */
-async function backfillReceiptNumbers() {
-  const existing = await studentModel.find({ registered: true }); // sort chronologically if needed
-  let counter = 3502;
-
-  for (const doc of existing) {
-    if (!doc.r_no) {
-      doc.r_no = counter++;
-      await doc.save();
-    }
-  }
-  console.log("backup fill");
-}
-// backfillReceiptNumbers()
-// removeReceiptNumbers()
-async function removeReceiptNumbers() {
-  try {
-    const result = await feesModel.updateMany(
-      { receiptNumber: { $exists: true } },
-      { $unset: { receiptNumber: 1 } }
-    );
-
-    console.log(
-      `Removed receiptNumber from ${result.modifiedCount} documents.`
-    );
-  } catch (error) {
-    console.error("Error while removing receiptNumber:", error);
-  }
-}
-
-router.get("/", function (req, res, next) {
+router.get("/", checkLoggedIn, function (req, res, next) {
   res.render("index");
 });
 // A
 router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
-  const student = await studentModel.findById({ _id: req.params.id });
-  const course = await courseModel.find();
+  const student = await inquiryModel.findById({ _id: req.params.id });
   const universities = await universityModel.find();
+  let course;
+  if (student.inquiryType == "student") {
+    course = await courseModel.find();
+    const lastStudent = await studentModel.find().sort({ r_no: -1 }).limit(1); // more efficient than accessing [0]
 
-  res.render("acceptenquiry", {
-    student,
-    course,
-    universities,
-  });
+    const r_no = lastStudent.length > 0 ? lastStudent[0].r_no + 1 : 1;
+    res.render("register", {
+      student,
+      course,
+      universities,
+      r_no,
+    });
+  } else {
+    course = await shortCourseModel.find();
+    res.render("admission", {
+      student,
+      course,
+      universities,
+    });
+  }
 });
 router.post("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const lastStudent = await studentModel
-      .findOne({ registered: true })
-      .sort({ r_no: -1 })
-      .lean();
+    const lastStudent = await studentModel.find().sort({ r_no: -1 }).lean();
 
     const newRno = lastStudent ? lastStudent.r_no + 1 : 1;
 
     const updateData = {
       ...req.body,
-      registered: true,
-      rejected: false,
       r_no: newRno,
     };
 
@@ -524,7 +291,12 @@ router.post("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
     res.redirect("/student");
   } catch (err) {
     console.error("Error accepting enquiry:", err);
-    next(err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
   }
 });
 
@@ -554,10 +326,9 @@ router.get("/admission-student", isLoggedIn, async (req, res, next) => {
     const { name, contactNumber, page = 1 } = req.query;
     const limit = 10;
     const skip = (page - 1) * limit;
-    let query;
+    let query = {}; // ✅ Always initialize
 
     // Build dynamic query
-
     if (name) {
       query.$or = [
         { firstName: new RegExp(name, "i") },
@@ -566,10 +337,14 @@ router.get("/admission-student", isLoggedIn, async (req, res, next) => {
     }
 
     if (contactNumber) {
-      query.contactNumber = contactNumber;
+      // If $or exists, merge it with contactNumber
+      if (query.$or) {
+        query.$and = [{ $or: query.$or }, { contactNumber }];
+        delete query.$or;
+      } else {
+        query.contactNumber = contactNumber;
+      }
     }
-
-    console.log(query);
 
     const [std, totalCount] = await Promise.all([
       admissionModel
@@ -582,6 +357,7 @@ router.get("/admission-student", isLoggedIn, async (req, res, next) => {
     ]);
 
     const totalPages = Math.ceil(totalCount / limit);
+
     res.render("admissionStudent", {
       std,
       query: req.query,
@@ -589,9 +365,18 @@ router.get("/admission-student", isLoggedIn, async (req, res, next) => {
       totalPages,
     });
   } catch (err) {
-    next(err);
+    console.log("Error fetching admission students:", err);
+    res.send(`
+      <html>
+        <body>
+          <h1>Something Went Wrong!</h1>
+          <p><a href="/feesManagement">Go Back</a></p>
+        </body>
+      </html>
+    `);
   }
 });
+
 router.get("/admprofile/:id", isLoggedIn, async (req, res, next) => {
   const courses = await shortCourseModel.find();
   const founduser = await admissionModel
@@ -605,9 +390,9 @@ router.get("/admprofile/:id", isLoggedIn, async (req, res, next) => {
 router.get("/addStaff", isLoggedIn, (req, res, next) => {
   res.render("addStaff");
 });
-router.post("/addStaff", isLoggedIn, (req, res, next) => {
-  staffModel
-    .create({
+router.post("/addStaff", isLoggedIn, async (req, res, next) => {
+  try {
+    await staffModel.create({
       firstName: req.body.firstName,
       secondName: req.body.secondName,
       gender: req.body.gender,
@@ -622,11 +407,19 @@ router.post("/addStaff", isLoggedIn, (req, res, next) => {
       joinDate: req.body.joinDate,
       jobTiming: req.body.jobTiming,
       position: req.body.position,
-    })
-    .then(() => {
-      res.redirect("/allStaff");
     });
+    res.redirect("/allStaff");
+  } catch (err) {
+    console.error("Error adding staff:", err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
+  }
 });
+
 router.get("/addUniversity", isLoggedIn, async (req, res, next) => {
   try {
     const universities = await universityModel.find();
@@ -653,6 +446,7 @@ router.post("/addUniversity", isLoggedIn, async (req, res, next) => {
       res.redirect("/addUniversity");
     });
 });
+
 router.get("/allenquiry", isLoggedIn, async (req, res, next) => {
   try {
     const filter = {
@@ -665,7 +459,7 @@ router.get("/allenquiry", isLoggedIn, async (req, res, next) => {
       filter.contactNumber = req.query.contactNumber;
     }
 
-    const students = await studentModel.find(filter).populate("course");
+    const students = await inquiryModel.find(filter);
 
     res.render("allenquiry", { students });
   } catch (err) {
@@ -673,6 +467,7 @@ router.get("/allenquiry", isLoggedIn, async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 router.get("/allStaff", isLoggedIn, (req, res, next) => {
   staffModel.find().then((staff) => {
     res.render("allStaff", { staff });
@@ -680,40 +475,37 @@ router.get("/allStaff", isLoggedIn, (req, res, next) => {
 });
 
 // C
-router.get("/clear-session", async (req, res) => {
+router.get("/course", isLoggedIn, async (req, res, next) => {
   try {
-    // First logout if client is active
-    await whatsappClient.logout();
-    // Delete the authentication folder
-    const authPath = path.join(__dirname, ".wwebjs_auth");
-    if (fs.existsSync(authPath)) {
-      fs.rmSync(authPath, { recursive: true, force: true });
-      console.log("✅ Authentication files deleted");
-    }
-
-    res.send(
-      "✅ WhatsApp session cleared! Restart the application to scan QR code again."
-    );
-  } catch (error) {
-    console.error("❌ Clear Session Error:", error.message);
-    res.status(500).send("❌ Failed to clear WhatsApp session");
+    const course = await courseModel.find();
+    res.render("course", { course });
+  } catch (err) {
+    console.error("Error fetching courses:", err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
   }
 });
-router.get("/course", isLoggedIn, (req, res, next) => {
-  courseModel.find().then((course) => {
-    res.render("course", { course });
-  });
-});
-router.post("/course", isLoggedIn, (req, res, next) => {
-  courseModel
-    .create({
+router.post("/course", isLoggedIn, async (req, res, next) => {
+  try {
+    await courseModel.create({
       courseName: req.body.courseName,
       courseCode: req.body.courseCode,
       courseDuration: req.body.courseDuration,
-    })
-    .then(() => {
-      res.redirect("/course");
     });
+    res.redirect("/course");
+  } catch (err) {
+    console.error("Error creating course:", err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
+  }
 });
 
 // D
@@ -821,7 +613,12 @@ router.get("/dashboard", isLoggedIn, async (req, res, next) => {
       totalFeesYear,
     });
   } catch (err) {
-    next(err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
   }
 });
 
@@ -831,18 +628,20 @@ router.get("/delete/transaction/:id", isLoggedIn, async (req, res, next) => {
   });
   res.redirect("/feesManagement");
 });
+
 router.get("/deletecourse/:id", isLoggedIn, async (req, res, next) => {
   await courseModel.findOneAndDelete({ _id: req.params.id });
   res.redirect("back");
 });
+
 router.get("/delete/shortcourse/:id", isLoggedIn, async (req, res, next) => {
   await shortCourseModel.findOneAndDelete({ _id: req.params.id });
   res.redirect("back");
 });
+
 router.get("/delete/enquiry/:id", isLoggedIn, async (req, res, next) => {
   try {
-    await studentModel.deleteOne({ _id: req.params.id });
-
+    await inquiryModel.deleteOne({ _id: req.params.id });
     res.redirect("back");
   } catch (err) {
     res.send(err.message);
@@ -871,7 +670,12 @@ router.get("/edit/:type/:id", isLoggedIn, async (req, res, next) => {
     res.render("edit", { founduser, type }); // Optional: pass type to edit view if needed
   } catch (err) {
     console.error("Error in edit route:", err);
-    next(err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
   }
 });
 
@@ -944,7 +748,12 @@ router.get("/feesManagement", isLoggedIn, async (req, res, next) => {
       query: req.query,
     });
   } catch (err) {
-    next(err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
   }
 });
 router.get("/fees", isLoggedIn, async (req, res, next) => {
@@ -974,77 +783,12 @@ router.get("/fees", isLoggedIn, async (req, res, next) => {
     });
   } catch (err) {
     console.error("Error fetching student and admission fees:", err);
-    next(err);
-  }
-});
-
-router.get('/allStudentFees', isLoggedIn, async (req, res, next) => {
-  try {
-    const { name, contactNumber, page = 1 } = req.query;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
-    let query = { registered: true, rejected: false };
-    
-    if (name) {
-      query.$or = [
-        { firstName: new RegExp(name, 'i') },
-        { lastName: new RegExp(name, 'i') }
-      ];
-    }
-
-    if (contactNumber) {
-      query.contactNumber = contactNumber;
-    }
-
-    const [students, totalCount] = await Promise.all([
-      studentModel.find(query)
-        .populate('course')
-        .skip(skip)
-        .limit(limit)
-        .sort({ r_no: 1 }),
-      studentModel.countDocuments(query)
-    ]);
-
-    // Get detailed fees information for each student
-    const studentsWithFees = await Promise.all(students.map(async (student) => {
-      const fees = await feesModel.find({ student: student._id })
-        .sort({ payDate: -1 }); // Sort by payment date, newest first
-      
-      const totalPaid = fees.reduce((sum, fee) => sum + fee.payment, 0);
-      const totalFee = student.course[0]?.totalFee || 0;
-      
-      return {
-        ...student.toObject(),
-        totalPaid,
-        totalFee,
-        balance: totalFee - totalPaid,
-        feeHistory: fees.map(fee => ({
-          amount: fee.payment,
-          date: fee.payDate,
-          paymentMode: fee.registrationPaymentMode,
-          feeType: fee.feeType,
-          receiptId: fee._id
-        }))
-      };
-    }));
-
-    const totalPages = Math.ceil(totalCount / limit);
-
-    res.render('allStudentsFees', {
-      students: studentsWithFees,
-      currentPage: parseInt(page),
-      totalPages,
-      query: req.query,
-      helpers: {
-        formatDate: (date) => date ? new Date(date).toLocaleDateString() : 'N/A',
-        formatCurrency: (amount) => `₹${amount.toLocaleString('en-IN')}`
-      }
-    });
-
-  } catch (err) {
-    console.error('Error fetching student fees:', err);
-    next(err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
   }
 });
 
@@ -1068,61 +812,91 @@ router.get("/getdate", isLoggedIn, async (req, res, next) => {
     res.json({ students: combined });
   } catch (err) {
     console.error("Error in /getdate:", err);
-    next(err);
-  }
-});
-
-// I
-router.get("/inquiry", isLoggedIn, async (req, res, next) => {
-  const course = await courseModel.find();
-  res.render("inquiry", { course });
-});
-router.post("/inquiry", isLoggedIn, async (req, res, next) => {
-  // add enquiryBy in student model from req.user
-  try {
-    res.json(req.body);
-
-    // if (req.user) req.body.enquiryBy = req.user.username;
-    // let contactNumber = req.body?.contactNumber;
-    // contactNumber = contactNumber.replace(/\D/g, ""); // Remove non-digits
-    // if (contactNumber.startsWith("91") && contactNumber.length === 12) {
-    //   contactNumber = contactNumber.slice(2); // remove '91'
-    // } else if (contactNumber.startsWith("0") && contactNumber.length === 11) {
-    //   contactNumber = contactNumber.slice(1); // remove '0'
-    // }
-    // if (!/^[6-9]\d{9}$/.test(contactNumber)) {
-    //   return res.status(400).send(`
-    //     <html>
-    //       <body>
-    //         <h1>Invalid contact number</h1>
-    //         <p><a href="/feesManagement">Go Back</a></p>
-    //       </body>
-    //     </html>
-    //   `);
-    // }
-    // if (contactNumber) {
-    //   const whatsappClient = getWhatsAppClient();
-    //   // Final validation
-    //   const formattedNumber = "91" + contactNumber + "@c.us"; // WhatsApp format
-
-    //   const thankYouMessage = `🙏 Thank you for your enquiry, ${
-    //     req.body.firstName || "Student"
-    //   }! We’ll reach out to you shortly.`;
-
-    //   await whatsappClient.sendMessage(formattedNumber, thankYouMessage);
-    // }
-    // req.body.contactNumber = contactNumber;
-    // await studentModel.create(req.body);
-    // res.redirect("/allenquiry");
-  } catch (err) {
-    console.log(err.message);
-
     res.send(`<html>
             <body>
               <h1>Something Went Wrong!</h1>
               <p><a href="/feesManagement">Go Back</a></p>
             </body>
             </html>`);
+  }
+});
+
+// I
+router.get("/inquiry", isLoggedIn, async (req, res, next) => {
+  const course = await courseModel.find();
+  const admcourse = await shortCourseModel.find();
+  res.render("inquiry", { course, admcourse });
+});
+
+router.post("/inquiry", isLoggedIn, async (req, res, next) => {
+  try {
+    const {
+      inquiryType,
+      firstName,
+      lastName,
+      email,
+      fatherName,
+      contactNumber,
+      courseId,
+      courseName,
+      qualification,
+      address,
+    } = req.body;
+
+    // Clean and validate contact number
+    let contact = contactNumber.replace(/\D/g, "");
+    if (contact.startsWith("91") && contact.length === 12) {
+      contact = contact.slice(2); // remove '91'
+    } else if (contact.startsWith("0") && contact.length === 11) {
+      contact = contact.slice(1); // remove '0'
+    }
+
+    // Send WhatsApp message
+    if (/^[6-9]\d{9}$/.test(contact)) {
+      const whatsappClient = getWhatsAppClient();
+      const formattedNumber = "91" + contact + "@c.us";
+
+      const thankYouMessage = `🙏 Thank you for your enquiry, ${
+        firstName || "Student"
+      }! We’ll reach out to you shortly.`;
+
+      await whatsappClient.sendMessage(formattedNumber, thankYouMessage);
+    }
+
+    // Build inquiry object
+    const inquiryData = {
+      inquiryType,
+      firstName,
+      lastName,
+      email,
+      fatherName,
+      contactNumber: contact,
+      qualification,
+      address,
+      course: {
+        _id: courseId,
+        courseName: courseName,
+      },
+    };
+
+    // If user is logged in, add the enquirer info
+    if (req.user) {
+      inquiryData.enquiryBy = req.user.username;
+    }
+
+    await inquiryModel.create(inquiryData);
+
+    res.redirect("/allenquiry");
+  } catch (err) {
+    console.error("Error creating inquiry:", err);
+    res.status(500).send(`
+      <html>
+        <body>
+          <h1>Something Went Wrong!</h1>
+          <p><a href="/feesManagement">Go Back</a></p>
+        </body>
+      </html>
+    `);
   }
 });
 router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
@@ -1289,32 +1063,42 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
 
 // R
 router.get("/register", async function (req, res, next) {
-  const course = await courseModel.find();
-  const universities = await universityModel.find();
-  const lastStudent = await studentModel
-    .find({ registered: true })
-    .sort({ r_no: -1 });
+  try {
+    const course = await courseModel.find();
+    const universities = await universityModel.find();
 
-  const r_no = lastStudent[0].r_no + 1;
+    const lastStudent = await studentModel.findOne().sort({ r_no: -1 }).lean(); // more efficient than accessing [0]
 
-  res.render("register", { course, universities, r_no });
+    console.log(lastStudent);
+
+    const r_no = lastStudent ? lastStudent.r_no + 1 : 1;
+
+    res.render("register", { course, universities, r_no });
+  } catch (err) {
+    console.error("Error in /register route:", err);
+    res.send(
+      `<html><body><h1>Something Went Wrong!</h1><p><a href="/feesManagement">Go Back</a></p></body></html>`
+    );
+  }
 });
-router.post("/register", function (req, res) {
-  var newUser = new userModel({
-    username: req.body.username,
-    email: req.body.email,
-  });
-  userModel
-    .register(newUser, req.body.password)
-    .then(function (u) {
-      passport.authenticate("local")(req, res, function () {
-        res.redirect("/dashboard");
-      });
-    })
-    .catch((e) => {
-      console.log(e);
-      res.redirect("/signup");
+
+router.post("/register", async (req, res) => {
+  try {
+    const newUser = new userModel({
+      username: req.body.username,
+      email: req.body.email,
     });
+
+    const user = await userModel.register(newUser, req.body.password);
+    await new Promise((resolve, reject) => {
+      passport.authenticate("local")(req, res, () => resolve());
+    });
+
+    res.redirect("/dashboard");
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.redirect("/signup");
+  }
 });
 router.get("/rejected", isLoggedIn, async (req, res, next) => {
   try {
@@ -1324,7 +1108,7 @@ router.get("/rejected", isLoggedIn, async (req, res, next) => {
       filter.contactNumber = req.query.contactNumber;
     }
 
-    const students = await studentModel.find(filter).populate("course");
+    const students = await inquiryModel.find(filter);
 
     res.render("rejected", {
       students,
@@ -1337,10 +1121,20 @@ router.get("/rejected", isLoggedIn, async (req, res, next) => {
 });
 
 router.get("/reject/enquiry/:id", isLoggedIn, async (req, res, next) => {
-  const student = await studentModel.findById({ _id: req.params.id });
-  student.rejected = true;
-  await student.save();
-  res.redirect("back");
+  try {
+    const student = await inquiryModel.findById(req.params.id);
+    if (!student) {
+      throw new Error("Student not found");
+    }
+    student.rejected = true;
+    await student.save();
+    res.redirect("back");
+  } catch (err) {
+    console.error("Error rejecting enquiry:", err);
+    res.send(
+      `<html><body><h1>Something Went Wrong!</h1><p><a href="/feesManagement">Go Back</a></p></body></html>`
+    );
+  }
 });
 
 // S
@@ -1354,7 +1148,7 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
     const skip = (page - 1) * limit;
 
     // Build dynamic query
-    const query = { rejected: false, registered: true };
+    const query = {};
 
     if (name) {
       query.$or = [
@@ -1398,29 +1192,78 @@ router.get("/student", isLoggedIn, async (req, res, next) => {
       sessionMonths, // Pass sessionMonths to the view
     });
   } catch (err) {
-    next(err);
+    res.send(
+      `<html><body><h1>Something Went Wrong!</h1><p><a href="/feesManagement">Go Back</a></p></body></html>`
+    );
+  }
+});
+
+router.post("/student/register", isLoggedIn, async (req, res, next) => {
+  try {
+    // Create a new student
+
+    const lastStudent = await studentModel.findOne().sort({ r_no: -1 }).lean();
+
+    const newRno = lastStudent ? lastStudent.r_no + 1 : 1;
+
+    const updateData = {
+      ...req.body,
+      r_no: newRno,
+    };
+    const newStudent = await studentModel.create(updateData);
+
+    await inquiryModel.findOneAndUpdate(
+      { _id: req.body.inquiryId },
+      { registered: true, rejected: false },
+      { new: true }
+    );
+    res.redirect("/student");
+  } catch (err) {
+    console.error("Error registering student:", err);
+    res.send(
+      `<html><body><h1>Something Went Wrong!</h1><p><a href="/feesManagement">Go Back</a></p></body></html>`
+    );
   }
 });
 router.get("/stdprofile/:id", isLoggedIn, async (req, res, next) => {
-  const courses = await courseModel.find();
-  const founduser = await studentModel
-    .findOne({
-      _id: req.params.id,
-    })
-    .populate("course");
+  try {
+    const [courses, founduser] = await Promise.all([
+      courseModel.find(),
+      studentModel.findOne({ _id: req.params.id }).populate("course"),
+    ]);
 
-  res.render("stdprofile", { founduser, courses });
+    if (!founduser) {
+      throw new Error("Student not found");
+    }
+
+    res.render("stdprofile", { founduser, courses });
+  } catch (err) {
+    console.error("Error fetching student profile:", err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
+  }
 });
-router.post("/short-course", isLoggedIn, (req, res, next) => {
-  shortCourseModel
-    .create({
+router.post("/short-course", isLoggedIn, async (req, res, next) => {
+  try {
+    await shortCourseModel.create({
       courseName: req.body.courseName,
       courseCode: req.body.courseCode,
       courseDuration: req.body.courseDuration,
-    })
-    .then(() => {
-      res.redirect("back");
     });
+    res.redirect("back");
+  } catch (err) {
+    console.error("Error creating short course:", err);
+    res.send(`<html>
+            <body>
+              <h1>Something Went Wrong!</h1>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            </html>`);
+  }
 });
 router.get("/shortTermCourse", async function (req, res, next) {
   const shortCourses = await shortCourseModel.find();
@@ -1554,7 +1397,7 @@ router.post("/update/due/:type/:id", isLoggedIn, async (req, res, next) => {
       feeType: req.body.feeType,
       student: foundstudent._id,
       payment: paidAmount,
-      studentModelType:type
+      studentModelType: type,
     });
 
     // Update the student's due
@@ -1589,6 +1432,7 @@ router.get("/delete-students", async (req, res) => {
     res.status(500).send("❌ Failed to delete students");
   }
 });
+
 router.put("/universities/:id", async (req, res) => {
   try {
     const { id } = req.params;
