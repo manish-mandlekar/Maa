@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fees Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Main Container -->
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-72 bg-white shadow-lg border-r border-gray-200 hidden lg:block">
+            <div class="p-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800">EduManage</h2>
+                </div>
+            </div>
+            
+            <nav class="mt-8">
+                <div class="px-6 py-3">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Management</p>
+                </div>
+                <a href="#" class="flex items-center px-6 py-3 text-gray-700 bg-blue-50 border-r-2 border-blue-500">
+                    <i class="fas fa-money-bill-wave w-5 h-5 mr-3"></i>
+                    <span class="font-medium">Fees Management</span>
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                    <i class="fas fa-users w-5 h-5 mr-3"></i>
+                    <span>Students</span>
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                    <i class="fas fa-book w-5 h-5 mr-3"></i>
+                    <span>Courses</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                            <i class="fas fa-bars w-6 h-6"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-gray-900">Student Fees Management</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                            <i class="fas fa-bell w-5 h-5"></i>
+                        </button>
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm font-medium">A</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+                <!-- Filters Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Filter Students</h3>
+                    <form method="GET" action="/new/fees" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Student Name</label>
+                            <input type="text" name="name" value="<%= query.name || '' %>" placeholder="Search by name..." 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Payment Status</label>
+                            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">All Status</option>
+                                <option value="paid" <%= query.status === 'paid' ? 'selected' : '' %>>Fully Paid</option>
+                                <option value="partial" <%= query.status === 'partial' ? 'selected' : '' %>>Partially Paid</option>
+                                <option value="due" <%= query.status === 'due' ? 'selected' : '' %>>Due</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                            <select name="course" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">All Courses</option>
+                                <option value="B.Com" <%= query.course === 'B.Com' ? 'selected' : '' %>>B.Com</option>
+                                <option value="BCA" <%= query.course === 'BCA' ? 'selected' : '' %>>BCA</option>
+                                <option value="MBA" <%= query.course === 'MBA' ? 'selected' : '' %>>MBA</option>
+                                <option value="12th" <%= query.course === '12th' ? 'selected' : '' %>>12th</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end space-x-2">
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                <i class="fas fa-search mr-2"></i>Filter
+                            </button>
+                            <a href="/new/fees" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                                <i class="fas fa-refresh mr-2"></i>Reset
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Stats Cards -->
+                <%
+                    const totalStudents = fees.length;
+                    const totalDue = fees.reduce((sum, fee) => sum + fee.studentDetails.due, 0);
+                    const overdueCount = fees.filter(fee => {
+                        const dueDate = new Date(fee.studentDetails.dueDate);
+                        const today = new Date();
+                        return fee.studentDetails.due > 0 && dueDate < today;
+                    }).length;
+                %>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total Students</p>
+                                <p class="text-2xl font-semibold text-gray-900"><%= totalStudents %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-money-bill-wave text-green-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total Collected</p>
+                                <p class="text-2xl font-semibold text-gray-900">₹<%= totalFees.toLocaleString() %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-clock text-yellow-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Pending Dues</p>
+                                <p class="text-2xl font-semibold text-gray-900">₹<%= totalDue.toLocaleString() %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Overdue</p>
+                                <p class="text-2xl font-semibold text-gray-900"><%= overdueCount %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Student Fee Summary</h3>
+                        <p class="text-sm text-gray-600 mt-1">View and manage student fee records</p>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Paid</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Amount</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <% if (fees && fees.length > 0) { %>
+                                    <% fees.forEach((student, index) => { %>
+                                        <%
+                                            let paymentStatus, statusClass;
+                                            if (student.studentDetails.due === 0) {
+                                                paymentStatus = 'Paid';
+                                                statusClass = 'bg-green-100 text-green-800';
+                                            } else if (student.totalPaid > 0) {
+                                                paymentStatus = 'Partial';
+                                                statusClass = 'bg-yellow-100 text-yellow-800';
+                                            } else {
+                                                paymentStatus = 'Due';
+                                                statusClass = 'bg-red-100 text-red-800';
+                                            }
+                                        %>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                                            <span class="text-sm font-medium text-gray-700">
+                                                                <%= student.studentDetails.firstName.charAt(0) %><%= student.studentDetails.lastName.charAt(0) %>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">
+                                                            <%= student.studentDetails.firstName %> <%= student.studentDetails.lastName %>
+                                                        </div>
+                                                        <div class="text-sm text-gray-500">
+                                                            Father: <%= student.studentDetails.fatherName %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <%= student.studentDetails.contactNumber %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <%= student.studentDetails.qualification %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                                                ₹<%= student.totalPaid.toLocaleString() %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium <%= student.studentDetails.due > 0 ? 'text-red-600' : 'text-gray-900' %>">
+                                                ₹<%= student.studentDetails.due.toLocaleString() %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= statusClass %>">
+                                                    <%= paymentStatus %>
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button onclick="showPaymentDetails(<%= index %>)" class="text-blue-600 hover:text-blue-900">
+                                                    <i class="fas fa-eye mr-1"></i>View
+                                                </button>
+                                                <button class="text-green-600 hover:text-green-900">
+                                                    <i class="fas fa-plus mr-1"></i>Add Payment
+                                                </button>
+                                                <button class="text-purple-600 hover:text-purple-900">
+                                                    <i class="fas fa-download mr-1"></i>Invoice
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                            <div class="flex flex-col items-center py-8">
+                                                <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
+                                                <p class="text-lg font-medium">No students found</p>
+                                                <p class="text-sm">Try adjusting your search criteria</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <% if (fees && fees.length > 0) { %>
+                    <div class="mt-6 flex items-center justify-between">
+                        <div class="flex items-center text-sm text-gray-700">
+                            <span>Showing <%= ((currentPage - 1) * 10) + 1 %> to <%= Math.min(currentPage * 10, fees.length) %> of <%= fees.length %> results</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <% if (hasPrevPage) { %>
+                                <a href="?page=<%= currentPage - 1 %><% if (query.name) { %>&name=<%= query.name %><% } %><% if (query.status) { %>&status=<%= query.status %><% } %><% if (query.course) { %>&course=<%= query.course %><% } %>" 
+                                   class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                    Previous
+                                </a>
+                            <% } else { %>
+                                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md opacity-50 cursor-not-allowed" disabled>
+                                    Previous
+                                </button>
+                            <% } %>
+                            
+                            <span class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md">
+                                <%= currentPage %>
+                            </span>
+                            
+                            <% if (hasNextPage) { %>
+                                <a href="?page=<%= currentPage + 1 %><% if (query.name) { %>&name=<%= query.name %><% } %><% if (query.status) { %>&status=<%= query.status %><% } %><% if (query.course) { %>&course=<%= query.course %><% } %>" 
+                                   class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                    Next
+                                </a>
+                            <% } else { %>
+                                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md opacity-50 cursor-not-allowed" disabled>
+                                    Next
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+            </main>
+        </div>
+    </div>
+
+    <!-- Payment Details Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-96 overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900" id="modalTitle">Payment History</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6" id="modalContent">
+                    <!-- Payment details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Convert server data to JavaScript
+        const studentsData = <%- JSON.stringify(fees) %>;
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-GB');
+        }
+
+        function formatTime(dateString) {
+            return new Date(dateString).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function showPaymentDetails(studentIndex) {
+            const student = studentsData[studentIndex];
+            const modal = document.getElementById('paymentModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+
+            modalTitle.textContent = `Payment History - ${student.studentDetails.firstName} ${student.studentDetails.lastName}`;
+
+            let paymentsHtml = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-900 mb-2">Student Information</h4>
+                            <p class="text-sm text-gray-600">Name: ${student.studentDetails.firstName} ${student.studentDetails.lastName}</p>
+                            <p class="text-sm text-gray-600">Father: ${student.studentDetails.fatherName}</p>
+                            <p class="text-sm text-gray-600">Mother: ${student.studentDetails.motherName}</p>
+                            <p class="text-sm text-gray-600">Contact: ${student.studentDetails.contactNumber}</p>
+                            <p class="text-sm text-gray-600">Course: ${student.studentDetails.qualification}</p>
+                            <p class="text-sm text-gray-600">Address: ${student.studentDetails.address}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-900 mb-2">Fee Summary</h4>
+                            <p class="text-sm text-gray-600">Total Paid: ₹${student.totalPaid.toLocaleString()}</p>
+                            <p class="text-sm text-gray-600">Due Amount: ₹${student.studentDetails.due.toLocaleString()}</p>
+                            <p class="text-sm text-gray-600">Installment: ₹${student.studentDetails.installment}</p>
+                            <p class="text-sm text-gray-600">Due Date: ${formatDate(student.studentDetails.dueDate)}</p>
+                            <p class="text-sm text-gray-600">Joining Date: ${formatDate(student.studentDetails.joiningDate)}</p>
+                        </div>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-3">Payment Transactions</h4>
+                    <div class="space-y-3">
+            `;
+
+            if (student.payments && student.payments.length > 0) {
+                student.payments.forEach(payment => {
+                    paymentsHtml += `
+                        <div class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-check text-green-600"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">${payment.feeType || 'Fee Payment'}</p>
+                                        <p class="text-sm text-gray-500">${formatDate(payment.payDate)} at ${formatTime(payment.payDate)}</p>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            ${payment.registrationPaymentMode}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-lg font-semibold text-green-600">
+                                ₹${payment.payment.toLocaleString()}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                paymentsHtml += `
+                    <div class="text-center py-8">
+                        <i class="fas fa-receipt text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">No payment records found</p>
+                    </div>
+                `;
+            }
+
+            paymentsHtml += `
+                    </div>
+                </div>
+            `;
+
+            modalContent.innerHTML = paymentsHtml;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -20,7 +20,6 @@ startWhatsAppClient(); // your whatsapp.js file
 const { WritableStreamBuffer } = require("stream-buffers");
 
 function isLoggedIn(req, res, next) {
-  return next();
   if (req.isAuthenticated()) {
     return next();
   } else {
@@ -116,9 +115,7 @@ function buildPDF(
 
   doc.moveDown(0.5);
 
-  doc
-    .fontSize(12)
-    .text(`Course Enrolled: ${course[0].courseName || "N/A"}`, 50);
+  doc.fontSize(12).text(`Course Enrolled: ${course || "N/A"}`, 50);
 
   // Table section with proper borders and increased font size - reduced height for 2 rows only
   doc.moveDown(1.5);
@@ -239,6 +236,177 @@ function buildPDF(
 }
 passport.use(new localStrategy(userModel.authenticate()));
 
+router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
+  const { id } = req.query;
+  if (!id) return res.status(400).send("❌ Fee ID is required");
+  // populate student and course details
+  const Fees = await feesModel.findById(id).populate({
+    path: "student",
+    populate: {
+      path: "course",
+    },
+  });
+  if (!Fees) return res.status(404).send("❌ Fee record not found");
+
+  const student = Fees.student;
+  if (!student) return res.status(404).send("❌ Student record not found");
+  // Validate contact number
+  // res.json(Fees.student);
+
+  const { payment, registrationPaymentMode, payDate, feeType } = Fees;
+  const { firstName, lastName, course, reg_fee, contactNumber, r_no, _id } =
+    student;
+  const stream = res.writeHead(200, {
+    "Content-Type": "application/pdf",
+    "Content-Disposition": `attachment;filename=receipt.pdf`,
+  });
+  buildPDF(
+    (chunk) => stream.write(chunk),
+    () => stream.end(),
+    r_no ? r_no : _id,
+    feeType,
+    payDate
+      ? payDate.toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB"),
+    firstName,
+    lastName,
+    course.courseName,
+    reg_fee,
+    payment,
+    contactNumber,
+    registrationPaymentMode
+  );
+});
+router.get("/invoice", async (req, res) => {
+  const { id } = req.query;
+  if (!id) return res.status(400).send("❌ Fee ID is required");
+  // populate student and course details
+  const Fees = await feesModel.findById(id).populate({
+    path: "student",
+    populate: {
+      path: "course",
+    },
+  });
+  if (!Fees) return res.status(404).send("❌ Fee record not found");
+
+  const student = Fees.student;
+  if (!student) return res.status(404).send("❌ Student record not found");
+  // Validate contact number
+  if (!student.contactNumber || !/^[6-9]\d{9}$/.test(student.contactNumber)) {
+    return res.status(400)
+      .send(`<div style="text-align: center; margin-top: 50px; font-family: Arial, sans-serif;">
+    <h2>❌ Invalid Contact Number</h2>
+    <p>Redirecting in <span id="countdown">3</span> seconds...</p>
+    <p><a href="/fees" style="color: #007bff; text-decoration: none;">Click here if not redirected automatically</a></p>
+    <script>
+      let count = 3;
+      const countdown = document.getElementById('countdown');
+      const timer = setInterval(() => {
+        count--;
+        countdown.textContent = count;
+        if (count <= 0) {
+          clearInterval(timer);
+          window.location.href = '/feesManagement';
+        }
+      }, 1000);
+    </script>
+  </div>`);
+  }
+
+  const { payment, registrationPaymentMode, payDate, feeType } = Fees;
+  const { firstName, lastName, course, reg_fee, contactNumber, r_no, _id } =
+    student;
+  if (!contactNumber || !/^[6-9]\d{9}$/.test(contactNumber)) {
+    return res
+      .status(400)
+      .send("❌ Invalid Indian phone number (10 digits required)");
+  }
+
+  const chatId = `91${contactNumber}@c.us`;
+  // const chatId = `917089369114@c.us`;
+
+  const bufferStream = new WritableStreamBuffer();
+
+  let responseSent = false;
+
+  buildPDF(
+    (chunk) => bufferStream.write(chunk),
+    async () => {
+      try {
+        const buffer = bufferStream.getContents();
+        if (!buffer) {
+          if (!responseSent) {
+            responseSent = true;
+            return res.status(500).send("❌ PDF generation failed");
+          }
+          return;
+        }
+
+        const base64 = buffer.toString("base64");
+        const media = new MessageMedia(
+          "application/pdf",
+          base64,
+          "invoice.pdf"
+        );
+        const whatsappClient = getWhatsAppClient();
+
+        await whatsappClient.sendMessage(chatId, media);
+
+        if (!responseSent) {
+          responseSent = true;
+          return res.send(
+            `<html>
+            <body>
+              <h1>✅ Invoice Sent Successfully!</h1>
+              <p>Invoice has been sent to ${contactNumber} on WhatsApp.</p>
+              <p><a href="/invoice/download?id=${Fees._id}">Download Invoice</a></p>
+              <p>Redirecting in <span id="countdown">3</span> seconds...</p>
+              <p><a href="/feesManagement">Go Back</a></p>
+            </body>
+            <script>
+      let count = 3;
+      const countdown = document.getElementById('countdown');
+      const timer = setInterval(() => {
+        count--;
+        countdown.textContent = count;
+        if (count <= 0) {
+          clearInterval(timer);
+          window.location.href = '/feesManagement';
+        }
+      }, 1000);
+    </script>
+  </div>
+            </html>`
+          );
+        }
+      } catch (error) {
+        console.error("❌ WhatsApp Send Error:", error.message);
+
+        if (!responseSent) {
+          responseSent = true;
+          return res
+            .status(500)
+            .send(
+              "❌ Failed to send invoice. Make sure the number is registered on WhatsApp."
+            );
+        }
+      }
+    },
+    r_no ? r_no : _id,
+    feeType,
+    payDate
+      ? payDate.toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB"),
+    firstName,
+    lastName,
+    course.courseName,
+    reg_fee,
+    payment,
+    contactNumber,
+    registrationPaymentMode
+  );
+});
+
 router.get("/", checkLoggedIn, function (req, res, next) {
   res.render("index");
 });
@@ -267,38 +435,6 @@ router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
     });
   }
 });
-router.post("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const lastStudent = await studentModel.find().sort({ r_no: -1 }).lean();
-
-    const newRno = lastStudent ? lastStudent.r_no + 1 : 1;
-
-    const updateData = {
-      ...req.body,
-      r_no: newRno,
-    };
-
-    const updatedStudent = await studentModel.findOneAndUpdate(
-      { _id: id },
-      updateData,
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedStudent) return res.status(404).send("Student not found");
-
-    res.redirect("/student");
-  } catch (err) {
-    console.error("Error accepting enquiry:", err);
-    res.send(`<html>
-            <body>
-              <h1>Something Went Wrong!</h1>
-              <p><a href="/feesManagement">Go Back</a></p>
-            </body>
-            </html>`);
-  }
-});
 
 router.get("/addFeeStructure", isLoggedIn, (req, res, next) => {
   courseModel.find().then((course) => {
@@ -318,7 +454,6 @@ router.get("/admission", async function (req, res, next) {
 });
 router.post("/admission", async function (req, res, next) {
   await admissionModel.create(req.body);
-  console.log(req.body);
   res.redirect("back");
 });
 router.get("/admission-student", isLoggedIn, async (req, res, next) => {
@@ -792,6 +927,78 @@ router.get("/fees", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get("/new/fees", isLoggedIn, async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const query = {};
+
+    const result = await feesModel.aggregate([
+      { $match: query }, // Your dynamic filters here
+      {
+        $group: {
+          _id: { student: "$student", studentModelType: "$studentModelType" },
+          totalPaid: { $sum: "$payment" },
+          payments: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $lookup: {
+          from: "admissions", // collection name for Admission model (check in DB)
+          localField: "_id.student",
+          foreignField: "_id",
+          as: "admission",
+        },
+      },
+      {
+        $lookup: {
+          from: "students", // collection name for StudentEnquiry model (check in DB)
+          localField: "_id.student",
+          foreignField: "_id",
+          as: "student",
+        },
+      },
+      {
+        $addFields: {
+          studentDetails: {
+            $cond: [
+              { $eq: ["$_id.studentModelType", "admission"] },
+              { $arrayElemAt: ["$admission", 0] },
+              { $arrayElemAt: ["$student", 0] },
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          studentId: "$_id.student",
+          studentModelType: "$_id.studentModelType",
+          totalPaid: 1,
+          payments: 1,
+          studentDetails: 1,
+        },
+      },
+      { $sort: { studentId: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    res.render("newfees", {
+      fees: result,
+      currentPage: page,
+      totalPages: Math.ceil(result.length / limit),
+      totalFees: result.reduce((sum, fee) => sum + fee.totalPaid, 0),
+      hasNextPage: result.length > skip + limit,
+      hasPrevPage: page > 1,
+      query: req.query,
+    });
+  } catch (err) {
+    console.error("Error fetching student fees:", err);
+  }
+});
+
 // G
 router.get("/getdate", isLoggedIn, async (req, res, next) => {
   try {
@@ -898,144 +1105,6 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
       </html>
     `);
   }
-});
-router.get("/invoice/download", isLoggedIn, async (req, res, next) => {
-  const { id } = req.query;
-  if (!id) return res.status(400).send("❌ Fee ID is required");
-  // populate student and course details
-  const Fees = await feesModel.findById(id).populate({
-    path: "student",
-    populate: {
-      path: "course",
-    },
-  });
-  if (!Fees) return res.status(404).send("❌ Fee record not found");
-
-  const student = Fees.student;
-  if (!student) return res.status(404).send("❌ Student record not found");
-  // Validate contact number
-  // res.json(Fees.student);
-
-  const { payment, registrationPaymentMode, payDate, feeType } = Fees;
-  const { firstName, lastName, course, reg_fee, contactNumber, r_no } = student;
-  const stream = res.writeHead(200, {
-    "Content-Type": "application/pdf",
-    "Content-Disposition": `attachment;filename=receipt.pdf`,
-  });
-  buildPDF(
-    (chunk) => stream.write(chunk),
-    () => stream.end(),
-    r_no,
-    feeType,
-    payDate
-      ? payDate.toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB"),
-    firstName,
-    lastName,
-    course,
-    reg_fee,
-    payment,
-    contactNumber,
-    registrationPaymentMode
-  );
-});
-router.get("/invoice", async (req, res) => {
-  const { id } = req.query;
-  if (!id) return res.status(400).send("❌ Fee ID is required");
-  // populate student and course details
-  const Fees = await feesModel.findById(id).populate({
-    path: "student",
-    populate: {
-      path: "course",
-    },
-  });
-  if (!Fees) return res.status(404).send("❌ Fee record not found");
-
-  const student = Fees.student;
-  if (!student) return res.status(404).send("❌ Student record not found");
-  // Validate contact number
-  if (!student.contactNumber || !/^[6-9]\d{9}$/.test(student.contactNumber)) {
-    return res
-      .status(400)
-      .send("❌ Invalid Indian phone number (10 digits required)");
-  }
-
-  const { payment, registrationPaymentMode, payDate, receiptNumber } = Fees;
-  const { firstName, lastName, course, reg_fee, contactNumber } = student;
-  if (!contactNumber || !/^[6-9]\d{9}$/.test(contactNumber)) {
-    return res
-      .status(400)
-      .send("❌ Invalid Indian phone number (10 digits required)");
-  }
-
-  const chatId = `91${contactNumber}@c.us`;
-  // const chatId = `917089369114@c.us`;
-
-  const bufferStream = new WritableStreamBuffer();
-
-  let responseSent = false;
-
-  buildPDF(
-    (chunk) => bufferStream.write(chunk),
-    async () => {
-      try {
-        const buffer = bufferStream.getContents();
-        if (!buffer) {
-          if (!responseSent) {
-            responseSent = true;
-            return res.status(500).send("❌ PDF generation failed");
-          }
-          return;
-        }
-
-        const base64 = buffer.toString("base64");
-        const media = new MessageMedia(
-          "application/pdf",
-          base64,
-          "invoice.pdf"
-        );
-        const whatsappClient = getWhatsAppClient();
-
-        await whatsappClient.sendMessage(chatId, media);
-
-        if (!responseSent) {
-          responseSent = true;
-          return res.send(
-            `<html>
-            <body>
-              <h1>✅ Invoice Sent Successfully!</h1>
-              <p>Invoice has been sent to ${contactNumber} on WhatsApp.</p>
-              <p><a href="/invoice/download?id=${Fees._id}">Download Invoice</a></p>
-              <p><a href="/feesManagement">Go Back</a></p>
-            </body>
-            </html>`
-          );
-        }
-      } catch (error) {
-        console.error("❌ WhatsApp Send Error:", error.message);
-
-        if (!responseSent) {
-          responseSent = true;
-          return res
-            .status(500)
-            .send(
-              "❌ Failed to send invoice. Make sure the number is registered on WhatsApp."
-            );
-        }
-      }
-    },
-    receiptNumber,
-    payDate
-      ? payDate.toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB"),
-    firstName,
-    lastName,
-    course,
-    reg_fee,
-    payment,
-    contactNumber,
-    registrationPaymentMode
-  );
 });
 
 // L
@@ -1314,17 +1383,6 @@ router.post("/update/profile/:id", isLoggedIn, async (req, res, next) => {
 router.post("/update/admprofile/:id", isLoggedIn, async (req, res, next) => {
   try {
     const updateData = { ...req.body };
-
-    // Ensure course is always treated as an array of ObjectIds
-    if (req.body.course) {
-      updateData.course = Array.isArray(req.body.course)
-        ? req.body.course
-        : [req.body.course];
-    } else {
-      // Explicitly remove 'course' field if it's not provided to avoid unintended overwrite
-      delete updateData.course;
-    }
-
     await admissionModel.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
     });

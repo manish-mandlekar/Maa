@@ -12,41 +12,360 @@
       href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./stylesheets/feesManagement.css" />
+    <style>
+      * {
+        margin: 0%;
+        padding: 0%;
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+      }
+      #main {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #left {
+        width: 18%;
+        height: 100%;
+        padding: 12px;
+        border-right: 1px solid #dadada;
+        background-color: white;
+      }
+
+      #nav-logo {
+        width: 100%;
+        height: 7.4vmax;
+      }
+      #nav-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .container {
+        width: 100%;
+        height: 8rem;
+        display: flex;
+      }
+      .lo {
+        width: 70%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 2vmax;
+        padding-right: 6vmax;
+      }
+      .ro {
+        width: 30%;
+        height: 100%;
+        display: flex;
+        gap: 3.5vmax;
+        padding-left: 2vmax;
+        align-items: center;
+        justify-content: center;
+      }
+      .ro > ion-icon {
+        font-size: 1.5vmax;
+      }
+      #right {
+        width: 82%;
+        height: 100%;
+        overflow-y: auto;
+      }
+      .contain {
+        width: 100%;
+        height: fit-content;
+        background-color: white;
+        border-top: 1px solid black;
+        padding: 2vmax;
+      }
+      .packet {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2vmax;
+        width: 100%;
+        height: 100%;
+      }
+      #course {
+        width: 40%;
+        height: 100%;
+        background-color: white;
+        padding: 1vmax;
+      }
+      #course-list {
+        width: 60%;
+        height: 100%;
+        background-color: white;
+        padding: 1vmax;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      h4 {
+        margin-bottom: 1rem;
+      }
+
+      /* Responsive form styling */
+      #toll {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: end;
+        gap: 1vw;
+        flex-wrap: wrap;
+      }
+
+      #toll .col-md-3 {
+        flex: 1;
+        min-width: 200px;
+        margin-bottom: 1rem;
+      }
+
+      #toll button {
+        margin-bottom: 1rem;
+        margin-right: 0.5rem;
+      }
+
+      /* Responsive table */
+      .table-container {
+        overflow-x: auto;
+        margin-top: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+        min-width: 800px;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 12px 8px;
+        text-align: left;
+      }
+
+      table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      table td {
+        background-color: white;
+      }
+
+      table tbody tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      table img {
+        max-width: 50px;
+        max-height: 50px;
+      }
+
+      /* Action links styling */
+      table td a {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      table td a:hover {
+        text-decoration: underline;
+      }
+
+      /* Mobile Responsive Styles */
+      @media (max-width: 768px) {
+        #main {
+          flex-direction: column;
+          height: auto;
+          min-height: 100vh;
+        }
+
+        #left {
+          width: 100%;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid #dadada;
+        }
+
+        #right {
+          width: 100%;
+          height: auto;
+        }
+
+        .contain {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+          margin-bottom: 1rem;
+        }
+
+        h4 {
+          font-size: 1.1rem;
+        }
+
+        #toll {
+          flex-direction: column;
+          gap: 0;
+        }
+
+        #toll .col-md-3 {
+          width: 100%;
+          min-width: auto;
+          margin-bottom: 1rem;
+        }
+
+        #toll button {
+          width: 100%;
+          margin-bottom: 0.5rem;
+          margin-right: 0;
+        }
+
+        /* Mobile table - stack columns */
+        .table-container {
+          overflow-x: auto;
+        }
+
+        table {
+          min-width: 600px;
+          font-size: 0.85rem;
+        }
+
+        table th,
+        table td {
+          padding: 8px 4px;
+        }
+
+        /* Alternative mobile table layout */
+        @media (max-width: 480px) {
+          table {
+            min-width: 100%;
+          }
+
+          table th,
+          table td {
+            padding: 6px 3px;
+            font-size: 0.75rem;
+          }
+
+          table th:nth-child(3),
+          table td:nth-child(3) {
+            display: none; /* Hide sender column on very small screens */
+          }
+        }
+      }
+
+      /* Tablet Responsive Styles */
+      @media (max-width: 1024px) and (min-width: 769px) {
+        .contain {
+          padding: 1.5rem;
+        }
+
+        #toll {
+          gap: 0.5rem;
+        }
+
+        #toll .col-md-3 {
+          min-width: 180px;
+        }
+
+        table {
+          font-size: 0.9rem;
+        }
+      }
+
+      /* Small mobile improvements */
+      @media (max-width: 480px) {
+        .contain {
+          padding: 0.5rem;
+        }
+
+        h1 {
+          font-size: 1.25rem;
+        }
+
+        .lo {
+          font-size: 4vmax;
+          padding-right: 2vmax;
+        }
+
+        .ro {
+          gap: 2vmax;
+          padding-left: 1vmax;
+        }
+      }
+
+      /* Form improvements */
+      .form-control, .form-select {
+        margin-bottom: 0.5rem;
+      }
+
+      .btn {
+        white-space: nowrap;
+      }
+
+      /* Ensure buttons don't break on small screens */
+      @media (max-width: 576px) {
+        #toll button {
+          font-size: 0.9rem;
+          padding: 0.5rem 1rem;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="main">
       <%- include('./partials/header') %>
+      
       <div id="right">
         <%- include('./partials/right-header') %>
+        
         <div class="contain">
           <h1>Transaction History</h1>
           <h4>Add filter</h4>
-          <form action="/feesManagement">
+          <form action="/feesManagement" method="GET">
             <div id="toll">
               <div class="col-md-3">
-                <label for="inputZip">Before date</label>
+                <label for="prevDate" class="form-label">Before date</label>
                 <input
-                name="prev"
-                type="date"
-                class="form-control "
-                id="inputZip"
+                  name="prev"
+                  type="date"
+                  class="form-control"
+                  id="prevDate"
                 />              
               </div>
               <div class="col-md-3">
-                <label for="inputZip">After date</label>
-              <input
-                name="next"
-                type="date"
-                class="form-control "
-                id="inputZip"
-              />
+                <label for="nextDate" class="form-label">After date</label>
+                <input
+                  name="next"
+                  type="date"
+                  class="form-control"
+                  id="nextDate"
+                />
               </div>
               <div class="col-md-3">
-                <label for="registrationPaymentMode" class="form-label"
-                  >Payment Mode</label
-                >
-                <select class="form-select" name="registrationPaymentMode">
+                <label for="registrationPaymentMode" class="form-label">Payment Mode</label>
+                <select class="form-select" name="registrationPaymentMode" id="registrationPaymentMode">
                   <option value="">All</option>
                   <option value="cash" <%= query.registrationPaymentMode === 'cash' ? 'selected' : '' %>>Cash</option>
                   <option value="upi" <%= query.registrationPaymentMode === 'upi' ? 'selected' : '' %>>
@@ -57,26 +376,25 @@
             </div>
             <br />
             <div id="toll">
-              <!-- Transaction Limit in number -->
-               <div class="col-md-3">
-              <label for="inputZip">R. No.</label>
-              <input
-                name="r_no"
-                type="number"
-                class="form-control"
-                id="inputZip"
-                placeholder="Enter R. No."
-              />
+              <div class="col-md-3">
+                <label for="rNumber" class="form-label">R. No.</label>
+                <input
+                  name="r_no"
+                  type="number"
+                  class="form-control"
+                  id="rNumber"
+                  placeholder="Enter R. No."
+                />
               </div>
-               <div class="col-md-3">
-              <label for="inputZip">Transaction Limit</label>
-              <input
-                name="limit"
-                type="number"
-                class="form-control"
-                id="inputZip"
-                placeholder="Enter limit"
-              />
+              <div class="col-md-3">
+                <label for="transactionLimit" class="form-label">Transaction Limit</label>
+                <input
+                  name="limit"
+                  type="number"
+                  class="form-control"
+                  id="transactionLimit"
+                  placeholder="Enter limit"
+                />
               </div>
               
               <button type="submit" class="btn btn-primary">Submit</button>
@@ -88,45 +406,45 @@
             </div>
           </form>
 
-          <table>
-            <thead>
-              <tr>
-                <th>R. No.</th>
-                <th>Date</th>
-                <th>Sender</th>
-                <th>Session</th>
-                <th>Payment Mode</th>
-                <th>Amount</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% fees.forEach(elem=>{ %>
-              <tr>
-                <td><%= elem?.student?.r_no ? elem?.student?.r_no : "ADM" %></td>
-                <td>
-                  <%= elem?.payDate?.toLocaleTimeString() %> - <%=
-                  elem?.payDate?.toLocaleDateString('en-GB') %>
-                </td>
-                <td>
-                  <%= elem?.student?.firstName %> <%= elem?.student?.lastName %>
-                </td>
-                <td><%= elem?.student.session ? elem?.student?.session : "ADM" %></td>
-                <td><%= elem?.registrationPaymentMode %></td>
-                <!-- <td><i class="ri-arrow-right-down-line"></i> Credited</td> -->
-                <td>₹<%= elem?.payment %>.00</td>
-                <td>
-                  <!-- <a href="/delete/transaction/<%= elem._id %>">delete</a> -->
-                  <a href="/invoice/download?id=<%= elem?._id %>">download</a>
-                  <br />
-                  <a href="/invoice?id=<%= elem?._id %>">send</a>
-                </td>
-              </tr>
-              <% }) %>
+          <div class="table-container">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>R. No.</th>
+                  <th>Date</th>
+                  <th>Sender</th>
+                  <th>Session</th>
+                  <th>Payment Mode</th>
+                  <th>Amount</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% fees.forEach(elem=>{ %>
+                <tr>
+                  <td><%= elem?.student?.r_no ? elem?.student?.r_no : "ADM" %></td>
+                  <td>
+                    <%= elem?.payDate?.toLocaleTimeString() %> - <%=
+                    elem?.payDate?.toLocaleDateString('en-GB') %>
+                  </td>
+                  <td>
+                    <%= elem?.student?.firstName %> <%= elem?.student?.lastName %>
+                  </td>
+                  <td><%= elem?.student.session ? elem?.student?.session : "ADM" %></td>
+                  <td><%= elem?.registrationPaymentMode %></td>
+                  <td>₹<%= elem?.payment %>.00</td>
+                  <td>
+                    <a href="/invoice/download?id=<%= elem?._id %>">download</a>
+                    <br />
+                    <a href="/invoice?id=<%= elem?._id %>">send</a>
+                  </td>
+                </tr>
+                <% }) %>
 
-              <!-- Add more rows for additional transactions -->
-            </tbody>
-          </table>
+                <!-- Add more rows for additional transactions -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
