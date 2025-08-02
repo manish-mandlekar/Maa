@@ -125,9 +125,7 @@ function getWhatsAppClient() {
   if (!whatsappClient || !whatsappClient.pupPage) {
     console.log("⚠️ WhatsApp client not ready, initializing...");
     initializeWhatsAppClient();
-    throw new Error(
-      "WhatsApp client is initializing. Please try again in a few moments."
-    );
+    return null;
   }
   return whatsappClient;
 }

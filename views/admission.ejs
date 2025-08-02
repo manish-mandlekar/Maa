@@ -8,7 +8,119 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     />
-    <link rel="stylesheet" href="./stylesheets/inquiry.css" />
+
+    <style>
+      * {
+        margin: 0%;
+        padding: 0%;
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+      }
+      #main {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #left {
+        width: 18%;
+        height: 100%;
+        padding: 12px;
+        border-right: 1px solid #dadada;
+        background-color: white;
+      }
+      .cnt {
+        width: 100%;
+        height: 3vmax;
+        padding: 2px;
+        padding-left: 2vmax;
+        display: flex;
+        align-items: center;
+        margin-top: 1vmax;
+        gap: 1vmax;
+      }
+      .cnt > ion-icon {
+        font-size: 1.4vmax;
+        color: black;
+      }
+      .cnt > h3 {
+        font-weight: 400;
+        color: #315a51;
+        text-transform: uppercase;
+        font-size: 1.2vmax;
+      }
+      .cnt:hover {
+        background-color: #f1f5fa;
+      }
+      #nav-logo {
+        width: 100%;
+        height: 7.4vmax;
+      }
+      #nav-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .container {
+        width: 100%;
+        height: 8rem;
+        display: flex;
+      }
+      .lo {
+        width: 70%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 2vmax;
+        padding-right: 6vmax;
+      }
+      .ro {
+        width: 30%;
+        height: 100%;
+        display: flex;
+        gap: 3.5vmax;
+        padding-left: 2vmax;
+        align-items: center;
+        justify-content: center;
+      }
+      .ro > ion-icon {
+        font-size: 1.5vmax;
+      }
+      #right {
+        width: 82%;
+        height: 100%;
+        overflow-y: auto;
+      }
+      #cover {
+        width: 100%;
+        height: fit-content;
+        background-color: #f1f5fa;
+
+        padding: 1vmax;
+      }
+      .inq {
+        width: 100%;
+        height: fit-content;
+        border-radius: 10px;
+        background-color: rgb(255, 255, 255);
+        margin-top: 2vmax;
+        padding: 10px;
+      }
+       @media (max-width: 768px) {
+        #right {
+          width: 100%;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="main">
@@ -28,6 +140,7 @@
                   name="firstName"
                   class="form-control"
                   id="inputEmail4"
+                  value="<%= typeof student !== 'undefined' ? student.firstName : '' %>"
                 />
               </div>
               <div class="col-md-6">
@@ -41,6 +154,7 @@
                   placeholder="Enter Last Name"
                   class="form-control"
                   id="inputPassword4"
+                  value="<%= typeof student !== 'undefined' ? student.lastName : '' %>"
                 />
               </div>
 
@@ -55,6 +169,7 @@
                   class="form-control"
                   id="inputAddress"
                   placeholder="Enter Name Of Father / Husband"
+                  value="<%= typeof student !== 'undefined' ? student.fatherName : '' %>"
                 />
               </div>
               <div class="col-12">
@@ -66,12 +181,13 @@
                   name="motherName"
                   class="form-control"
                   id="inputAddress"
-                  placeholder="Enter Email Address"
+                  placeholder="Enter Name Of Mother"
+                  value="<%= typeof student !== 'undefined' ? student.motherName : '' %>"
                 />
               </div>
               <div class="col-12">
                 <label for="inputAddress2" class="form-label"
-                  >Contact Number/ WhatsAap Number</label
+                  >Contact Number/ WhatsApp Number</label
                 >
                 <input
                   required
@@ -80,6 +196,7 @@
                   class="form-control"
                   id="inputAddress2"
                   placeholder="Enter Contact Number"
+                  value="<%= typeof student !== 'undefined' ? student.contactNumber : '' %>"
                 />
               </div>
               <div class="col-md-6">
@@ -93,6 +210,7 @@
                   class="form-control"
                   placeholder="Enter Qualification"
                   id="inputCity"
+                  value="<%= typeof student !== 'undefined' ? student.qualification : '' %>"
                 />
               </div>
               <div class="col-md-2">
@@ -104,6 +222,7 @@
                   placeholder="Address"
                   class="form-control"
                   id="inputZip"
+                  value="<%= typeof student !== 'undefined' ? student.joiningDate : '' %>"
                 />
               </div>
               <div class="col-md-2">
@@ -114,6 +233,7 @@
                   type="date"
                   class="form-control"
                   id="inputZip"
+                  value="<%= typeof student !== 'undefined' ? student.dateOfBirth : '' %>"
                 />
               </div>
               <div class="inq">
@@ -125,6 +245,7 @@
                     id="male"
                     name="gender"
                     value="male"
+                    <%= typeof student !== 'undefined' && student.gender === 'male' ? 'checked' : '' %>
                   />
 
                   <label for="female">Female</label>
@@ -134,6 +255,7 @@
                     id="female"
                     name="gender"
                     value="female"
+                    <%= typeof student !== 'undefined' && student.gender === 'female' ? 'checked' : '' %>
                   />
                 </div>
 
@@ -143,10 +265,17 @@
                       >Select Course</label
                     >
                     <select name="course" class="form-select" required>
-                      <option selected disabled>Choose a course...</option>
-                      <% shortCourses.forEach(course=>{ %>
-                      <option value="<%= course._id %>"><%= course.courseName %></option>
-                      <% }) %>
+                      <option disabled>Choose a course...</option>
+                      <% if(typeof shortCourses !== 'undefined' && shortCourses.length > 0) { %>
+                        <% shortCourses.forEach(course => { %>
+                        <option 
+                          value="<%= course._id %>"
+                          <%= typeof student !== 'undefined' && student.course && student.course._id === course._id.toString() ? 'selected' : '' %>
+                        >
+                          <%= course.courseName %>
+                        </option>
+                        <% }) %>
+                      <% } %>
                     </select>
                   </div>
                   <div class="col-md-12">
@@ -160,6 +289,7 @@
                       class="form-control"
                       placeholder="Enter Permanent Address"
                       id="inputCity"
+                      value="<%= typeof student !== 'undefined' ? student.address : '' %>"
                     />
                   </div>
                 </div>
@@ -173,8 +303,8 @@
                       id="inputState"
                       class="form-select"
                     >
-                      <option selected>Done</option>
-                      <option>Not Done</option>
+                      <option <%= typeof student !== 'undefined' && student.registrationPayment === 'Done' ? 'selected' : 'selected' %>>Done</option>
+                      <option <%= typeof student !== 'undefined' && student.registrationPayment === 'Not Done' ? 'selected' : '' %>>Not Done</option>
                     </select>
                   </div>
                   <div class="col-md-6">
@@ -186,11 +316,11 @@
                       id="inputState"
                       class="form-select"
                     >
-                      <option value="Cash" selected>Cash</option>
-                      <option value="Phone pe">Phone pe</option>
-                      <option value="Google pay">Google pay</option>
-                      <option value="Paytm">Paytm</option>
-                      <option value="Cheque">Cheque</option>
+                      <option value="Cash" <%= typeof student !== 'undefined' && student.registrationPaymentMode === 'Cash' ? 'selected' : 'selected' %>>Cash</option>
+                      <option value="Phone pe" <%= typeof student !== 'undefined' && student.registrationPaymentMode === 'Phone pe' ? 'selected' : '' %>>Phone pe</option>
+                      <option value="Google pay" <%= typeof student !== 'undefined' && student.registrationPaymentMode === 'Google pay' ? 'selected' : '' %>>Google pay</option>
+                      <option value="Paytm" <%= typeof student !== 'undefined' && student.registrationPaymentMode === 'Paytm' ? 'selected' : '' %>>Paytm</option>
+                      <option value="Cheque" <%= typeof student !== 'undefined' && student.registrationPaymentMode === 'Cheque' ? 'selected' : '' %>>Cheque</option>
                     </select>
                   </div>
                 </div>
@@ -206,6 +336,7 @@
                       class="form-control"
                       id="inputEmail4"
                       placeholder="Enter Installment Amount"
+                      value="<%= typeof student !== 'undefined' ? student.installment : '' %>"
                     />
                   </div>
                   <div class="col-md-6" style="margin-top: 1vmax">
@@ -217,6 +348,7 @@
                       class="form-control"
                       id="inputPassword4"
                       placeholder="Enter Due Amount"
+                      value="<%= typeof student !== 'undefined' ? student.due : '' %>"
                     />
                   </div>
                 </div>
@@ -232,6 +364,7 @@
                     class="form-control"
                     id="inputPassword4"
                     placeholder="Enter Due Amount date"
+                    value="<%= typeof student !== 'undefined' ? student.dueDate : '' %>"
                   />
                 </div>
 

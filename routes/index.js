@@ -387,7 +387,7 @@ router.get("/invoice", async (req, res) => {
           return res
             .status(500)
             .send(
-              "❌ Failed to send invoice. Make sure the number is registered on WhatsApp."
+              `<div>❌ Failed to send invoice. Make sure the number is registered on WhatsApp.<p><a href="/feesManagement">Go Back</a></p></div>`
             );
         }
       }
@@ -427,10 +427,10 @@ router.get("/accepted/enquiry/:id", isLoggedIn, async (req, res, next) => {
       r_no,
     });
   } else {
-    course = await shortCourseModel.find();
+    shortCourses = await shortCourseModel.find();
     res.render("admission", {
       student,
-      course,
+      shortCourses,
       universities,
     });
   }
@@ -1058,16 +1058,23 @@ router.post("/inquiry", isLoggedIn, async (req, res, next) => {
       contact = contact.slice(1); // remove '0'
     }
 
-    // Send WhatsApp message
+    // Try to send WhatsApp message if number is valid
     if (/^[6-9]\d{9}$/.test(contact)) {
-      const whatsappClient = getWhatsAppClient();
-      const formattedNumber = "91" + contact + "@c.us";
+      try {
+        const whatsappClient = getWhatsAppClient();
+        const formattedNumber = "91" + contact + "@c.us";
+        const thankYouMessage = `🙏 Thank you for your enquiry, ${
+          firstName || "Student"
+        }! We'll reach out to you shortly.`;
 
-      const thankYouMessage = `🙏 Thank you for your enquiry, ${
-        firstName || "Student"
-      }! We’ll reach out to you shortly.`;
-
-      await whatsappClient.sendMessage(formattedNumber, thankYouMessage);
+        await whatsappClient.sendMessage(formattedNumber, thankYouMessage);
+      } catch (whatsappError) {
+        console.error(
+          "WhatsApp message not sent (client may not be ready):",
+          whatsappError.message
+        );
+        // Continue with the inquiry even if WhatsApp fails
+      }
     }
 
     // Build inquiry object

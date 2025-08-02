@@ -14,21 +14,150 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
+      * {
+        margin: 0%;
+        padding: 0%;
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+      }
+      #main {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* #left{
+          width: 18%;
+          height: 100%;
+          padding: 12px;
+          border-right: 1px solid #dadada;
+      background-color: white;
+      } */
+      .cnt {
+        width: 100%;
+        height: 3vmax;
+        padding: 2px;
+        padding-left: 2vmax;
+        display: flex;
+        align-items: center;
+        margin-top: 1vmax;
+        gap: 1vmax;
+      }
+      .cnt > ion-icon {
+        font-size: 1.4vmax;
+        color: black;
+      }
+      .cnt > h3 {
+        font-weight: 400;
+        color: #315a51;
+        text-transform: uppercase;
+        font-size: 1.2vmax;
+      }
+      .cnt:hover {
+        background-color: #f1f5fa;
+      }
+
+      #right {
+        width: 82%;
+        height: 100%;
+        overflow-y: auto;
+      }
+      #nav-logo {
+        width: 100%;
+      }
+      #nav-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .container {
+        width: 100%;
+        height: 8rem;
+        display: flex;
+      }
+      .lo {
+        width: 70%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 2vmax;
+        padding-right: 6vmax;
+      }
+      .ro {
+        width: 30%;
+        height: 100%;
+        display: flex;
+        gap: 3.5vmax;
+        padding-left: 2vmax;
+        align-items: center;
+        justify-content: center;
+      }
+      .ro > ion-icon {
+        font-size: 1.5vmax;
+      }
+      .dash-cnt {
+        width: 100%;
+        height: 8rem;
+        background-color: #64c5b1;
+        padding: 1.4vmax 2vmax;
+      }
+      .long {
+        width: 70%;
+        height: 100%;
+        background-color: white;
+        border-radius: 10px;
+        padding: 0 2vmax;
+        display: flex;
+        align-items: center;
+      }
+      .box {
+        width: 30%;
+        height: 100%;
+        background-color: white;
+        border-radius: 10px;
+        padding: 1.6vmax 1vmax;
+      }
       .card {
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         border: none;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         border-radius: 12px;
       }
-      /* .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-      } */
+      .card-body {
+        background-color: #f1f5fa;
+        border: none;
+      }
+      .internal-box {
+        width: 21vw;
+        height: 14vh;
+        border-radius: 8px;
+        background-color: white;
+        padding: 1.6vmax 1vmax;
+      }
+      .monthly-report {
+        width: 100%;
+        height: fit-content;
+        background-color: white;
+        padding: 10px 12px;
+        border-radius: 8px;
+      }
+
       .display-6 {
         font-size: 2.5rem;
       }
       .display-5 {
         font-size: 2rem;
       }
+
+      /* Mobile Responsive Styles */
       @media (max-width: 768px) {
         .display-6 {
           font-size: 1.8rem;
@@ -36,12 +165,175 @@
         .display-5 {
           font-size: 1.5rem;
         }
+
+        /* Dashboard title responsive */
+        .dash-cnt h5 {
+          font-size: 4vw !important;
+        }
+        .dash-cnt p {
+          font-size: 3vw !important;
+        }
+
+        /* Card body padding adjustment */
+        .card-body {
+          padding: 1rem 0.75rem;
+        }
+
+        /* Table text size */
+        .table {
+          font-size: 0.85rem;
+        }
+
+        /* Badge size adjustment */
+        .badge {
+          font-size: 0.7rem !important;
+        }
+
+        /* Course item padding */
+        .course-item {
+          padding: 0.75rem !important;
+        }
+
+        /* Footer text size */
+        .dash-cnt:last-child {
+          font-size: 2.5vw !important;
+          padding: 1rem;
+          text-align: center;
+        }
+
+        /* Responsive internal box */
+        .internal-box {
+          width: 100%;
+          height: auto;
+          min-height: 10vh;
+        }
       }
+
+      @media (max-width: 576px) {
+        /* Extra small devices */
+        .display-6 {
+          font-size: 1.5rem;
+        }
+        .display-5 {
+          font-size: 1.25rem;
+        }
+
+        /* Card title size */
+        .card-title {
+          font-size: 1rem !important;
+        }
+
+        /* Collection amount size */
+        .internal-box p {
+          font-size: 20px !important;
+        }
+
+        /* Hide less important columns on very small screens */
+        .d-none-xs {
+          display: none !important;
+        }
+
+        /* Stack course items vertically */
+        .course-item h6 {
+          font-size: 0.9rem;
+        }
+
+        /* Table responsive improvements */
+        .table-responsive {
+          font-size: 0.8rem;
+        }
+
+        .px-3 {
+          padding-left: 0.75rem !important;
+          padding-right: 0.75rem !important;
+        }
+
+        /* Responsive internal box */
+        .internal-box {
+          width: 100%;
+          height: auto;
+          padding: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        /* Very small mobile devices */
+        .container-fluid {
+          padding: 0.5rem 1rem !important;
+        }
+
+        .dash-cnt {
+          padding: 0.75rem !important;
+        }
+
+        .card-body {
+          padding: 0.75rem 0.5rem;
+        }
+
+        .internal-box p {
+          font-size: 18px !important;
+        }
+
+        /* Hide contact column on very small screens */
+        .hide-on-xs {
+          display: none !important;
+        }
+
+        /* Responsive internal box */
+        .internal-box {
+          width: 100%;
+          height: auto;
+          padding: 0.75rem;
+        }
+      }
+
+      /* Tablet specific adjustments */
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .dash-cnt h5 {
+          font-size: 2.5vw;
+        }
+
+        .container-fluid {
+          padding: 1.5vmax 2vmax;
+        }
+
+        .internal-box {
+          width: 100%;
+          height: auto;
+          min-height: 12vh;
+        }
+      }
+
+      /* Large screen adjustments */
+      @media (min-width: 1200px) {
+        .display-6 {
+          font-size: 3rem;
+        }
+        .display-5 {
+          font-size: 2.5rem;
+        }
+      }
+
       .table-responsive {
         border-radius: 8px;
       }
       .course-item:last-child {
         margin-bottom: 0 !important;
+      }
+
+      /* Ensure cards maintain minimum height */
+      .h-100 {
+        min-height: 120px;
+      }
+
+      /* Responsive text sizing for collection amounts */
+      .internal-box p {
+        font-size: clamp(18px, 3vw, 24px);
+      }
+      @media (max-width: 768px) {
+        #right {
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -65,7 +357,7 @@
           style="background-color: #f1f5fa; padding: 1vmax 2vmax"
         >
           <div class="row g-3">
-            <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="col-lg-4 col-md-6 col-12">
               <div class="card border-success h-100 shadow-sm">
                 <div class="card-body text-center">
                   <h5 class="card-title text-success mb-3">
@@ -84,7 +376,7 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="col-lg-4 col-md-6 col-12">
               <div class="card border-primary h-100 shadow-sm">
                 <div class="card-body text-center">
                   <h5 class="card-title text-primary mb-3">
@@ -103,7 +395,7 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-12 col-sm-12">
+            <div class="col-lg-4 col-md-12 col-12">
               <div class="card border-warning h-100 shadow-sm">
                 <div class="card-body text-center">
                   <h5 class="card-title text-warning mb-3">
@@ -131,7 +423,7 @@
           <div class="row g-3">
             <div class="col-lg-8 col-md-12">
               <div class="row g-3">
-                <div class="col-sm-6">
+                <div class="col-sm-6 col-12">
                   <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                       <h5 class="card-title text-info mb-3">
@@ -148,7 +440,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6 col-12">
                   <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                       <h5 class="card-title text-secondary mb-3">
@@ -221,15 +513,13 @@
                     <table class="table table-hover mb-0">
                       <thead class="table-light">
                         <tr>
-                          <th scope="col" class="px-3 py-3">
-                            S_No.
-                          </th>
+                          <th scope="col" class="px-3 py-3">S_No.</th>
                           <th scope="col" class="px-3 py-3">
                             <i class="fas fa-user me-1"></i>Student Name
                           </th>
                           <th
                             scope="col"
-                            class="px-3 py-3 d-none d-md-table-cell"
+                            class="px-3 py-3 d-none d-md-table-cell hide-on-xs"
                           >
                             <i class="fas fa-phone me-1"></i>Contact
                           </th>
@@ -271,11 +561,13 @@
                                 <%=
                                 fee.student.firstName.charAt(0).toUpperCase() %>
                               </div>
-                              <span><%= fee.student.firstName %></span>
+                              <span class="text-truncate"
+                                ><%= fee.student.firstName %></span
+                              >
                             </div>
                           </td>
                           <td
-                            class="px-3 py-3 d-none d-md-table-cell text-muted"
+                            class="px-3 py-3 d-none d-md-table-cell text-muted hide-on-xs"
                           >
                             <i class="fas fa-phone-alt me-1"></i><%=
                             fee.student.contactNumber %>
@@ -286,12 +578,20 @@
                             >
                           </td>
                           <td class="px-3 py-3 text-muted">
-                            <%= new
-                            Date(fee.payDate).toLocaleDateString('en-IN', { day:
-                            '2-digit', month: 'short', year: 'numeric' }) %>
+                            <span class="d-none d-sm-inline">
+                              <%= new
+                              Date(fee.payDate).toLocaleDateString('en-IN', {
+                              day: '2-digit', month: 'short', year: 'numeric' })
+                              %>
+                            </span>
+                            <span class="d-sm-none">
+                              <%= new
+                              Date(fee.payDate).toLocaleDateString('en-IN', {
+                              day: '2-digit', month: 'short' }) %>
+                            </span>
                           </td>
                           <td class="px-3 py-3 text-end">
-                            <span class="badge bg-success fs-6 px-3 py-2">
+                            <span class="badge bg-success fs-6 px-2 py-1">
                               ₹<%= fee.payment %>
                             </span>
                           </td>
@@ -308,14 +608,18 @@
                     </table>
                   </div>
                   <div
-                    class="card-footer bg-light d-flex justify-content-between align-items-center"
+                    class="card-footer bg-light d-flex flex-column flex-sm-row justify-content-between align-items-center"
                   >
-                    <small class="text-muted">
+                    <small class="text-muted mb-2 mb-sm-0">
                       Showing recent <%= fees ? Math.min(5, fees.length) : 0 %>
                       transactions
                     </small>
                     <a href="/feesManagement" class="btn btn-primary btn-sm">
-                      <i class="fas fa-eye me-1"></i>View All Transactions
+                      <i class="fas fa-eye me-1"></i>
+                      <span class="d-none d-sm-inline"
+                        >View All Transactions</span
+                      >
+                      <span class="d-sm-none">View All</span>
                     </a>
                   </div>
                 </div>
