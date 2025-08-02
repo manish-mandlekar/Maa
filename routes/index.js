@@ -896,7 +896,7 @@ router.get("/fees", isLoggedIn, async (req, res, next) => {
     const today = new Date();
 
     const studentData = await studentModel
-      .find({ registered: true, rejected: false, due: { $gt: 0 } })
+      .find({ due: { $gt: 0 } })
       .populate("course");
 
     const admissionData = await admissionModel
@@ -1003,9 +1003,7 @@ router.get("/new/fees", isLoggedIn, async (req, res, next) => {
 router.get("/getdate", isLoggedIn, async (req, res, next) => {
   try {
     const studentData = (
-      await studentModel
-        .find({ registered: true, rejected: false, due: { $gt: 0 } })
-        .populate("course")
+      await studentModel.find({ due: { $gt: 0 } }).populate("course")
     ).map((s) => ({ ...s.toObject(), source: "student" }));
 
     const admissionData = (
